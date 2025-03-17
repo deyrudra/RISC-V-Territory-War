@@ -34,7 +34,7 @@ typedef struct {
 } Pixel;
 
 typedef struct {
-    Pixel data_array[240][320];
+    Pixel data_array[480][640];
     int width;
     int height;
 } Asset;
@@ -59,7 +59,12 @@ Asset img = {
 
 // Assets Loading and Assets List
 // Declare global variables as extern
-extern Asset rocket;
+extern Asset dead;
+extern Asset idle;
+extern Asset leftboot;
+extern Asset rightboot;
+extern Asset leftmovement;
+extern Asset rightmovement;
 
 
 
@@ -138,12 +143,42 @@ int main(void)
         //     }
         // }
 
-        for (int y_pix = 0; y_pix < rocket.height; y_pix++){
-            for (int x_pix = 0; x_pix < rocket.width; x_pix++){
-                Pixel current_pixel = rocket.data_array[y_pix][x_pix];
+        for (int y_pix = 0; y_pix < dead.height; y_pix++){
+            for (int x_pix = 0; x_pix < dead.width; x_pix++){
+                Pixel current_pixel = dead.data_array[y_pix][x_pix];
                 plot_pixel(current_pixel.x, current_pixel.y, current_pixel.rgb_565);
             }
         }
+
+        for (int y_pix = 0; y_pix < leftboot.height; y_pix++){
+            for (int x_pix = 0; x_pix < leftboot.width; x_pix++){
+                Pixel current_pixel = leftboot.data_array[y_pix][x_pix];
+                plot_pixel(current_pixel.x + 50, current_pixel.y, current_pixel.rgb_565);
+            }
+        }
+
+        for (int y_pix = 0; y_pix < rightmovement.height; y_pix++){
+            for (int x_pix = 0; x_pix < rightmovement.width; x_pix++){
+                Pixel current_pixel = rightmovement.data_array[y_pix][x_pix];
+                plot_pixel(current_pixel.x + 100, current_pixel.y, current_pixel.rgb_565);
+            }
+        }
+
+
+        for (int y_pix = 0; y_pix < leftmovement.height; y_pix++){
+            for (int x_pix = 0; x_pix < leftmovement.width; x_pix++){
+                Pixel current_pixel = leftmovement.data_array[y_pix][x_pix];
+                plot_pixel(current_pixel.x + 150, current_pixel.y, current_pixel.rgb_565);
+            }
+        }
+        
+        for (int y_pix = 0; y_pix < idle.height; y_pix++){
+            for (int x_pix = 0; x_pix < idle.width; x_pix++){
+                Pixel current_pixel = idle.data_array[y_pix][x_pix];
+                plot_pixel(current_pixel.x + 200, current_pixel.y, current_pixel.rgb_565);
+            }
+        }
+
 
         wait_for_vsync(); // swap front and back buffers on VGA vertical sync
         pixel_buffer_start = *(buffer_register + 1); // new back buffer
@@ -154,8 +189,8 @@ int main(void)
 
 // Screen Functions
 void clear_screen() {
-    for (int x = 0; x < 320; x++) {
-        for (int y = 0; y < 240; y++) {
+    for (int x = 0; x < 640; x++) {
+        for (int y = 0; y < 480; y++) {
             // 0x0000 represents:
             // 0 red (3rd hex digit)
             // 0 green (2nd hex )

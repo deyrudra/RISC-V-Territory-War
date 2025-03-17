@@ -88,7 +88,7 @@ void process_ppm_file(const char *filepath, FILE *output_file) {
     get_base_filename(filepath, base_filename);
 
     // Write the output to the specified file
-    fprintf(output_file, "Asset asset%d = {\n", count);
+    fprintf(output_file, "Asset %s = {\n", base_filename);
     fprintf(output_file, "    .data_array = {\n");
     for (int y = 0; y < height; y++) {
         fprintf(output_file, "        {   // Row %d\n", y);
@@ -109,7 +109,7 @@ void process_ppm_file(const char *filepath, FILE *output_file) {
     fprintf(output_file, "    .width = %d,\n", img.width);
     fprintf(output_file, "    .height = %d\n", img.height);
     fprintf(output_file, "};\n\n");
-    fprintf(output_file, "%s = asset%d;", base_filename, count);
+    // fprintf(output_file, "%s = asset%d;", base_filename, count);
 
     // Free allocated memory
     for (int y = 0; y < height; y++) {
@@ -139,21 +139,21 @@ int main() {
     // Creating assets.c
     struct dirent *entry;
     
-    while ((entry = readdir(dir)) != NULL) {
-        // Check if the file has a .ppm extension
-        const char *extension = strrchr(entry->d_name, '.');
-        if (extension && strcmp(extension, ".ppm") == 0) {
-            // Construct the full file path
-            char filepath[1024];
-            snprintf(filepath, sizeof(filepath), "%s/%s", directory, entry->d_name);
+    // while ((entry = readdir(dir)) != NULL) {
+    //     // Check if the file has a .ppm extension
+    //     const char *extension = strrchr(entry->d_name, '.');
+    //     if (extension && strcmp(extension, ".ppm") == 0) {
+    //         // Construct the full file path
+    //         char filepath[1024];
+    //         snprintf(filepath, sizeof(filepath), "%s/%s", directory, entry->d_name);
             
-            char base_filename[256];
-            get_base_filename(filepath, base_filename);
+    //         char base_filename[256];
+    //         get_base_filename(filepath, base_filename);
             
-            // Write the output to the specified file
-            fprintf(output_file, "Asset %s;\n", base_filename);
-        }
-    }
+    //         // Write the output to the specified file
+    //         fprintf(output_file, "Asset %s;\n", base_filename);
+    //     }
+    // }
     
     dir = opendir(directory);
 
