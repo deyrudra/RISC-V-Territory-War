@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include "loadAssets.c"
 
 // Global Variables --------------------------------------------------------------------
 
@@ -27,44 +28,45 @@ void draw_6x6_box(int x0, int y0, short int box_color);
 // Helper Functions
 void swap(int* num1, int* num2);
 
-// Structs
-typedef struct {
-    unsigned int x, y;
-    unsigned int rgb_565;
-} Pixel;
+// // Structs
+// typedef struct {
+//     unsigned int x, y;
+//     unsigned int rgb_565;
+// } Pixel;
 
-typedef struct {
-    Pixel data_array[480][640];
-    int width;
-    int height;
-} Asset;
+// typedef struct {
+//     Pixel data_array[480][640];
+//     int width;
+//     int height;
+// } Asset;
 
-// Define and initialize the Asset object globally
-Asset img = {
-    .data_array = {
-        {   // Row 0
-            { .x = 0, .y = 0, .rgb_565 = 0xFFFF },  // Pixel (0,0)
-            { .x = 1, .y = 0, .rgb_565 = 0x07E0 },  // Pixel (1,0)
-            { .x = 2, .y = 0, .rgb_565 = 0xF800 }   // Pixel (2,0)
-        },
-        {   // Row 1
-            { .x = 0, .y = 1, .rgb_565 = 0x001F },  // Pixel (0,1)
-            { .x = 1, .y = 1, .rgb_565 = 0x07FF },  // Pixel (1,1)
-            { .x = 2, .y = 1, .rgb_565 = 0xE07F }   // Pixel (2,1)
-        }
-    },
-    .width = 3,
-    .height = 2
-};
+// // Define and initialize the Asset object globally
+// Asset img = {
+//     .data_array = {
+//         {   // Row 0
+//             { .x = 0, .y = 0, .rgb_565 = 0xFFFF },  // Pixel (0,0)
+//             { .x = 1, .y = 0, .rgb_565 = 0x07E0 },  // Pixel (1,0)
+//             { .x = 2, .y = 0, .rgb_565 = 0xF800 }   // Pixel (2,0)
+//         },
+//         {   // Row 1
+//             { .x = 0, .y = 1, .rgb_565 = 0x001F },  // Pixel (0,1)
+//             { .x = 1, .y = 1, .rgb_565 = 0x07FF },  // Pixel (1,1)
+//             { .x = 2, .y = 1, .rgb_565 = 0xE07F }   // Pixel (2,1)
+//         }
+//     },
+//     .width = 3,
+//     .height = 2
+// };
 
 // Assets Loading and Assets List
 // Declare global variables as extern
-extern Asset dead;
-extern Asset idle;
-extern Asset leftboot;
-extern Asset rightboot;
-extern Asset leftmovement;
-extern Asset rightmovement;
+extern short int leftmovement;
+// extern Asset dead;
+// extern Asset idle;
+// extern Asset leftboot;
+// extern Asset rightboot;
+// extern Asset leftmovement;
+// extern Asset rightmovement;
 
 
 
@@ -143,41 +145,40 @@ int main(void)
         //     }
         // }
 
-        for (int y_pix = 0; y_pix < dead.height; y_pix++){
-            for (int x_pix = 0; x_pix < dead.width; x_pix++){
-                Pixel current_pixel = dead.data_array[y_pix][x_pix];
-                plot_pixel(current_pixel.x, current_pixel.y, current_pixel.rgb_565);
+        for (int y_pix = 0; y_pix < LEFTMOVEMENT_HEIGHT; y_pix++){
+            for (int x_pix = 0; x_pix < LEFTMOVEMENT_WIDTH; x_pix++){
+                plot_pixel(x_pix, y_pix, leftmovement[x_pix+y_pix*LEFTMOVEMENT_WIDTH]);
             }
         }
 
-        for (int y_pix = 0; y_pix < leftboot.height; y_pix++){
-            for (int x_pix = 0; x_pix < leftboot.width; x_pix++){
-                Pixel current_pixel = leftboot.data_array[y_pix][x_pix];
-                plot_pixel(current_pixel.x + 50, current_pixel.y, current_pixel.rgb_565);
-            }
-        }
+        // for (int y_pix = 0; y_pix < leftboot.height; y_pix++){
+        //     for (int x_pix = 0; x_pix < leftboot.width; x_pix++){
+        //         Pixel current_pixel = leftboot.data_array[y_pix][x_pix];
+        //         plot_pixel(current_pixel.x + 50, current_pixel.y, current_pixel.rgb_565);
+        //     }
+        // }
 
-        for (int y_pix = 0; y_pix < rightmovement.height; y_pix++){
-            for (int x_pix = 0; x_pix < rightmovement.width; x_pix++){
-                Pixel current_pixel = rightmovement.data_array[y_pix][x_pix];
-                plot_pixel(current_pixel.x + 100, current_pixel.y, current_pixel.rgb_565);
-            }
-        }
+        // for (int y_pix = 0; y_pix < rightmovement.height; y_pix++){
+        //     for (int x_pix = 0; x_pix < rightmovement.width; x_pix++){
+        //         Pixel current_pixel = rightmovement.data_array[y_pix][x_pix];
+        //         plot_pixel(current_pixel.x + 100, current_pixel.y, current_pixel.rgb_565);
+        //     }
+        // }
 
 
-        for (int y_pix = 0; y_pix < leftmovement.height; y_pix++){
-            for (int x_pix = 0; x_pix < leftmovement.width; x_pix++){
-                Pixel current_pixel = leftmovement.data_array[y_pix][x_pix];
-                plot_pixel(current_pixel.x + 150, current_pixel.y, current_pixel.rgb_565);
-            }
-        }
+        // for (int y_pix = 0; y_pix < leftmovement.height; y_pix++){
+        //     for (int x_pix = 0; x_pix < leftmovement.width; x_pix++){
+        //         Pixel current_pixel = leftmovement.data_array[y_pix][x_pix];
+        //         plot_pixel(current_pixel.x + 150, current_pixel.y, current_pixel.rgb_565);
+        //     }
+        // }
         
-        for (int y_pix = 0; y_pix < idle.height; y_pix++){
-            for (int x_pix = 0; x_pix < idle.width; x_pix++){
-                Pixel current_pixel = idle.data_array[y_pix][x_pix];
-                plot_pixel(current_pixel.x + 200, current_pixel.y, current_pixel.rgb_565);
-            }
-        }
+        // for (int y_pix = 0; y_pix < idle.height; y_pix++){
+        //     for (int x_pix = 0; x_pix < idle.width; x_pix++){
+        //         Pixel current_pixel = idle.data_array[y_pix][x_pix];
+        //         plot_pixel(current_pixel.x + 200, current_pixel.y, current_pixel.rgb_565);
+        //     }
+        // }
 
 
         wait_for_vsync(); // swap front and back buffers on VGA vertical sync
