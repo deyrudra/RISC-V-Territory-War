@@ -6,13 +6,13 @@
 
 # Cygwin path to the Nios V GNU Toolchain
 export PATH := /home/compiler/bin/:$(PATH)
-export PATH := /cygdrive/e/intelFPGA/23.1std/quartus/bin64/:$(PATH)
-export PATH := /cygdrive/e/intelFPGA/23.1std/quartus/sopc_builder/bin/:$(PATH)
+export PATH := /cygdrive/c/intelFPGA/23.1std/quartus/bin64/:$(PATH)
+export PATH := /cygdrive/c/intelFPGA/23.1std/quartus/sopc_builder/bin/:$(PATH)
 
-export PATH := E:/intelFPGA/23.1std/quartus/bin64/:$(PATH)
-export PATH := E:/intelFPGA/23.1std/quartus/sopc_builder/bin/:$(PATH)
-export PATH := E:/intelFPGA/23.1std/riscfree/debugger/gdbserver-riscv/:$(PATH)
-export PATH := E:/intelFPGA/23.1std/riscfree/toolchain/riscv32-unknown-elf/bin/:$(PATH)
+export PATH := C:/intelFPGA/23.1std/quartus/bin64/:$(PATH)
+export PATH := C:/intelFPGA/23.1std/quartus/sopc_builder/bin/:$(PATH)
+export PATH := C:/intelFPGA/23.1std/riscfree/debugger/gdbserver-riscv/:$(PATH)
+export PATH := C:/intelFPGA/23.1std/riscfree/toolchain/riscv32-unknown-elf/bin/:$(PATH)
 
 ############################################
 # Global Macros
@@ -47,7 +47,7 @@ OCFLAGS		:= -O srec
 ELF		:= main
 ELFEXT		:= .elf
 HDRS		:=
-SRCS		:= main.c loadassets.c
+SRCS		:= ../game/main.c ../game/objecthandler.c ../game/loadassets.c
 OBJS		:= $(patsubst %, %.o, $(SRCS))
 
 ############################################
@@ -77,9 +77,9 @@ SYS_ARG_JTAG_INDEX		:= 1
 SYS_ARG_GDB_PORT		:= 2399
 
 # Files
-SYS_FILE_SOF			:= "E:/intelFPGA/23.1std/fpgacademy/Computer_Systems/DE1-SoC/DE1-SoC_Computer/niosVg/DE1_SoC_Computer.sof"
-SYS_SCRIPT_JTAG_ID		:= --script="E:/intelFPGA/23.1std/fpgacademy/AMP/bin/jtag_instance_check.tcl"
-SYS_FILE_ARM_PL			:= --preloader "E:/intelFPGA/23.1std/fpgacademy/AMP/arm_tools/u-boot-spl.de1-soc.srec"
+SYS_FILE_SOF			:= "C:/intelFPGA/23.1std/fpgacademy/Computer_Systems/DE1-SoC/DE1-SoC_Computer/niosVg/DE1_SoC_Computer.sof"
+SYS_SCRIPT_JTAG_ID		:= --script="C:/intelFPGA/23.1std/fpgacademy/AMP/bin/jtag_instance_check.tcl"
+SYS_FILE_ARM_PL			:= --preloader "C:/intelFPGA/23.1std/fpgacademy/AMP/arm_tools/u-boot-spl.de1-soc.srec"
 SYS_FLAG_ARM_PL_ADDR	:= --preloaderaddr 0xffff13a0
 
 ############################################
