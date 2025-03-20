@@ -5,19 +5,12 @@
 #include "objecthandler.c"
 
 // Global Variables --------------------------------------------------------------------
-
-// Pixel Location for (0,0)
+volatile int * buffer_register = (int *)0xFF203020;
 volatile int pixel_buffer_start;
 
 // Front and Back Buffers of size 480 rows, 640 columns (640x480)
 short int Buffer1[480][640];
 short int Buffer2[480][640];
-
-// Internal Buffers
-short int backgroundBuffer[480][640]; // Background Layer (Static Terrain, Decorations)
-short int midgroundBuffer[480][640]; // Midground Layer (Buildings, platforms, large objects)
-short int entityBuffer[480][640]; //Entity Layer (Characters, projectiles, items)
-short int uiBuffer[480][640]; // UI Layer (Health Bars, Menus, etc)
 
 //---------------------------------------------------------------------------------------
 
@@ -39,9 +32,7 @@ void swap(int* num1, int* num2);
 //----------------------------------------------------------------------------------------
 
 int main(void)
-{
-    volatile int * buffer_register = (int *)0xFF203020;
-    
+{    
     /* set front pixel buffer to Buffer 1 */
     *(buffer_register + 1) = (int) &Buffer1; // first store the address in the  back buffer
     /* now, swap the front/back buffers, to set the front buffer location */
@@ -59,35 +50,59 @@ int main(void)
     pixel_buffer_start = *(buffer_register + 1); // we draw on the back buffer
     clear_screen(); // pixel_buffer_start points to the pixel buffer
 
+    GameObject *leftMovementObj = (GameObject *)malloc(sizeof(GameObject));
+    int leftmovementPrevData[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH];
+    leftMovementObj->x = 50;
+    leftMovementObj->y = 50;
+    leftMovementObj->asset = &leftmovement;
+    leftMovementObj->collidable = 0;
+    leftMovementObj->height = LEFTMOVEMENT_HEIGHT;
+    leftMovementObj->width = LEFTMOVEMENT_WIDTH;
+    leftMovementObj->prevPixelData = &leftmovementPrevData;
+
+    GameObject *rightMovementObj = (GameObject *)malloc(sizeof(GameObject));
+    int rightmovementPrevData[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
+    rightMovementObj->x = 80;
+    rightMovementObj->y = 80;
+    rightMovementObj->asset = &rightmovement;
+    rightMovementObj->collidable = 0;
+    rightMovementObj->height = RIGHTMOVEMENT_HEIGHT;
+    rightMovementObj->width = RIGHTMOVEMENT_WIDTH;
+    rightMovementObj->prevPixelData = &rightmovementPrevData;
+    
+    int count = 0;
     // Game Function ----------------------------------------------------------------------
     while (1)
     {
+        count++;
         /* Erase any boxes and lines that were drawn in the last iteration */
-        // clear_screen();
+        
+        
+
+
+        if (count % 100) {
+            rightMovementObj->x += 1;
+            renderOut(rightMovementObj);
+            renderIn(rightMovementObj);
+
+        }
+
+        if (count % 200) {
+            leftMovementObj->x += 1;
+            leftMovementObj->y += 1;
+            renderOut(leftMovementObj);
+            renderIn(leftMovementObj);
+
+        }
 
 
         
-
-        for (int y_pix = 0; y_pix < LEFTMOVEMENT_HEIGHT; y_pix++){
-            for (int x_pix = 0; x_pix < LEFTMOVEMENT_WIDTH; x_pix++){
-                if(leftmovement[x_pix+y_pix*LEFTMOVEMENT_WIDTH] != -1) {
-                    plot_pixel(x_pix + 10, y_pix, leftmovement[x_pix+y_pix*LEFTMOVEMENT_WIDTH]);
-                }
-            }
-        }
-
-        for (int y_pix = 0; y_pix < RIGHTMOVEMENT_HEIGHT; y_pix++){
-            for (int x_pix = 0; x_pix < RIGHTMOVEMENT_WIDTH; x_pix++){
-                if(rightmovement[x_pix+y_pix*RIGHTMOVEMENT_WIDTH] != -1) {
-                    plot_pixel(x_pix + 40, y_pix, rightmovement[x_pix+y_pix*RIGHTMOVEMENT_WIDTH]);
-                }
-            }
-        }
-
-
         wait_for_vsync(); // swap front and back buffers on VGA vertical sync
         pixel_buffer_start = *(buffer_register + 1); // new back buffer
     }
+
+    free(leftMovementObj);
+    free(rightMovementObj);
 }
 
 // Functions ------------------------------------------------------------------------------
@@ -120,14 +135,6 @@ void wait_for_vsync(){
     while((status_register_value & 0x1) != 0){
         status_register_value = *(status_register); // Polling
     }
-}
-
-// Drawing Functions
-void plot_pixel(int x, int y, short int line_color)
-{
-    volatile short int *one_pixel_address;
-    one_pixel_address = (volatile short int*)pixel_buffer_start + (y << 9) + x;
-    *one_pixel_address = line_color;
 }
 
 void draw_line(int x0, int y0, int x1, int y1, short int line_color) {
@@ -207,3 +214,13 @@ void swap(int* num1, int* num2) {
 }
 
 //-----------------------------------------------------------------------------------------
+
+// Drawing Functions
+void plot_pixel(int x, int y, short int line_color)
+{
+    if (line_color != -1) {
+        volatile short int *one_pixel_address;
+        one_pixel_address = (volatile short int*)pixel_buffer_start + (y << 9) + x;
+        *one_pixel_address = line_color;
+    }
+}

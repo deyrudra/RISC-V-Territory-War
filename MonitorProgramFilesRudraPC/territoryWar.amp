@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><fpgacademy_a_monitor_program_file filetype="project" version="1.0">
+    <architecture>Nios V</architecture>
+    <preloader>DE1-SoC</preloader>
+    <system>
+        <sample_title>DE1-SoC Computer for Nios V</sample_title>
+        <cable>DE-SoC [USB-1]</cable>
+        <processor>NiosVg</processor>
+        <reset_processor_during_load>true</reset_processor_during_load>
+        <terminal>JTAG_UART_NiosV.avalon_jtag_slave</terminal>
+    </system>
+    <program type="C Program">
+        <source_files>
+            <source_file>../game/main.c</source_file>
+            <source_file>../game/objecthandler.c</source_file>
+            <source_file>../game/loadassets.c</source_file>
+        </source_files>
+        <options>
+            <compiler_flags>-g -O1 -ffunction-sections -fverbose-asm -fno-inline -gdwarf-2</compiler_flags>
+            <linker_flags>-Wl,--defsym=__stack_pointer$$=0x4000000 -Wl,--defsym  -Wl,JTAG_UART_BASE=0xff201000 -lm</linker_flags>
+        </options>
+        <linker_sections type="BASIC">
+            <linker_section name=".text">
+                <memory_device>SDRAM.s1</memory_device>
+                <base_address>0x00000000</base_address>
+                <end_address>0x03FFFFFF</end_address>
+                <required_section>true</required_section>
+                <fixed_base_address>false</fixed_base_address>
+            </linker_section>
+        </linker_sections>
+    </program>
+</fpgacademy_a_monitor_program_file>

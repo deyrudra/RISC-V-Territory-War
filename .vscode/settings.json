@@ -57,6 +57,9 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "compare": "c"
+    "compare": "c",
+    "stdio.h": "c",
+    "stdlib.h": "c",
+    "stdbool.h": "c"
   }
 }
