@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "loadAssets.c"
+#include "objecthandler.c"
 
 // Global Variables --------------------------------------------------------------------
 
@@ -11,6 +12,12 @@ volatile int pixel_buffer_start;
 // Front and Back Buffers of size 480 rows, 640 columns (640x480)
 short int Buffer1[480][640];
 short int Buffer2[480][640];
+
+// Internal Buffers
+short int backgroundBuffer[480][640]; // Background Layer (Static Terrain, Decorations)
+short int midgroundBuffer[480][640]; // Midground Layer (Buildings, platforms, large objects)
+short int entityBuffer[480][640]; //Entity Layer (Characters, projectiles, items)
+short int uiBuffer[480][640]; // UI Layer (Health Bars, Menus, etc)
 
 //---------------------------------------------------------------------------------------
 
@@ -28,76 +35,12 @@ void draw_6x6_box(int x0, int y0, short int box_color);
 // Helper Functions
 void swap(int* num1, int* num2);
 
-// // Structs
-// typedef struct {
-//     unsigned int x, y;
-//     unsigned int rgb_565;
-// } Pixel;
-
-// typedef struct {
-//     Pixel data_array[480][640];
-//     int width;
-//     int height;
-// } Asset;
-
-// // Define and initialize the Asset object globally
-// Asset img = {
-//     .data_array = {
-//         {   // Row 0
-//             { .x = 0, .y = 0, .rgb_565 = 0xFFFF },  // Pixel (0,0)
-//             { .x = 1, .y = 0, .rgb_565 = 0x07E0 },  // Pixel (1,0)
-//             { .x = 2, .y = 0, .rgb_565 = 0xF800 }   // Pixel (2,0)
-//         },
-//         {   // Row 1
-//             { .x = 0, .y = 1, .rgb_565 = 0x001F },  // Pixel (0,1)
-//             { .x = 1, .y = 1, .rgb_565 = 0x07FF },  // Pixel (1,1)
-//             { .x = 2, .y = 1, .rgb_565 = 0xE07F }   // Pixel (2,1)
-//         }
-//     },
-//     .width = 3,
-//     .height = 2
-// };
-
-// Assets Loading and Assets List
-// Declare global variables as extern
-extern short int leftmovement;
-// extern Asset dead;
-// extern Asset idle;
-// extern Asset leftboot;
-// extern Asset rightboot;
-// extern Asset leftmovement;
-// extern Asset rightmovement;
-
-
 
 //----------------------------------------------------------------------------------------
 
 int main(void)
 {
     volatile int * buffer_register = (int *)0xFF203020;
-    // declare other variables(not shown)
-    int N = 15;
-    int x_pos[N], y_pos[N]; //tracking Middle pixel
-    short int colour[N];
-    int dx[N], dy[N];
-    short int colours_list[10] = 
-        {0xf800, 0xfd08, 0xf7c4,
-        0xafec, 0x3ffc, 0x8e1f,
-        0xfd76, 0xde5f, 0xfaff,
-        0xffff}; 
-    // initialize location and direction of rectangles(not shown)
-    for (int i = 0; i < N; i++){
-        // These generate object movement direction (steps) between -1 and 1, for both dx and dy.
-        dx[i] = ((rand() % 2) * 2) - 1;
-        dy[i] = ((rand() % 2) * 2) - 1;
-        
-        //rand() % (max-min+1) + min
-        x_pos[i] = rand() % 320; // x position ranges from 0 to 319
-        y_pos[i] = rand() % 240; // y position ranges from 0 to 239
-
-        // Chooses a color form 0 to 9 in the colour array
-        colour[i] = colours_list[rand() % 10];
-    }
     
     /* set front pixel buffer to Buffer 1 */
     *(buffer_register + 1) = (int) &Buffer1; // first store the address in the  back buffer
@@ -120,65 +63,26 @@ int main(void)
     while (1)
     {
         /* Erase any boxes and lines that were drawn in the last iteration */
-        clear_screen();
+        // clear_screen();
+
+
         
-        // // code for drawing the boxes and lines (not shown)
-        // for(int i = 0; i < N; i++){
-            
-        //     //draw a box at its determined position
-        //     draw_6x6_box(x_pos[i], y_pos[i], colour[i]);
-            
-        //     //draw line from this box to the next box (indexing prevents out of bounds error when i == N-1)
-        //     draw_line(x_pos[i], y_pos[i], x_pos[(i+1) % N], y_pos[(i+1) % N], colour[i]);
-            
-        //     // update box positions for next frame
-        //     x_pos[i] += dx[i];
-        //     y_pos[i] += dy[i];
-            
-        //     //check for collisions at edges and flip dx or dy for next frame
-        //     if(x_pos[i] == 0 || x_pos[i] + 1 == 319){
-        //         dx[i] *= -1;
-        //     }
-            
-        //     if(y_pos[i] == 0 || y_pos[i]+1 == 239){
-        //         dy[i] *= -1;
-        //     }
-        // }
 
         for (int y_pix = 0; y_pix < LEFTMOVEMENT_HEIGHT; y_pix++){
             for (int x_pix = 0; x_pix < LEFTMOVEMENT_WIDTH; x_pix++){
-                plot_pixel(x_pix, y_pix, leftmovement[x_pix+y_pix*LEFTMOVEMENT_WIDTH]);
+                if(leftmovement[x_pix+y_pix*LEFTMOVEMENT_WIDTH] != -1) {
+                    plot_pixel(x_pix + 10, y_pix, leftmovement[x_pix+y_pix*LEFTMOVEMENT_WIDTH]);
+                }
             }
         }
 
-        // for (int y_pix = 0; y_pix < leftboot.height; y_pix++){
-        //     for (int x_pix = 0; x_pix < leftboot.width; x_pix++){
-        //         Pixel current_pixel = leftboot.data_array[y_pix][x_pix];
-        //         plot_pixel(current_pixel.x + 50, current_pixel.y, current_pixel.rgb_565);
-        //     }
-        // }
-
-        // for (int y_pix = 0; y_pix < rightmovement.height; y_pix++){
-        //     for (int x_pix = 0; x_pix < rightmovement.width; x_pix++){
-        //         Pixel current_pixel = rightmovement.data_array[y_pix][x_pix];
-        //         plot_pixel(current_pixel.x + 100, current_pixel.y, current_pixel.rgb_565);
-        //     }
-        // }
-
-
-        // for (int y_pix = 0; y_pix < leftmovement.height; y_pix++){
-        //     for (int x_pix = 0; x_pix < leftmovement.width; x_pix++){
-        //         Pixel current_pixel = leftmovement.data_array[y_pix][x_pix];
-        //         plot_pixel(current_pixel.x + 150, current_pixel.y, current_pixel.rgb_565);
-        //     }
-        // }
-        
-        // for (int y_pix = 0; y_pix < idle.height; y_pix++){
-        //     for (int x_pix = 0; x_pix < idle.width; x_pix++){
-        //         Pixel current_pixel = idle.data_array[y_pix][x_pix];
-        //         plot_pixel(current_pixel.x + 200, current_pixel.y, current_pixel.rgb_565);
-        //     }
-        // }
+        for (int y_pix = 0; y_pix < RIGHTMOVEMENT_HEIGHT; y_pix++){
+            for (int x_pix = 0; x_pix < RIGHTMOVEMENT_WIDTH; x_pix++){
+                if(rightmovement[x_pix+y_pix*RIGHTMOVEMENT_WIDTH] != -1) {
+                    plot_pixel(x_pix + 40, y_pix, rightmovement[x_pix+y_pix*RIGHTMOVEMENT_WIDTH]);
+                }
+            }
+        }
 
 
         wait_for_vsync(); // swap front and back buffers on VGA vertical sync
@@ -222,7 +126,7 @@ void wait_for_vsync(){
 void plot_pixel(int x, int y, short int line_color)
 {
     volatile short int *one_pixel_address;
-    one_pixel_address = (volatile short int*)pixel_buffer_start + (y << 10) + (x << 1);
+    one_pixel_address = (volatile short int*)pixel_buffer_start + (y << 9) + x;
     *one_pixel_address = line_color;
 }
 

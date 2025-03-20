@@ -10,8 +10,9 @@
     </system>
     <program type="C Program">
         <source_files>
-            <source_file>main.c</source_file>
-            <source_file>loadassets.c</source_file>
+            <source_file>../game/main.c</source_file>
+            <source_file>../game/objecthandler.c</source_file>
+            <source_file>../game/loadassets.c</source_file>
         </source_files>
         <options>
             <compiler_flags>-g -O1 -ffunction-sections -fverbose-asm -fno-inline -gdwarf-2</compiler_flags>
