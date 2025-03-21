@@ -1,8 +1,13 @@
 // Global Variables
 // extern volatile int pixel_buffer_start;
+#define SCREEN_HEIGHT 240
+#define SCREEN_WIDTH 320
+
 extern short int Buffer1[480][640];
 extern short int Buffer2[480][640];
 extern volatile int pixel_buffer_start;
+
+
 
 // Define GameObject structure
 typedef struct {
@@ -38,16 +43,16 @@ static void renderIn(GameObject *obj) {
             short int pixel = obj->asset[x_pix+y_pix*obj->width];
             if(pixel != -1) {
                 volatile short int *one_pixel_address;
-                one_pixel_address = (volatile short int*)pixel_buffer_start + (obj->prevY + y_pix << 9) + obj->prevX + x_pix;
+                one_pixel_address = (volatile short int*)pixel_buffer_start + ((obj->prevY + y_pix) << 9) + ((obj->prevX + x_pix) << 0);
                 short int prevPixel = *one_pixel_address;
                 obj->prevPixelData[x_pix+y_pix*obj->width] = *one_pixel_address;
                 
                 volatile short int *buffer1_pixel_address;
-                buffer1_pixel_address = (volatile short int*)&Buffer1 + ((obj->y + y_pix) << 9) + (obj->x + x_pix);
+                buffer1_pixel_address = (volatile short int*)&Buffer1 + ((obj->y + y_pix) << 9) + ((obj->x + x_pix) << 0);
                 *buffer1_pixel_address = pixel; 
                 
                 volatile short int *buffer2_pixel_address;
-                buffer2_pixel_address = (volatile short int*)&Buffer2 + ((obj->y + y_pix) << 9) + (obj->x + x_pix);
+                buffer2_pixel_address = (volatile short int*)&Buffer2 + ((obj->y + y_pix) << 9) + ((obj->x + x_pix) << 0);
                 *buffer2_pixel_address = pixel; 
             }
         }
@@ -62,11 +67,11 @@ static void renderOut(GameObject *obj) {
                 if (prevPixel != -1) {
                     // Erase from Buffer1
                     volatile short int *buffer1_pixel_address;
-                    buffer1_pixel_address = (volatile short int*)&Buffer1 + ((obj->prevY + y_pix) << 9) + (obj->prevX + x_pix);
+                    buffer1_pixel_address = (volatile short int*)&Buffer1 + ((obj->prevY + y_pix) << 9) + ((obj->prevX + x_pix) << 0);
                     *buffer1_pixel_address = prevPixel; // Draw black pixel
                     // Erase from Buffer2
                     volatile short int *buffer2_pixel_address;
-                    buffer2_pixel_address = (volatile short int*)&Buffer2 + ((obj->prevY + y_pix) << 9) + (obj->prevX + x_pix);
+                    buffer2_pixel_address = (volatile short int*)&Buffer2 + ((obj->prevY + y_pix) << 9) + ((obj->prevX + x_pix) << 0);
                     *buffer2_pixel_address = prevPixel; // Draw black pixel
                 }
             }

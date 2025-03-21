@@ -4,11 +4,14 @@
 #include "loadAssets.c"
 #include "objecthandler.c"
 
+#define SCREEN_HEIGHT 240
+#define SCREEN_WIDTH 320
+
 // Global Variables --------------------------------------------------------------------
 volatile int * buffer_register = (int *)0xFF203020;
 volatile int pixel_buffer_start;
 
-// Front and Back Buffers of size 480 rows, 640 columns (640x480)
+// Front and Back Buffers of size SCREEN_HEIGHT rows, SCREEN_WIDTH columns (SCREEN_WIDTHxSCREEN_HEIGHT)
 short int Buffer1[480][640];
 short int Buffer2[480][640];
 
@@ -52,8 +55,8 @@ int main(void)
 
     GameObject *leftMovementObj = (GameObject *)malloc(sizeof(GameObject));
     int leftmovementPrevData[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH];
-    leftMovementObj->x = 50;
-    leftMovementObj->y = 50;
+    leftMovementObj->x = 80;
+    leftMovementObj->y = 80;
     leftMovementObj->asset = &leftmovement;
     leftMovementObj->collidable = 0;
     leftMovementObj->height = LEFTMOVEMENT_HEIGHT;
@@ -62,34 +65,62 @@ int main(void)
 
     GameObject *rightMovementObj = (GameObject *)malloc(sizeof(GameObject));
     int rightmovementPrevData[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
-    rightMovementObj->x = 80;
-    rightMovementObj->y = 80;
+    rightMovementObj->x = 20;
+    rightMovementObj->y = 50;
     rightMovementObj->asset = &rightmovement;
     rightMovementObj->collidable = 0;
     rightMovementObj->height = RIGHTMOVEMENT_HEIGHT;
     rightMovementObj->width = RIGHTMOVEMENT_WIDTH;
     rightMovementObj->prevPixelData = &rightmovementPrevData;
+
+    GameObject *backgroundObj = (GameObject *)malloc(sizeof(GameObject));
+    int backgroundPrevData[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
+    backgroundObj->x = 0;
+    backgroundObj->y = 0;
+    backgroundObj->asset = &background;
+    backgroundObj->collidable = 0;
+    backgroundObj->height = BACKGROUND_HEIGHT;
+    backgroundObj->width = BACKGROUND_WIDTH;
+    backgroundObj->prevPixelData = &backgroundPrevData;
+
+    GameObject *mainMenuTitleObj = (GameObject *)malloc(sizeof(GameObject));
+    int mainMenuTitlePrevData[MAIN_MENU_TITLE_HEIGHT][MAIN_MENU_TITLE_WIDTH];
+    mainMenuTitleObj->x = SCREEN_WIDTH - MAIN_MENU_TITLE_WIDTH - 40;
+    mainMenuTitleObj->y = 10;
+    mainMenuTitleObj->asset = &main_menu_title;
+    mainMenuTitleObj->collidable = 0;
+    mainMenuTitleObj->height = MAIN_MENU_TITLE_HEIGHT;
+    mainMenuTitleObj->width = MAIN_MENU_TITLE_WIDTH;
+    mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData;
     
+    // Rendering Background
+    for (int ypos = 0; ypos <= SCREEN_WIDTH + 40; ypos += 40) {
+        for (int xpos = 0; xpos <= SCREEN_HEIGHT + 40; xpos += 40) {
+            backgroundObj->x = xpos;
+            backgroundObj->y = ypos;
+            renderIn(backgroundObj);
+        }
+    }
+
+    // Rendering Main Menu Title
+    renderIn(mainMenuTitleObj);
+
     int count = 0;
     // Game Function ----------------------------------------------------------------------
     while (1)
     {
         count++;
-        /* Erase any boxes and lines that were drawn in the last iteration */
-        
-        
-
 
         if (count % 100) {
-            rightMovementObj->x += 1;
+            // rightMovementObj->x += 5;
             renderOut(rightMovementObj);
             renderIn(rightMovementObj);
 
         }
 
         if (count % 200) {
-            leftMovementObj->x += 1;
-            leftMovementObj->y += 1;
+            leftMovementObj->x += 5;
+            leftMovementObj->y += 5;
             renderOut(leftMovementObj);
             renderIn(leftMovementObj);
 
@@ -109,13 +140,13 @@ int main(void)
 
 // Screen Functions
 void clear_screen() {
-    for (int x = 0; x < 640; x++) {
-        for (int y = 0; y < 480; y++) {
+    for (int x = 0; x < SCREEN_WIDTH; x++) {
+        for (int y = 0; y < SCREEN_HEIGHT; y++) {
             // 0x0000 represents:
             // 0 red (3rd hex digit)
             // 0 green (2nd hex )
             // 0 blue (binary 0 to 4)
-            plot_pixel(x,y,0x000);
+            plot_pixel(x,y,0x0000);
         }
     }
 }
@@ -220,7 +251,7 @@ void plot_pixel(int x, int y, short int line_color)
 {
     if (line_color != -1) {
         volatile short int *one_pixel_address;
-        one_pixel_address = (volatile short int*)pixel_buffer_start + (y << 9) + x;
+        one_pixel_address = (volatile short int*)pixel_buffer_start + (y << 9) + (x << 0);
         *one_pixel_address = line_color;
     }
 }
