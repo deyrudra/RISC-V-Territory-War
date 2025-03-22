@@ -60,6 +60,8 @@
     "compare": "c",
     "stdio.h": "c",
     "stdlib.h": "c",
-    "stdbool.h": "c"
+    "stdbool.h": "c",
+    "objecthandler.h": "c",
+    "movementhandler.h": "c"
   }
 }

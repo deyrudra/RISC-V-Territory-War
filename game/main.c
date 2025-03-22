@@ -2,18 +2,43 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "loadAssets.c"
-#include "objecthandler.c"
+#include "objecthandler.h"
+#include "inputhandler.h"
+#include "movementhandler.h"
 
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
 
 // Global Variables --------------------------------------------------------------------
+
+// Buffer Register and Pixel Buffer Start
 volatile int * buffer_register = (int *)0xFF203020;
 volatile int pixel_buffer_start;
 
 // Front and Back Buffers of size SCREEN_HEIGHT rows, SCREEN_WIDTH columns (SCREEN_WIDTHxSCREEN_HEIGHT)
 short int Buffer1[480][640];
 short int Buffer2[480][640];
+
+// global pointers to memory mapped IO
+volatile int* ps2_ptr = (int*)PS2_BASE;
+
+// Keyboard Input Polling Bytes
+uint8_t byte1 = 0, byte2 = 0, byte3 = 0;
+
+// Global Game Objects
+GameObject *leftMovementObj;
+GameObject *rightMovementObj;
+GameObject *backgroundObj;
+GameObject *mainMenuTitleObj;
+
+// Global Game Controls
+const char* gameControls[] = {
+    "Move_Left",
+    "Move_Right",
+    "Move_Jump",
+    // ...
+  };
+  
 
 //---------------------------------------------------------------------------------------
 
@@ -53,51 +78,54 @@ int main(void)
     pixel_buffer_start = *(buffer_register + 1); // we draw on the back buffer
     clear_screen(); // pixel_buffer_start points to the pixel buffer
 
-    GameObject *leftMovementObj = (GameObject *)malloc(sizeof(GameObject));
-    int leftmovementPrevData[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH];
-    leftMovementObj->x = 80;
-    leftMovementObj->y = 80;
-    leftMovementObj->asset = &leftmovement;
-    leftMovementObj->collidable = 0;
-    leftMovementObj->height = LEFTMOVEMENT_HEIGHT;
-    leftMovementObj->width = LEFTMOVEMENT_WIDTH;
-    leftMovementObj->prevPixelData = &leftmovementPrevData;
+    // Setting Some Initial Object Data.
+    // leftMovementObj = (GameObject *)malloc(sizeof(GameObject));
+    // int leftmovementPrevData[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH];
+    // leftMovementObj->x = 80;
+    // leftMovementObj->y = 80;
+    // leftMovementObj->asset = &leftmovement;
+    // leftMovementObj->collidable = 0;
+    // leftMovementObj->height = LEFTMOVEMENT_HEIGHT;
+    // leftMovementObj->width = LEFTMOVEMENT_WIDTH;
+    // leftMovementObj->prevPixelData = &leftmovementPrevData;
 
-    GameObject *rightMovementObj = (GameObject *)malloc(sizeof(GameObject));
-    int rightmovementPrevData[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
-    rightMovementObj->x = 20;
-    rightMovementObj->y = 50;
-    rightMovementObj->asset = &rightmovement;
-    rightMovementObj->collidable = 0;
-    rightMovementObj->height = RIGHTMOVEMENT_HEIGHT;
-    rightMovementObj->width = RIGHTMOVEMENT_WIDTH;
-    rightMovementObj->prevPixelData = &rightmovementPrevData;
+    // rightMovementObj = (GameObject *)malloc(sizeof(GameObject));
+    // int rightmovementPrevData[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
+    // rightMovementObj->x = 20;
+    // rightMovementObj->y = 50;
+    // rightMovementObj->asset = &rightmovement;
+    // rightMovementObj->collidable = 0;
+    // rightMovementObj->height = RIGHTMOVEMENT_HEIGHT;
+    // rightMovementObj->width = RIGHTMOVEMENT_WIDTH;
+    // rightMovementObj->prevPixelData = &rightmovementPrevData;
 
-    GameObject *backgroundObj = (GameObject *)malloc(sizeof(GameObject));
+    backgroundObj = (GameObject *)malloc(sizeof(GameObject));
     int backgroundPrevData[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
-    backgroundObj->x = 0;
-    backgroundObj->y = 0;
     backgroundObj->asset = &background;
     backgroundObj->collidable = 0;
     backgroundObj->height = BACKGROUND_HEIGHT;
     backgroundObj->width = BACKGROUND_WIDTH;
     backgroundObj->prevPixelData = &backgroundPrevData;
 
-    GameObject *mainMenuTitleObj = (GameObject *)malloc(sizeof(GameObject));
+    mainMenuTitleObj = (GameObject *)malloc(sizeof(GameObject));
     int mainMenuTitlePrevData[MAIN_MENU_TITLE_HEIGHT][MAIN_MENU_TITLE_WIDTH];
-    mainMenuTitleObj->x = SCREEN_WIDTH - MAIN_MENU_TITLE_WIDTH - 40;
-    mainMenuTitleObj->y = 10;
+    mainMenuTitleObj->x = &(int){SCREEN_WIDTH - MAIN_MENU_TITLE_WIDTH - 40};
+    mainMenuTitleObj->y = &(int){10};
     mainMenuTitleObj->asset = &main_menu_title;
     mainMenuTitleObj->collidable = 0;
     mainMenuTitleObj->height = MAIN_MENU_TITLE_HEIGHT;
     mainMenuTitleObj->width = MAIN_MENU_TITLE_WIDTH;
     mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData;
-    
+
+    // Test Player
+    Character player;
+    initializeCharacter(&player, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
+
     // Rendering Background
     for (int ypos = 0; ypos <= SCREEN_WIDTH + 40; ypos += 40) {
         for (int xpos = 0; xpos <= SCREEN_HEIGHT + 40; xpos += 40) {
-            backgroundObj->x = xpos;
-            backgroundObj->y = ypos;
+            backgroundObj->x = &xpos;
+            backgroundObj->y = &ypos;
             renderIn(backgroundObj);
         }
     }
@@ -105,26 +133,46 @@ int main(void)
     // Rendering Main Menu Title
     renderIn(mainMenuTitleObj);
 
+    poll_start_input();
+
     int count = 0;
-    // Game Function ----------------------------------------------------------------------
+    // Game Logic Loop ----------------------------------------------------------------------
     while (1)
     {
-        count++;
+        // Input Handler Logic
+        char* control = single_poll_input();
 
-        if (count % 100) {
-            // rightMovementObj->x += 5;
-            renderOut(rightMovementObj);
-            renderIn(rightMovementObj);
-
+        if (control != NULL) {
+            printf("%s\n", control);
         }
 
-        if (count % 200) {
-            leftMovementObj->x += 5;
-            leftMovementObj->y += 5;
-            renderOut(leftMovementObj);
-            renderIn(leftMovementObj);
+        moveCharacter(&player, control);
+        drawCharacter(&player);
 
-        }
+        
+        // renderIn(player.idleCharacter);
+        // renderIn(player.walkLeftCharacter);
+        // renderIn(player.walkRightCharacter);
+        
+        
+        // renderIn(leftMovementObj);
+       
+        // count++;
+
+        // if (count % 100) {
+        //     // rightMovementObj->x += 5;
+        //     renderOut(rightMovementObj);
+        //     renderIn(rightMovementObj);
+
+        // }
+
+        // if (count % 200) {
+        //     // leftMovementObj->x += 5;
+        //     // leftMovementObj->y += 5;
+        //     renderOut(leftMovementObj);
+        //     renderIn(leftMovementObj);
+
+        // }
 
 
         
