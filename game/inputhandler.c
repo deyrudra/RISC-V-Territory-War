@@ -51,13 +51,15 @@ char* single_poll_input() {
                 case 0x74: // Right Arrow
                     return gameControls[1];
                 case 0xF0:  // Break code detected
-                    // if (byte3 == 0x75) printf("Up arrow released!\n");
-                    // else if (byte3 == 0x72) printf("Down arrow released!\n");
-                    // else if (byte3 == 0x6B) printf("Left arrow released!\n");
-                    // else if (byte3 == 0x74) printf("Right arrow released!\n");
+                    if (byte3 == 0x75) return gameControls[5]; // Up Arrow Released
+                    else if (byte3 == 0x72) printf("Down arrow released!\n"); // Down Arrow Released
+                    else if (byte3 == 0x6B) return gameControls[3]; // Left Arrow Released
+                    else if (byte3 == 0x74) return gameControls[4]; // Right Arrow Released
                     break;
             }
         }
+
+
     }
     
     return NULL;

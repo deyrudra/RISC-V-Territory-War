@@ -2,6 +2,15 @@
 #include "movementhandler.h"
 #include <stdio.h>
 
+double abs_double(double value) {
+    if (value >= 0) {
+        return value;
+    }
+    else {
+        return -value;
+    }
+}
+
 void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData) {
     character->x = malloc(sizeof(int));
     character->y = malloc(sizeof(int));
@@ -106,22 +115,36 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         // Setting Character States (for assets) based on movement input.
         if (strcmp(direction, gameControls[0]) == 0) { // Checking for move_left
             character->state = LEFTMOVEMENT;
-            *(character->velocityX) = -3.0;
-            *(character->x) = *(character->x) + *(character->velocityX)*1;
-            *distance_travelled += *(character->velocityX)*1;
+            // *(character->velocityX) = -3.0;
+            horizontalAcceleration(character, 0);
+            *(character->x) = *(character->x) + *(character->velocityX);
+            // *distance_travelled += *(character->velocityX)*DELTATIME;
 
         }
         else if (strcmp(direction, gameControls[1]) == 0) { // Checking for move_right
             character->state = RIGHTMOVEMENT;
-            *(character->velocityX) = 3.0;
-            *(character->x) = *(character->x) + *(character->velocityX)*1;
-            *distance_travelled += *(character->velocityX)*1;
+            // *(character->velocityX) = 3.0;
+            horizontalAcceleration(character, 1);
+            *(character->x) = *(character->x) + *(character->velocityX);
+            // *distance_travelled += *(character->velocityX)*DELTATIME;
         }
         else if (strcmp(direction, gameControls[2] == 0)) { // Checking for move_jump
             character->state = JUMPING;
             *(character->velocityY) = 10.0;
             
         }
+        // else if (strcmp(direction, gameControls[3] == 0)) { // Checking for move_left_stop
+        //     character->state = character->prevState;
+        //     *(character->velocityX) = 0;
+            
+        // }
+        // else if (strcmp(direction, gameControls[4] == 0)) { // Checking for move_right_stop
+        //     character->state = character->prevState;
+        //     *(character->velocityX) = 0;
+            
+        // }
+
+
 
         // // Setting Character States based on Velocity (for idle asset)
         // if (*(character->velocityX) == 0) {
@@ -181,4 +204,35 @@ void airdragCharacter(Character *character) {
     // else {
 
     // }
+}
+
+
+void horizontalAcceleration(Character *character, int directionBool) {
+    // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
+    if (directionBool == 1) {
+        if (*(character->velocityX) > 20) {
+            *(character->velocityX) = 20;
+        }
+        else if (*(character->velocityX) < 3) {
+            *(character->velocityX) = 3;
+        }
+        else {
+            *(character->velocityX) = *(character->velocityX) + (X_ACCELERATION * DELTATIME);
+        }
+
+    }
+    else {
+        if (*(character->velocityX) < -20) {
+            *(character->velocityX) = -20;
+        }
+        else if (*(character->velocityX) > -3) {
+            *(character->velocityX) = -3;
+        }
+        else {
+            *(character->velocityX) = *(character->velocityX) - (X_ACCELERATION * DELTATIME);
+        }
+    }
+
+    printf("%lf", *(character->velocityX));
+
 }

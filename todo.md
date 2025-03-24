@@ -1,0 +1,3 @@
+- Fix FIFO Overflow for PS2 Keyboard Input
+- Add Y velocity, gravity and jumping
+- Add GUI banners

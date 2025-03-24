@@ -50,9 +50,13 @@ GameObject *platformObj;
 
 // Global Game Controls
 const char* gameControls[] = {
-    "Move_Left",
-    "Move_Right",
-    "Move_Jump",
+    "Move_Left", // 0
+    "Move_Right", // 1
+    "Move_Jump", // 2
+    "Move_Left_Stop", // 3
+    "Move_Right_Stop", // 4
+    "Move_Jump_Stop", // 5
+
     // ...
   };
   
