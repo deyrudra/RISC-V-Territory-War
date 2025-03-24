@@ -342,7 +342,6 @@ static const int leftboot[]  = {
   65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535
 };
 
-static int leftbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
 
 // array size is 1024
 static const int rightboot[]  = {
@@ -380,7 +379,6 @@ static const int rightboot[]  = {
   65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535
 };
 
-static int rightbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
 
 // array size is 1024
 static const int jump[]  = {
@@ -418,7 +416,6 @@ static const int jump[]  = {
   65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535
 };
 
-static int jumpPrev[JUMP_HEIGHT][JUMP_WIDTH];
 
 
 // array size is 1024
@@ -457,7 +454,6 @@ static const int dead[]  = {
   65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535
 };
 
-static int deadPrev[DEAD_HEIGHT][DEAD_WIDTH];
 
 
 // array size is 1064
@@ -478,7 +474,6 @@ static const int platform[]  = {
   0x8431, 0x8431, 0x8431, 0x8431, 0x8451, 0x8451, 0x8431, 0x8431, 0x8431, 0x8451, 0x8451, 0x8431, 0x8431, 0x8451, 0x8451, 0x8431, 0x8431, 0x8431, 0x8431, 0x8451, 0x8431, 0x8431, 0x8431, 0x8451, 0x8451, 0x8451, 0x8431, 0x8431, 0x8451, 0x8451, 0x8431, 0x8431, 0x8431, 0x8431, 0x8431, 0x8431, 0x8431, 0x8431
 };
 
-static int platformPrev[PLATFORM_HEIGHT][PLATFORM_WIDTH];
 
 
 
