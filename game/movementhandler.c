@@ -2,20 +2,22 @@
 #include "movementhandler.h"
 #include <stdio.h>
 
-void initializeCharacter(Character *character, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData) {
+void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData) {
     character->x = malloc(sizeof(int));
     character->y = malloc(sizeof(int));
     character->velocityX = malloc(sizeof(double));
     character->velocityY = malloc(sizeof(double));
     character->collidable = malloc(sizeof(int));
+    character->health = malloc(sizeof(int));
     character->state = IDLE;
     character->prevState = UNKNOWN;
     
     *(character->collidable) = 1;
-    *(character->x) = SCREEN_WIDTH/2 - PLAYER_WIDTH;
-    *(character->y) = SCREEN_HEIGHT/2 - PLAYER_HEIGHT;
+    *(character->x) = x;
+    *(character->y) = y;
     *(character->velocityX) = 0;
     *(character->velocityY) = 0;
+    *(character->health) = 0;
     
     GameObject * idleCharacterObj = (GameObject *)malloc(sizeof(GameObject));
     character->idleCharacter = idleCharacterObj;
@@ -89,7 +91,7 @@ void initializeCharacter(Character *character, int *idleCharAsset, int *walkLeft
 }
 
 // Function to handle character movement
-void moveCharacter(Character *character, char* direction){
+void moveCharacter(Character *character, char* direction, int* distance_travelled){
     if (character == NULL) {
         printf("Character does not exist...\n");
     }
@@ -104,13 +106,21 @@ void moveCharacter(Character *character, char* direction){
         // Setting Character States (for assets) based on movement input.
         if (strcmp(direction, gameControls[0]) == 0) { // Checking for move_left
             character->state = LEFTMOVEMENT;
+            *(character->velocityX) = -3.0;
+            *(character->x) = *(character->x) + *(character->velocityX)*1;
+            *distance_travelled += *(character->velocityX)*1;
+
         }
         else if (strcmp(direction, gameControls[1]) == 0) { // Checking for move_right
             character->state = RIGHTMOVEMENT;
+            *(character->velocityX) = 3.0;
+            *(character->x) = *(character->x) + *(character->velocityX)*1;
+            *distance_travelled += *(character->velocityX)*1;
         }
         else if (strcmp(direction, gameControls[2] == 0)) { // Checking for move_jump
             character->state = JUMPING;
             *(character->velocityY) = 10.0;
+            
         }
 
         // // Setting Character States based on Velocity (for idle asset)

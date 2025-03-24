@@ -8,6 +8,8 @@
 
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
+#define NUM_CHARACTERS_PER_TEAM 1 //Chnage to 3
+
 
 // Global Variables --------------------------------------------------------------------
 
@@ -22,14 +24,29 @@ short int Buffer2[480][640];
 // global pointers to memory mapped IO
 volatile int* ps2_ptr = (int*)PS2_BASE;
 
+struct GameState {
+    char team_turn;
+    int character_turn_team_a;
+    int character_turn_team_b;
+    bool game_running;
+};
+
+//Game logic objects
+struct Character* team_a[NUM_CHARACTERS_PER_TEAM];
+struct Character* team_b[NUM_CHARACTERS_PER_TEAM];
+struct GameState* game_state_ptr;
+
 // Keyboard Input Polling Bytes
 uint8_t byte1 = 0, byte2 = 0, byte3 = 0;
+int ps2_data, RVALID;
+
 
 // Global Game Objects
 GameObject *leftMovementObj;
 GameObject *rightMovementObj;
 GameObject *backgroundObj;
 GameObject *mainMenuTitleObj;
+GameObject *platformObj;
 
 // Global Game Controls
 const char* gameControls[] = {
@@ -55,6 +72,11 @@ void draw_6x6_box(int x0, int y0, short int box_color);
 
 // Helper Functions
 void swap(int* num1, int* num2);
+
+// Game Logic Functions
+void initializeGame();
+int getCharacterIndexForNextTurn(struct Character* team_array[NUM_CHARACTERS_PER_TEAM], int current_character_turn_index);
+char checkWinCondition();
 
 
 //----------------------------------------------------------------------------------------
@@ -99,6 +121,9 @@ int main(void)
     // rightMovementObj->width = RIGHTMOVEMENT_WIDTH;
     // rightMovementObj->prevPixelData = &rightmovementPrevData;
 
+    initializeGame();
+
+    // 40x40 brick wall, 
     backgroundObj = (GameObject *)malloc(sizeof(GameObject));
     int backgroundPrevData[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
     backgroundObj->asset = &background;
@@ -107,19 +132,30 @@ int main(void)
     backgroundObj->width = BACKGROUND_WIDTH;
     backgroundObj->prevPixelData = &backgroundPrevData;
 
+    // game title screen
     mainMenuTitleObj = (GameObject *)malloc(sizeof(GameObject));
     int mainMenuTitlePrevData[MAIN_MENU_TITLE_HEIGHT][MAIN_MENU_TITLE_WIDTH];
-    mainMenuTitleObj->x = &(int){SCREEN_WIDTH - MAIN_MENU_TITLE_WIDTH - 40};
+    mainMenuTitleObj->x = &(int){SCREEN_WIDTH - MAIN_MENU_TITLE_WIDTH - 40}; //casting to addr since x and y as ptrs
     mainMenuTitleObj->y = &(int){10};
     mainMenuTitleObj->asset = &main_menu_title;
     mainMenuTitleObj->collidable = 0;
     mainMenuTitleObj->height = MAIN_MENU_TITLE_HEIGHT;
     mainMenuTitleObj->width = MAIN_MENU_TITLE_WIDTH;
-    mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData;
+    mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData; //prev data for keeping trrack of background
 
-    // Test Player
-    Character player;
-    initializeCharacter(&player, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
+    //initialize platform
+    platformObj = (GameObject *)malloc(sizeof(GameObject));
+    int platformPrevData[PLATFORM_HEIGHT][PLATFORM_WIDTH];
+    platformObj->x = &(int){SCREEN_WIDTH/2}; //casting to addr since x and y as ptrs
+    platformObj->y = &(int){SCREEN_HEIGHT-90};
+    platformObj->asset = &platform;
+    platformObj->collidable = 1;
+    platformObj->height = PLATFORM_HEIGHT;
+    platformObj->width = PLATFORM_WIDTH;
+    platformObj->prevPixelData = &platformPrevData; //prev data for keeping trrack of background
+    
+
+    //pass in assets and prev backgrounds
 
     // Rendering Background
     for (int ypos = 0; ypos < SCREEN_HEIGHT; ypos += 40) {
@@ -133,21 +169,244 @@ int main(void)
     // Rendering Main Menu Title
     renderIn(mainMenuTitleObj);
 
+    // Create characters
+    Character player_a0, player_b0;
+    initializeCharacter(&player_a0, 20 + PLAYER_WIDTH, SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
+    initializeCharacter(&player_b0, SCREEN_WIDTH - 20 - PLAYER_WIDTH, SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
+
+    initializeGame();
+
+    //Add characters to teams
+    team_a[0] = &player_a0;
+    team_b[0] = &player_b0;
+
+    //Wait for user to hit enter to start game
     poll_start_input();
+    game_state_ptr->game_running = true;
+
+
+
+    //Render out title screen
+    renderOut(mainMenuTitleObj);
+
+    //HOW TO RENDER OUT brick background??
+    // for (int ypos = SCREEN_HEIGHT; ypos > 0; ypos -= 40) {
+    //     for (int xpos = SCREEN_WIDTH; xpos > 0; xpos -= 40) {
+    //         backgroundObj->x = &xpos;
+    //         backgroundObj->y = &ypos;
+    //         renderOut(backgroundObj);
+    //     }
+    // }
+
+    //Render in initial game map, players, and objects
+    renderIn(platformObj);
+
+    drawCharacter(&player_a0);
+    drawCharacter(&player_b0);
 
     int count = 0;
     // Game Logic Loop ----------------------------------------------------------------------
-    while (1)
-    {
-        // Input Handler Logic
-        char* control = single_poll_input();
+    while (game_state_ptr->game_running){
+        bool end_turn = false;
 
-        if (control != NULL) {
-            printf("%s\n", control);
+        // Team A's Turn
+        if (game_state_ptr->team_turn == 'a') {
+        printf("Team A's Turn\n");
+        printf("Character %d's turn: Press 1 to move or 2 to stay\n",
+                game_state_ptr->character_turn_team_a);
+
+        //-----------------------Stage 1 of turn, draw bottom bar here
+        while (1) {
+            ps2_data = *ps2_ptr;
+            RVALID = ps2_data & 0x8000;
+
+            if (RVALID) {
+            byte1 = byte2;
+            byte2 = byte3;
+            byte3 = ps2_data & 0xFF;
+            }
+
+            if (byte3 == 0x16) {  // User pressed 1
+            if (byte2 == 0xF0) {
+                printf("You selected move\n");
+                break;
+            }
+            } else if (byte3 == 0x1E) {  // User pressed 2
+            if (byte2 == 0xF0) {
+                printf("You selected stay\n");
+                end_turn = true;
+                break;
+            }
+            }
+        }
+        byte1 = byte2 = byte3 = 0;
+
+        if (!end_turn) {
+            // Input handler logic for moving controls
+            int distance_travelled = 0;
+            while(distance_travelled < 15){
+                char* control = single_poll_input();
+
+                if (control != NULL) {
+                    printf("%s\n", control);
+                }
+                
+                moveCharacter(team_a[game_state_ptr->character_turn_team_a], control, &distance_travelled);
+                drawCharacter(team_a[game_state_ptr->character_turn_team_a]);
+
+
+                wait_for_vsync(); // swap front and back buffers on VGA vertical sync
+                pixel_buffer_start = *(buffer_register + 1); // new back buffer
+            }
+            
+
+            //----------Stage 2 of turn, output bar for weapon or stay
+            printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n",
+                game_state_ptr->character_turn_team_a);
+
+            while (1) {
+            ps2_data = *ps2_ptr;
+            RVALID = ps2_data & 0x8000;
+
+            if (RVALID) {
+                byte1 = byte2;
+                byte2 = byte3;
+                byte3 = ps2_data & 0xFF;
+            }
+
+            if (byte3 == 0x16) {  // User pressed 1
+                if (byte2 == 0xF0) {
+                printf("You selected throw grenade\n");
+                break;
+                }
+            } else if (byte3 == 0x1E) {  // User pressed 2
+                if (byte2 == 0xF0) {
+                printf("You selected stay\n");
+                end_turn = true;
+                break;
+                }
+            }
+            }
+            byte1 = byte2 = byte3 = 0;
         }
 
-        moveCharacter(&player, control);
-        drawCharacter(&player);
+        if (!end_turn) {
+            // grenade logic
+            printf("call grenade logic controls!\n");
+        }
+
+        // END TURN LOGIC
+        //  Give turn to other team and if we just controlled character 2,
+        //  next turn will be controlling character 0
+        game_state_ptr->character_turn_team_a = getCharacterIndexForNextTurn(
+            team_a, game_state_ptr->character_turn_team_a);
+        game_state_ptr->team_turn = 'b';
+
+        char game_result = checkWinCondition();
+        printf("\nCurrent game result is %c\n", game_result);
+        }
+
+        // Team B's Turn
+        else {
+        printf("Team B's Turn\n");
+        printf("Character %d's turn: Press 1 to move or 2 to stay\n",
+                game_state_ptr->character_turn_team_b);
+
+        //-----------------------Stage 1 of turn, draw bottom bar here
+        while (1) {
+            ps2_data = *ps2_ptr;
+            RVALID = ps2_data & 0x8000;
+
+            if (RVALID) {
+            byte1 = byte2;
+            byte2 = byte3;
+            byte3 = ps2_data & 0xFF;
+            }
+
+            if (byte3 == 0x16) {  // User pressed 1
+            if (byte2 == 0xF0) {
+                printf("You selected move\n");
+                break;
+            }
+            } else if (byte3 == 0x1E) {  // User pressed 2
+            if (byte2 == 0xF0) {
+                printf("You selected stay\n");
+                end_turn = true;
+                break;
+            }
+            }
+        }
+        byte1 = byte2 = byte3 = 0;
+
+        if (!end_turn) {
+            // Input handler logic for moving controls
+            int distance_travelled = 0;
+            while(distance_travelled < 15){
+                char* control = single_poll_input();
+
+                if (control != NULL) {
+                    printf("%s\n", control);
+                }
+
+                moveCharacter(team_b[game_state_ptr->character_turn_team_b], control, &distance_travelled);
+                drawCharacter(team_b[game_state_ptr->character_turn_team_b]);
+
+
+                wait_for_vsync(); // swap front and back buffers on VGA vertical sync
+                pixel_buffer_start = *(buffer_register + 1); // new back buffer
+            }
+
+            //----------Stage 2 of turn, output bar for weapon or stay
+            printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n",
+                game_state_ptr->character_turn_team_a);
+
+            while (1) {
+            ps2_data = *ps2_ptr;
+            RVALID = ps2_data & 0x8000;
+
+            if (RVALID) {
+                byte1 = byte2;
+                byte2 = byte3;
+                byte3 = ps2_data & 0xFF;
+            }
+
+            if (byte3 == 0x16) {  // User pressed 1
+                if (byte2 == 0xF0) {
+                printf("You selected throw grenade\n");
+                break;
+                }
+            } else if (byte3 == 0x1E) {  // User pressed 2
+                if (byte2 == 0xF0) {
+                printf("You selected stay\n");
+                end_turn = true;
+                break;
+                }
+            }
+            }
+            byte1 = byte2 = byte3 = 0;
+        }
+
+        if (!end_turn) {
+            // grenade logic
+            printf("call grenade logic controls\n");
+        }
+
+        // END TURN LOGIC (occurs after user attacks or decides to stay)
+        //  Give turn to other team and if we just controlled character 2,
+        //  next turn will be controlling character 0
+        game_state_ptr->character_turn_team_b = getCharacterIndexForNextTurn(
+            team_b, game_state_ptr->character_turn_team_b);
+        game_state_ptr->team_turn = 'a';
+
+        char game_result = checkWinCondition();
+        printf("\nCurrent game result is %c\n", game_result);
+        }
+
+
+
+
+
+        
 
         
         // renderIn(player.idleCharacter);
@@ -174,10 +433,6 @@ int main(void)
 
         // }
 
-
-        
-        wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-        pixel_buffer_start = *(buffer_register + 1); // new back buffer
     }
 
     free(leftMovementObj);
@@ -303,3 +558,64 @@ void plot_pixel(int x, int y, short int line_color)
         *one_pixel_address = line_color;
     }
 }
+
+//-----------------------------------------------------------------------------------------
+
+// Game Logic Functions
+void initializeGame() {
+    game_state_ptr->team_turn = 'a';  //'a' for team A, 'b' for team B
+    game_state_ptr->character_turn_team_a = 0;
+    game_state_ptr->character_turn_team_b = 0;
+    game_state_ptr->game_running = false;
+  
+}
+  
+  int getCharacterIndexForNextTurn(struct Character* team_array[NUM_CHARACTERS_PER_TEAM],
+                                   int current_character_turn_index) {
+    int next_idx;
+    for (int i = 1; i <= NUM_CHARACTERS_PER_TEAM; i++) {
+      next_idx = (current_character_turn_index + i) % NUM_CHARACTERS_PER_TEAM;
+  
+      if (team_array[next_idx]->state != DEAD) {
+        return next_idx;
+      }
+    }
+  
+    return next_idx;
+  }
+  
+  char checkWinCondition() {
+    int dead_count_a = 0;
+    int dead_count_b = 0;
+  
+    for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+      if (!team_a[i]->state != DEAD) {
+        dead_count_a++;
+      }
+  
+      if (!team_b[i]->state != DEAD) {
+        dead_count_b++;
+      }
+    }
+  
+    if (dead_count_a < NUM_CHARACTERS_PER_TEAM && dead_count_b < NUM_CHARACTERS_PER_TEAM) {
+      return 'i';
+    } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM && dead_count_b == NUM_CHARACTERS_PER_TEAM) {
+      return 't';
+    } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM) {
+      return 'l';  // 'l' means team A lost
+    } else if (dead_count_b == NUM_CHARACTERS_PER_TEAM) {
+      return 'w';  // 'w' means team A won
+    } else {
+      return 'x';  // Unexpected case
+    }
+  }
+
+//make new .c file platformhandler
+//make GameObject* platform
+//copy rudra code commented out testing __code_model_medium
+//xy tracking top left
+//once done in main
+
+//go to while loop
+//render in (GameObject* platform)

@@ -6,15 +6,16 @@ void resetPrevPixelData(GameObject *obj) {
             obj->prevPixelData[x_pix + y_pix * obj->width] = -1;
         }
     }
-}
+} //set asset of object everything -1
 
+// records for the prev location of the asset for obj, and draws a obj 
 void renderIn(GameObject *obj) {
     // Save previous position
     obj->prevX = *obj->x;
     obj->prevY = *obj->y;
 
     // Reset previous pixel data
-    resetPrevPixelData(obj);
+    resetPrevPixelData(obj); //makes an array of all -1
 
     // Mark the object as currently rendered
     obj->currentlyRendered = 1;
@@ -29,7 +30,7 @@ void renderIn(GameObject *obj) {
                 one_pixel_address = (volatile short int *)pixel_buffer_start + ((obj->prevY + y_pix) << 9) + ((obj->prevX + x_pix) << 0);
 
                 // Save the previous pixel data
-                obj->prevPixelData[x_pix + y_pix * obj->width] = *one_pixel_address;
+                obj->prevPixelData[x_pix + y_pix * obj->width] = *one_pixel_address; //takes whatever inside buffer and store in prev pixel data
 
                 // Write the new pixel data to Buffer1
                 volatile short int *buffer1_pixel_address;
@@ -45,6 +46,7 @@ void renderIn(GameObject *obj) {
     }
 }
 
+// rendering the prev data from the asset (renders yellow backgrround)
 void renderOut(GameObject *obj) {
     if (obj->currentlyRendered == 1) {
         for (int y_pix = 0; y_pix < obj->height; y_pix++) {
@@ -64,7 +66,7 @@ void renderOut(GameObject *obj) {
             }
         }
     } else {
-        obj->currentlyRendered = 0;
+        obj->currentlyRendered = 0; //set obj to 0 since we are not rendering it
     }
 }
 

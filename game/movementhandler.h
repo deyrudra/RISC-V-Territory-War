@@ -17,7 +17,7 @@ extern const char* gameControls[];
 typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD, UNKNOWN } CharacterState;
 
 // Define character structure
-typedef struct {
+typedef struct Character{
     GameObject *idleCharacter; // GameObject for the character
     GameObject *walkLeftCharacter; // GameObject for the character
     GameObject *walkRightCharacter; // GameObject for the character
@@ -31,13 +31,14 @@ typedef struct {
     int *collidable; // 1 for collidable,  0 for non-collidable
     CharacterState state;
     CharacterState prevState;
+    int* health;
 } Character;
 
 // Function prototypes
-void initializeCharacter(Character *character, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData);
+void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData);
 
 
-void moveCharacter(Character *character, char* direction);
+void moveCharacter(Character *character, char* direction, int* distance_travelled);
 
 void drawCharacter(Character *character);
 
