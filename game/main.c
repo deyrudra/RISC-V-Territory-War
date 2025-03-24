@@ -122,8 +122,8 @@ int main(void)
     initializeCharacter(&player, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
 
     // Rendering Background
-    for (int ypos = 0; ypos <= SCREEN_WIDTH + 40; ypos += 40) {
-        for (int xpos = 0; xpos <= SCREEN_HEIGHT + 40; xpos += 40) {
+    for (int ypos = 0; ypos < SCREEN_HEIGHT; ypos += 40) {
+        for (int xpos = 0; xpos < SCREEN_WIDTH; xpos += 40) {
             backgroundObj->x = &xpos;
             backgroundObj->y = &ypos;
             renderIn(backgroundObj);
