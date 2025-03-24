@@ -47,7 +47,7 @@ OCFLAGS		:= -O srec
 ELF		:= main
 ELFEXT		:= .elf
 HDRS		:=
-SRCS		:= ../game/main.c ../game/objecthandler.c ../game/loadassets.c
+SRCS		:= ../game/main.c ../game/objecthandler.c ../game/loadassets.c ../game/inputhandler.c ../game/movementhandler.c
 OBJS		:= $(patsubst %, %.o, $(SRCS))
 
 ############################################
@@ -67,8 +67,8 @@ SYS_PROG_SYSTEM_CONSOLE	:= system-console.exe
 SYS_PROG_NII_GDB_SERVER	:= nios2-gdb-server.exe
 
 # Flags
-SYS_FLAG_CABLE			:= -c ""
-SYS_FLAG_USB			:= ""
+SYS_FLAG_CABLE			:= -c "DE-SoC [USB-1]"
+SYS_FLAG_USB			:= "USB-1"
 SYS_FLAG_JTAG_INST		:= --instance
 SYS_FLAG_NII_HALT		:= --stop
 

@@ -142,8 +142,9 @@ int main(void)
     mainMenuTitleObj->height = MAIN_MENU_TITLE_HEIGHT;
     mainMenuTitleObj->width = MAIN_MENU_TITLE_WIDTH;
     mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData; //prev data for keeping trrack of background
-
+    
     //initialize platform
+    int platformPrev[PLATFORM_HEIGHT][PLATFORM_WIDTH];
     platformObj = (GameObject *)malloc(sizeof(GameObject));
     int platformPrevData[PLATFORM_HEIGHT][PLATFORM_WIDTH];
     platformObj->x = &(int){SCREEN_WIDTH/2}; //casting to addr since x and y as ptrs
@@ -171,8 +172,29 @@ int main(void)
 
     // Create characters
     Character player_a0, player_b0;
+
+    int leftmovementPrev[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH]; //set to -1 when we wanna render something
+    int rightmovementPrev[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
+    int backgroundPrev[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
+    int main_menu_titlePrev[MAIN_MENU_TITLE_HEIGHT][MAIN_MENU_TITLE_WIDTH];
+    int idlePrev[IDLE_HEIGHT][IDLE_WIDTH];
+    int leftbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
+    int rightbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
+    int jumpPrev[JUMP_HEIGHT][JUMP_WIDTH];
+    int deadPrev[DEAD_HEIGHT][DEAD_WIDTH];
     initializeCharacter(&player_a0, 20 + PLAYER_WIDTH, SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
-    initializeCharacter(&player_b0, SCREEN_WIDTH - 20 - PLAYER_WIDTH, SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement, &rightmovement, &jump, &idlePrev, &leftmovementPrev, &rightmovementPrev, &jumpPrev);
+    
+    
+    int leftmovementPrev2[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH]; //set to -1 when we wanna render something
+    int rightmovementPrev2[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
+    int backgroundPrev2[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
+    int main_menu_titlePrev2[MAIN_MENU_TITLE_HEIGHT][MAIN_MENU_TITLE_WIDTH];
+    int idlePrev2[IDLE_HEIGHT][IDLE_WIDTH];
+    int leftbootPrev2[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
+    int rightbootPrev2[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
+    int jumpPrev2[JUMP_HEIGHT][JUMP_WIDTH];
+    int deadPrev2[DEAD_HEIGHT][DEAD_WIDTH];
+    initializeCharacter(&player_b0, SCREEN_WIDTH - 20 - PLAYER_WIDTH, SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement, &rightmovement, &jump, &idlePrev2, &leftmovementPrev2, &rightmovementPrev2, &jumpPrev2);
 
     initializeGame();
 
@@ -589,11 +611,11 @@ void initializeGame() {
     int dead_count_b = 0;
   
     for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
-      if (!team_a[i]->state != DEAD) {
+      if (!team_a[i]->state == DEAD) {
         dead_count_a++;
       }
   
-      if (!team_b[i]->state != DEAD) {
+      if (!team_b[i]->state == DEAD) {
         dead_count_b++;
       }
     }
