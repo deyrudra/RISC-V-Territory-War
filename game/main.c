@@ -50,6 +50,9 @@ GameObject* mainMenuTitleObj;
 GameObject* platformObj;
 GameObject* skyObj;
 GameObject* moveOrStayBannerObj;
+GameObject* grenadeOrStayBannerObj;
+GameObject* groundObj;
+
 
 // Global Game Controls
 const char* gameControls[] = {
@@ -136,19 +139,23 @@ int main(void) {
   backgroundObj = (GameObject*)malloc(sizeof(GameObject));
   int backgroundPrevData[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
   backgroundObj->asset = &background;
-  backgroundObj->collidable = 0;
+  backgroundObj->collidable = &(int){0};
   backgroundObj->height = BACKGROUND_HEIGHT;
   backgroundObj->width = BACKGROUND_WIDTH;
   backgroundObj->prevPixelData = &backgroundPrevData;
+  backgroundObj->isGround = 0;
 
   // 40x40 sky block
   skyObj = (GameObject*)malloc(sizeof(GameObject));
   int skyPrevData[SKY_HEIGHT][SKY_WIDTH];
   skyObj->asset = &sky;
-  skyObj->collidable = 0;
+  skyObj->collidable = &(int){0};
   skyObj->height = SKY_HEIGHT;
   skyObj->width = SKY_WIDTH;
   skyObj->prevPixelData = &skyPrevData;
+  skyObj->isGround = 0;
+  
+
 
   // 320 x 40 move or stay banner
   moveOrStayBannerObj = (GameObject*)malloc(sizeof(GameObject));
@@ -156,10 +163,25 @@ int main(void) {
   moveOrStayBannerObj->asset = &moveorstaybanner;
   moveOrStayBannerObj->x = &(int){0};  // casting to addr since x and y as ptrs
   moveOrStayBannerObj->y = &(int){SCREEN_HEIGHT - BANNER_HEIGHT};   
-  moveOrStayBannerObj->collidable = 0;
+  moveOrStayBannerObj->collidable = &(int){0};
   moveOrStayBannerObj->height = BANNER_HEIGHT;
   moveOrStayBannerObj->width = BANNER_WIDTH;
   moveOrStayBannerObj->prevPixelData = &moveOrStayBannerPrevData;
+  moveOrStayBannerObj->isGround = 0;
+
+
+  // 320 x 40 move or stay banner
+  grenadeOrStayBannerObj = (GameObject*)malloc(sizeof(GameObject));
+  int grenadeOrStayBannerPrevData[BANNER_HEIGHT][BANNER_WIDTH];
+  grenadeOrStayBannerObj->asset = &grenadeorstaybanner;
+  grenadeOrStayBannerObj->x = &(int){0};  // casting to addr since x and y as ptrs
+  grenadeOrStayBannerObj->y = &(int){SCREEN_HEIGHT - BANNER_HEIGHT};   
+  grenadeOrStayBannerObj->collidable = &(int){0};
+  grenadeOrStayBannerObj->height = BANNER_HEIGHT;
+  grenadeOrStayBannerObj->width = BANNER_WIDTH;
+  grenadeOrStayBannerObj->prevPixelData = &grenadeOrStayBannerPrevData;
+  grenadeOrStayBannerObj->isGround = 0;
+
 
   // game title screen
   mainMenuTitleObj = (GameObject*)malloc(sizeof(GameObject));
@@ -168,24 +190,39 @@ int main(void) {
                                40};  // casting to addr since x and y as ptrs
   mainMenuTitleObj->y = &(int){10};
   mainMenuTitleObj->asset = &main_menu_title;
-  mainMenuTitleObj->collidable = 0;
+  mainMenuTitleObj->collidable = &(int){0};
   mainMenuTitleObj->height = MAIN_MENU_TITLE_HEIGHT;
   mainMenuTitleObj->width = MAIN_MENU_TITLE_WIDTH;
-  mainMenuTitleObj->prevPixelData =
-      &mainMenuTitlePrevData;  // prev data for keeping track of background
+  mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData;  // prev data for keeping track of background
+  mainMenuTitleObj->isGround = 0;
 
   // initialize platform
-  int platformPrev[PLATFORM_HEIGHT][PLATFORM_WIDTH];
   platformObj = (GameObject*)malloc(sizeof(GameObject));
   int platformPrevData[PLATFORM_HEIGHT][PLATFORM_WIDTH];
   platformObj->x =
       &(int){SCREEN_WIDTH / 2};  // casting to addr since x and y as ptrs
   platformObj->y = &(int){SCREEN_HEIGHT - 90};
   platformObj->asset = &platform;
-  platformObj->collidable = 1;
+  platformObj->collidable = &(int){1};
   platformObj->height = PLATFORM_HEIGHT;
   platformObj->width = PLATFORM_WIDTH;
   platformObj->prevPixelData = &platformPrevData;  // prev data for keeping track of background
+  platformObj->isGround = 1;
+
+
+  // initialize ground
+  groundObj = (GameObject*)malloc(sizeof(GameObject));
+  int groundPrevData[GROUND_HEIGHT][GROUND_WIDTH];
+  groundObj->x =
+      &(int){0};  // casting to addr since x and y as ptrs
+  groundObj->y = &(int){SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT};
+  groundObj->asset = &ground;
+  groundObj->collidable = &(int){1};
+  groundObj->height = GROUND_HEIGHT;
+  groundObj->width = GROUND_WIDTH;
+  groundObj->prevPixelData = &groundPrevData;  // prev data for keeping track of background
+  platformObj->isGround = 1;
+
 
   // pass in assets and prev backgrounds
 
@@ -222,7 +259,7 @@ int main(void) {
   int jumpPrev[JUMP_HEIGHT][JUMP_WIDTH];
   int deadPrev[DEAD_HEIGHT][DEAD_WIDTH];
   initializeCharacter(&player_a0, 20 + PLAYER_WIDTH,
-                      SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement,
+                      SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
                       &rightmovement, &jump, &idlePrev, &leftmovementPrev,
                       &rightmovementPrev, &jumpPrev);
 
@@ -238,7 +275,7 @@ int main(void) {
   int jumpPrev2[JUMP_HEIGHT][JUMP_WIDTH];
   int deadPrev2[DEAD_HEIGHT][DEAD_WIDTH];
   initializeCharacter(&player_b0, SCREEN_WIDTH - 20 - PLAYER_WIDTH,
-                      SCREEN_HEIGHT - 40 - PLAYER_HEIGHT, &idle, &leftmovement,
+                      SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
                       &rightmovement, &jump, &idlePrev2, &leftmovementPrev2,
                       &rightmovementPrev2, &jumpPrev2);
 
@@ -258,7 +295,7 @@ int main(void) {
 
   // Render in initial game map, players, and objects in layers
 
-  // Layer 1 bakcground
+  // Layer 1 background
   for (int ypos = 0; ypos < SCREEN_HEIGHT - 40; ypos += 40) {
     for (int xpos = 0; xpos < SCREEN_WIDTH; xpos += 40) {
       skyObj->x = &xpos;
@@ -269,6 +306,7 @@ int main(void) {
 
   // Layer 2 map objects and banners
   renderIn(platformObj);
+  renderIn(groundObj);
   renderIn(moveOrStayBannerObj);
 
   // Layer 3 characters
@@ -316,7 +354,7 @@ int main(void) {
       if (!end_turn) {
         // Input handler logic for moving controls
         int distance_travelled = 0;
-        while (distance_travelled < 15) {
+        while (distance_travelled < 200) {
           char* control = single_poll_input();
 
           if (control != NULL) {
@@ -329,11 +367,12 @@ int main(void) {
 
           wait_for_vsync();  // swap front and back buffers on VGA vertical sync
           pixel_buffer_start = *(buffer_register + 1);  // new back buffer
+          distance_travelled++;
         }
 
         //----------Stage 2 of turn, output bar for weapon or stay
-        printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n",
-               game_state_ptr->character_turn_team_a);
+        printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->character_turn_team_a);
+        renderIn(grenadeOrStayBannerObj);
 
         while (1) {
           ps2_data = *ps2_ptr;
@@ -380,8 +419,7 @@ int main(void) {
     // Team B's Turn
     else {
       printf("Team B's Turn\n");
-      printf("Character %d's turn: Press 1 to move or 2 to stay\n",
-             game_state_ptr->character_turn_team_b);
+      printf("Character %d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->character_turn_team_b);
 
       //-----------------------Stage 1 of turn, draw bottom bar here
       while (1) {
@@ -425,11 +463,14 @@ int main(void) {
 
           wait_for_vsync();  // swap front and back buffers on VGA vertical sync
           pixel_buffer_start = *(buffer_register + 1);  // new back buffer
+            
+          printf("after vsync\n");
+          distance_travelled++;
         }
 
         //----------Stage 2 of turn, output bar for weapon or stay
-        printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n",
-               game_state_ptr->character_turn_team_a);
+        printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->character_turn_team_b);
+        renderIn(grenadeOrStayBannerObj);
 
         while (1) {
           ps2_data = *ps2_ptr;

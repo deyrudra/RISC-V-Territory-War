@@ -20,6 +20,7 @@ typedef struct {
     int *asset; // Pointer to the asset (e.g., sprite data)
     int *prevPixelData; // Pointer to store previous pixel data
     int currentlyRendered; // 1 if currently rendered, 0 otherwise
+    int isGround;
 } GameObject;
 
 // Function prototypes
