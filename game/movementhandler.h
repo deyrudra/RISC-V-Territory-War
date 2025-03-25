@@ -4,9 +4,11 @@
 #define PLAYER_WIDTH 16
 #define PLAYER_HEIGHT 32
 
-#define DELTATIME 0.016
-#define GRAVITY -5
+#define DELTATIME 0.02
+#define GRAVITY -9.81
 #define AIRDRAG -2
+
+#define X_ACCELERATION 10
 
 
 #include "objecthandler.h" // Include the GameObject definitions
@@ -33,6 +35,9 @@ typedef struct Character{
     CharacterState prevState;
     int* health;
 } Character;
+
+double abs_double(double value);
+
 
 // Function prototypes
 void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData);
