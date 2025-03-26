@@ -10,14 +10,14 @@ double abs_double(double value) {
 }
 
 void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset) {
-    int walkLeftPrevData[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH];  // set to -1 when we wanna render // something
-    int walkRightPrevData[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
-    int jumpPrevData[JUMP_HEIGHT][JUMP_WIDTH];
-    int idlePrevData[IDLE_HEIGHT][IDLE_WIDTH];
-    // unused as of now
-    int leftbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
-    int rightbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
-    int deadPrev[DEAD_HEIGHT][DEAD_WIDTH];
+    // Replace all local array declarations with malloc calls
+    int* walkLeftPrevData = malloc(sizeof(int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
+    int* walkRightPrevData = malloc(sizeof(int) * RIGHTMOVEMENT_WIDTH * RIGHTMOVEMENT_HEIGHT);
+    int* jumpPrevData = malloc(sizeof(int) * JUMP_WIDTH * JUMP_HEIGHT);
+    int* idlePrevData = malloc(sizeof(int) * IDLE_WIDTH * IDLE_HEIGHT);
+    int* leftbootPrev = malloc(sizeof(int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
+    int* rightbootPrev = malloc(sizeof(int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
+    int* deadPrev = malloc(sizeof(int) * DEAD_WIDTH * DEAD_HEIGHT);
     
     character->x = malloc(sizeof(int));
     character->y = malloc(sizeof(int));
@@ -134,7 +134,7 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
             // *(character->velocityX) = -3.0;
             horizontalAcceleration(character, 0);
             *(character->x) = *(character->x) + *(character->velocityX);
-            // *distance_travelled += *(character->velocityX)*DELTATIME;
+            *distance_travelled += *character->velocityX;
 
         }
         else if (strcmp(direction, gameControls[1]) == 0) { // Checking for move_right
@@ -142,7 +142,7 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
             // *(character->velocityX) = 3.0;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
-            // *distance_travelled += *(character->velocityX)*DELTATIME;
+            *distance_travelled += *character->velocityX;
         }
         else if (strcmp(direction, gameControls[2]) == 0) { // Checking for move_jump
             printf("HEY %s", direction);
@@ -194,10 +194,41 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
 }
 
 void checkGrounded(Character *character) {
-    int currentX = *(character->x);
-    int currentY = *(character->y);
+    int right_char = *(character->x) + character->width;
+    int left_char = *(character->x);
+    int top_char = *(character->y);
+    int bottom_char = *(character->y)+ character->height;
 
-    
+    int top_plat;
+    int bottom_plat;
+    int right_plat;
+    int left_plat;
+
+    BoundingBox *boxNode = groundBoxHead;
+    int index = 0;
+    while (boxNode) {
+        top_plat = boxNode->y1;
+        bottom_plat = boxNode->y2;
+        right_plat = boxNode->x2;
+        left_plat = boxNode->x1;
+
+        // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_char, bottom_char, right_char, left_char);
+        // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_plat, bottom_plat, right_plat, left_plat);
+        if ((bottom_char >= top_plat) && (top_char <= bottom_plat)) { // Character is between the platform
+            if ((right_char <= right_plat) && (left_char >= left_plat)) {
+                character->isGroundedBool = 1;
+                character->velocityY = 0;
+                return;     
+            }
+        }
+        
+        // Otherwise
+        boxNode = boxNode->next;
+    }
+    // If not on ground.
+    character->isGroundedBool = 0;
+    return;
+
 }
 
 int checkCollision_CharacterObject(Character *a, GameObject *b) {

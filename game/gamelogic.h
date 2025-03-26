@@ -6,12 +6,11 @@
 #include "loadassets.h"
 #include <stdbool.h>
 #include "renderhandler.h"
+#include "platformhandler.h"
 
 #define NUM_CHARACTERS_PER_TEAM 3
 
 // Global Game Objects
-extern GameObject* leftMovementObj;
-extern GameObject* rightMovementObj;
 extern GameObject* backgroundObj;
 extern GameObject* mainMenuTitleObj;
 extern GameObject* platformObj;
@@ -31,7 +30,7 @@ typedef struct GameState {
 // Global game objects
 extern Character player_a0;
 extern Character player_b0;
-
+extern Platform platform1;
 
 // Global game state
 extern GameState* game_state_ptr;

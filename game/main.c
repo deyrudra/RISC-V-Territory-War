@@ -118,7 +118,7 @@ int main(void) {
   groundObj->height = GROUND_HEIGHT;
   groundObj->width = GROUND_WIDTH;
   groundObj->prevPixelData = &groundPrevData;  // prev data for keeping track of background
-  platformObj->isGround = 1;
+  groundObj->isGround = 1;
 
 
   // pass in assets and prev backgrounds

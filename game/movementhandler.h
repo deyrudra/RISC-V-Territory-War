@@ -15,6 +15,7 @@
 #include "objectHandler.h"
 #include "inputhandler.h"
 #include "loadassets.h"
+#include "platformhandler.h"
 
 
 // PS/2 Keyboard related variables
@@ -23,6 +24,7 @@ extern int ps2_data;
 extern int RVALID;
 extern uint8_t byte1, byte2, byte3;
 extern const char* gameControls[];
+
 
 typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD} CharacterState;
 // Define character structure
@@ -33,7 +35,6 @@ typedef struct Character{
     GameObject *jumpingCharacter; // GameObject for the character
     GameObject *leftBootCharacter; // GameObject for the character
     GameObject *rightBootCharacter; // GameObject for the character
-    GameObject *jumpCharacter; // GameObject for the character
     GameObject *deadCharacter; // GameObject for the character
     int *x, *y; // Position
     double *velocityX, *velocityY; // Velocity

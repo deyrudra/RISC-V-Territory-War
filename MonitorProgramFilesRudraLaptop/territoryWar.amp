@@ -3,7 +3,7 @@
     <preloader>DE1-SoC</preloader>
     <system>
         <sample_title>DE1-SoC Computer for Nios V</sample_title>
-        <cable>DE-SoC [USB-1]</cable>
+        <cable>null</cable>
         <processor>NiosVg</processor>
         <reset_processor_during_load>true</reset_processor_during_load>
         <terminal>JTAG_UART_NiosV.avalon_jtag_slave</terminal>
@@ -17,6 +17,7 @@
             <source_file>../game/movementhandler.c</source_file>
             <source_file>../game/renderhandler.c</source_file>
             <source_file>../game/gamelogic.c</source_file>
+            <source_file>../game/platformhandler.c</source_file>
         </source_files>
         <options>
             <compiler_flags>-g -O1 -ffunction-sections -fverbose-asm -fno-inline -gdwarf-2</compiler_flags>

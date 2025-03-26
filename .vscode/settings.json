@@ -67,6 +67,8 @@
     "gamelogic.h": "c",
     "global.h": "c",
     "gametypes.h": "c",
-    "renderhandler.h": "c"
+    "renderhandler.h": "c",
+    "platformhandler.h": "c",
+    "loadassets.h": "c"
   }
 }

@@ -1,8 +1,6 @@
 // gamelogic.c
 #include "gamelogic.h"
 
-GameObject* leftMovementObj;
-GameObject* rightMovementObj;
 GameObject* backgroundObj;
 GameObject* mainMenuTitleObj;
 GameObject* platformObj;
@@ -13,6 +11,9 @@ GameObject* groundObj;
 
 Character player_a0;
 Character player_b0;
+
+Platform platform1;
+Platform platform_ground;
 
 GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
@@ -52,8 +53,14 @@ void startGame() {
     }
 
     // Layer 2 map objects and banners
-    renderIn(platformObj);
-    renderIn(groundObj);
+
+    initializePlatform(&platform1, &platform, 100, 50, PLATFORM_WIDTH, PLATFORM_HEIGHT);
+    placePlatform(&platform1);
+
+    initializePlatform(&platform_ground, &ground, 0, SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT, GROUND_WIDTH, GROUND_HEIGHT);
+    placePlatform(&platform_ground);
+    // renderIn(platformObj);
+    // renderIn(groundObj);
     renderIn(moveOrStayBannerObj);
 
     // Layer 3 characters
@@ -118,7 +125,6 @@ void handle_team_turn() {
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 pixel_buffer_start = *(buffer_register + 1);  // new back buffer
-                distance_travelled++;
             }
 
             //----------Stage 2 of turn, output bar for weapon or stay
