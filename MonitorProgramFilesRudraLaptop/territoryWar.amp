@@ -15,6 +15,8 @@
             <source_file>../game/loadassets.c</source_file>
             <source_file>../game/inputhandler.c</source_file>
             <source_file>../game/movementhandler.c</source_file>
+            <source_file>../game/renderhandler.c</source_file>
+            <source_file>../game/gamelogic.c</source_file>
         </source_files>
         <options>
             <compiler_flags>-g -O1 -ffunction-sections -fverbose-asm -fno-inline -gdwarf-2</compiler_flags>

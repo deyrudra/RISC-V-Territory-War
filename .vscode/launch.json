@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/deyru/Documents/GitHub/RISC-V-Territory-War/imageCreator",
-      "program": "c:/Users/deyru/Documents/GitHub/RISC-V-Territory-War/imageCreator/build/Debug/outDebug",
+      "cwd": "c:/Users/deyru/Documents/GitHub/RISC-V-Territory-War",
+      "program": "c:/Users/deyru/Documents/GitHub/RISC-V-Territory-War/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -1,10 +1,22 @@
 #include "inputhandler.h"
 
+const char* gameControls[] = {
+    "Move_Left", // 0
+    "Move_Right", // 1
+    "Move_Jump", // 2
+    "Move_Left_Stop", // 3
+    "Move_Right_Stop", // 4
+    "Move_Jump_Stop", // 5
+    // ...
+};
+volatile int* ps2_ptr = (int*)PS2_BASE;
+uint8_t byte1 = 0, byte2 = 0, byte3 = 0;
+int ps2_data, RVALID;
+
+
 void poll_start_input(){
     printf("Welcome to Territory War!\n");
     printf("Press Enter to Start\n");
-
-    int ps2_data, RVALID;
     
     // Poll user to hit enter key
     while (1) {
@@ -30,7 +42,6 @@ void poll_start_input(){
 }
 
 char* single_poll_input() {
-    int ps2_data, RVALID;
     ps2_data = *ps2_ptr;  // Read data from PS/2 port
     RVALID = ps2_data & 0x8000;
 

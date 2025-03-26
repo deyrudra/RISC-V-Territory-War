@@ -22,7 +22,13 @@ void renderIn(GameObject *obj) {
 
     // Render the object into the pixel buffer
     for (int y_pix = 0; y_pix < obj->height; y_pix++) {
+        if (((*obj->y + y_pix) > SCREEN_HEIGHT) || ((*obj->y + y_pix) < 0) ){
+            continue;
+        }
         for (int x_pix = 0; x_pix < obj->width; x_pix++) {
+            if (((*obj->x + x_pix) > SCREEN_WIDTH) || ((*obj->x + x_pix) < 0) ){
+                continue;
+            }
             short int pixel = obj->asset[x_pix + y_pix * obj->width];
             if (pixel != -1) {
                 // Calculate address for the pixel in the pixel buffer
@@ -73,16 +79,21 @@ void renderOut(GameObject *obj) {
 int checkCollision(GameObject *a, GameObject *b) {
     if (!(*a->collidable) || !(*b->collidable)) return 0; // Ignore non-collidable objects
 
-    return (a->x < b->x + b->width &&
-            a->x + a->width > b->x &&
-            a->y < b->y + b->height &&
-            a->y + a->height > b->y);
+    return (*(a->x) < *(b->x) + b->width &&
+            *(a->x) + a->width > *(b->x) &&
+            *(a->y) < *(b->y) + b->height &&
+            *(a->y) + a->height > *(b->y));
 }
+
+
 
 void resolveCollision(GameObject *a, GameObject *b) {
-    if (a->x < b->x) a->x -= 5;
-    else a->x += 5;
+    if (*(a->x) < *(b->x)) *(a->x) -= 5;
+    else *(a->x) += 5;
 
-    if (a->y < b->y) a->y -= 5;
-    else a->y += 5;
+    if (*(a->y) < *(b->y)) *(a->y) -= 5;
+    else *(a->y) += 5;
 }
+
+
+

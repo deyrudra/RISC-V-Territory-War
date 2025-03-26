@@ -1,11 +1,6 @@
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #define LED_BASE 0xFF200000
 #define LEDR_BASE 0xFF200000
 #define HEX3_HEX0_BASE 0xFF200020
@@ -32,16 +27,16 @@
 
 #define MAP_BOUNDS 0
 #define PIXELS_IN_1_METER 1
-#define SCREEN_PIXEL_WIDTH 640
-#define SCREEN_PIXEL_HEIGHT 480
-#define NUM_CHARACTERS_PER_TEAM 3
+
+#include <stdint.h>
+#include <stdio.h>
 
 // Global pointers
+
 extern const char* gameControls[];
 extern volatile int* ps2_ptr;
-extern uint8_t byte1;
-extern uint8_t byte2;
-extern uint8_t byte3;
+extern uint8_t byte1, byte2, byte3;
+extern int ps2_data, RVALID;
 
 // Polling Functions
 void poll_start_input();

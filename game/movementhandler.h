@@ -5,19 +5,26 @@
 #define PLAYER_HEIGHT 32
 
 #define DELTATIME 0.02
-#define GRAVITY -9.81
+#define GRAVITY 9.81
 #define AIRDRAG -2
 
-#define X_ACCELERATION 10
+#define X_ACCELERATION 10 // For x movement walking.
+
+#include <stdlib.h>
+#include <stddef.h>
+#include "objectHandler.h"
+#include "inputhandler.h"
+#include "loadassets.h"
 
 
-#include "objecthandler.h" // Include the GameObject definitions
-#include <string.h>
-
+// PS/2 Keyboard related variables
+extern volatile int* ps2_ptr;
+extern int ps2_data;
+extern int RVALID;
+extern uint8_t byte1, byte2, byte3;
 extern const char* gameControls[];
 
-typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD, UNKNOWN } CharacterState;
-
+typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD} CharacterState;
 // Define character structure
 typedef struct Character{
     GameObject *idleCharacter; // GameObject for the character
@@ -33,14 +40,17 @@ typedef struct Character{
     int *collidable; // 1 for collidable,  0 for non-collidable
     CharacterState state;
     CharacterState prevState;
+    int isGroundedBool; // 1 for grounded, 0 for not grounded
     int* health;
+    int width;
+    int height;
 } Character;
 
 double abs_double(double value);
 
 
 // Function prototypes
-void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData);
+void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset);
 
 
 void moveCharacter(Character *character, char* direction, int* distance_travelled);
@@ -50,5 +60,11 @@ void drawCharacter(Character *character);
 void gravityCharacter(Character *character);
 
 void airdragCharacter(Character *character);
+
+void resolveCollision_CharacterObject(Character *a, GameObject *b);
+
+int checkCollision_CharacterObject(Character *a, GameObject *b);
+
+void checkGrounded(Character *character);
 
 #endif // MOVEMENTHANDLER_H

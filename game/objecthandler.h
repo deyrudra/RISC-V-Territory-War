@@ -1,9 +1,12 @@
+
 #ifndef OBJECTHANDLER_H
 #define OBJECTHANDLER_H
 
 // Screen dimensions
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
+
+#include "renderhandler.h"
 
 // Global Variables
 extern short int Buffer1[480][640];
@@ -23,6 +26,7 @@ typedef struct {
     int isGround;
 } GameObject;
 
+
 // Function prototypes
 
 void resetPrevPixelData(GameObject *obj);
@@ -34,5 +38,6 @@ void renderOut(GameObject *obj);
 int checkCollision(GameObject *a, GameObject *b);
 
 void resolveCollision(GameObject *a, GameObject *b);
+
 
 #endif // OBJECTHANDLER_H

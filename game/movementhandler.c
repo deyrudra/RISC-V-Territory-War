@@ -1,6 +1,4 @@
-#include "objecthandler.h"
 #include "movementhandler.h"
-#include <stdio.h>
 
 double abs_double(double value) {
     if (value >= 0) {
@@ -11,7 +9,16 @@ double abs_double(double value) {
     }
 }
 
-void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset, int *idlePrevData, int *walkLeftPrevData, int *walkRightPrevData, int *jumpPrevData) {
+void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset) {
+    int walkLeftPrevData[LEFTMOVEMENT_HEIGHT][LEFTMOVEMENT_WIDTH];  // set to -1 when we wanna render // something
+    int walkRightPrevData[RIGHTMOVEMENT_HEIGHT][RIGHTMOVEMENT_WIDTH];
+    int jumpPrevData[JUMP_HEIGHT][JUMP_WIDTH];
+    int idlePrevData[IDLE_HEIGHT][IDLE_WIDTH];
+    // unused as of now
+    int leftbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
+    int rightbootPrev[LEFTBOOT_HEIGHT][LEFTBOOT_WIDTH];
+    int deadPrev[DEAD_HEIGHT][DEAD_WIDTH];
+    
     character->x = malloc(sizeof(int));
     character->y = malloc(sizeof(int));
     character->velocityX = malloc(sizeof(double));
@@ -19,8 +26,10 @@ void initializeCharacter(Character *character, int x, int y, int *idleCharAsset,
     character->collidable = malloc(sizeof(int));
     character->health = malloc(sizeof(int));
     character->state = IDLE;
-    character->prevState = UNKNOWN;
-    
+    character->isGroundedBool = 0;
+    character->width = PLAYER_WIDTH;
+    character->height = PLAYER_HEIGHT;
+            
     *(character->collidable) = 1;
     *(character->x) = x;
     *(character->y) = y;
@@ -104,10 +113,17 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
     if (character == NULL) {
         printf("Character does not exist...\n");
     }
+    else if (direction == NULL) {
+        character->prevState = character->state; // Store previous state (Needed)
+    }
     else {
+        //Test
+        // printf("%s", direction);
+
+
         // Calling Gravity (y-friction) and Air Drag (x-friction) Functions
-        gravityCharacter(character);
-        airdragCharacter(character);
+        // gravityCharacter(character);
+        // airdragCharacter(character);
 
         // Saving Prevstate
         character->prevState = character->state;
@@ -128,25 +144,28 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
             *(character->x) = *(character->x) + *(character->velocityX);
             // *distance_travelled += *(character->velocityX)*DELTATIME;
         }
-        else if (strcmp(direction, gameControls[2] == 0)) { // Checking for move_jump
+        else if (strcmp(direction, gameControls[2]) == 0) { // Checking for move_jump
+            printf("HEY %s", direction);
             character->state = JUMPING;
-            *(character->velocityY) = 10.0;
+
+
+            // *(character->velocityY) = 10.0;
             
         }
-        // else if (strcmp(direction, gameControls[3] == 0)) { // Checking for move_left_stop
-        //     character->state = character->prevState;
-        //     *(character->velocityX) = 0;
+        else if (strcmp(direction, gameControls[3]) == 0) { // Checking for move_left_stop
+            character->state = IDLE;
+            *(character->velocityX) = 0;
             
-        // }
-        // else if (strcmp(direction, gameControls[4] == 0)) { // Checking for move_right_stop
-        //     character->state = character->prevState;
-        //     *(character->velocityX) = 0;
+        }
+        else if (strcmp(direction, gameControls[4]) == 0) { // Checking for move_right_stop
+            character->state = IDLE;
+            *(character->velocityX) = 0;
             
-        // }
+        }
 
 
 
-        // // Setting Character States based on Velocity (for idle asset)
+        // Setting Character States based on Velocity (for idle asset)
         // if (*(character->velocityX) == 0) {
         //     character->state = IDLE;
         // }
@@ -155,11 +174,53 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         // }
 
     }
+
+    // Must calls
+
+    // Y-Direction Logic (Gravity Affect on y-velocity, isGrounded poll, y-direction update)
+    
+    // isGrounded poll
+    checkGrounded(character);
+
+    // Gravity Affect on Y-Velocity
+    if (character->isGroundedBool == 0) {
+        // Update to velocity with constant acceleration
+        *(character->velocityY) = *(character->velocityY) + (GRAVITY * DELTATIME);
+        // Update to position with current velocity 
+        *(character->y) = *(character->y) + *(character->velocityY);
+
+    }
+
 }
+
+void checkGrounded(Character *character) {
+    int currentX = *(character->x);
+    int currentY = *(character->y);
+
+    
+}
+
+int checkCollision_CharacterObject(Character *a, GameObject *b) {
+    if (!(*a->collidable) || !(*b->collidable)) return 0; // Ignore non-collidable objects
+
+    return (*(a->x) < *(b->x) + b->width &&
+            *(a->x) + a->width > *(b->x) &&
+            *(a->y) < *(b->y) + b->height &&
+            *(a->y) + a->height > *(b->y));
+}
+
+void resolveCollision_CharacterObject(Character *a, GameObject *b) {
+    if (*(a->x) < *(b->x)) *(a->x) -= 5;
+    else *(a->x) += 5;
+    
+    if (*(a->y) < *(b->y)) *(a->y) -= 5;
+    else *(a->y) += 5;
+}
+
+
 
 void drawCharacter(Character *character){
     // If character state didn't change, then don't do nothing.
-
     // Rendering out Old Asset
     if (character->prevState == IDLE) {
         renderOut(character->idleCharacter);
@@ -184,7 +245,7 @@ void drawCharacter(Character *character){
     else if (character->state == RIGHTMOVEMENT) {
         renderIn(character->walkRightCharacter);
     }
-    else if (character->prevState == JUMPING) {
+    else if (character->state == JUMPING) {
         renderIn(character->jumpingCharacter);
     }
 
@@ -206,15 +267,20 @@ void airdragCharacter(Character *character) {
     // }
 }
 
+void jumpCharacter(Character *character) {
+
+
+}
+
 
 void horizontalAcceleration(Character *character, int directionBool) {
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
     if (directionBool == 1) {
-        if (*(character->velocityX) > 20) {
-            *(character->velocityX) = 20;
+        if (*(character->velocityX) > 4) {
+            *(character->velocityX) = 4;
         }
-        else if (*(character->velocityX) < 3) {
-            *(character->velocityX) = 3;
+        else if (*(character->velocityX) < 1) {
+            *(character->velocityX) = 1;
         }
         else {
             *(character->velocityX) = *(character->velocityX) + (X_ACCELERATION * DELTATIME);
@@ -222,11 +288,11 @@ void horizontalAcceleration(Character *character, int directionBool) {
 
     }
     else {
-        if (*(character->velocityX) < -20) {
-            *(character->velocityX) = -20;
+        if (*(character->velocityX) < -4) {
+            *(character->velocityX) = -4;
         }
-        else if (*(character->velocityX) > -3) {
-            *(character->velocityX) = -3;
+        else if (*(character->velocityX) > -1) {
+            *(character->velocityX) = -1;
         }
         else {
             *(character->velocityX) = *(character->velocityX) - (X_ACCELERATION * DELTATIME);
