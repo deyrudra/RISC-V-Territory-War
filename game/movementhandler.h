@@ -25,6 +25,8 @@ extern int RVALID;
 extern uint8_t byte1, byte2, byte3;
 extern const char* gameControls[];
 
+extern int move_right_released;
+extern int move_left_released;
 
 typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD} CharacterState;
 // Define character structure
@@ -45,6 +47,7 @@ typedef struct Character{
     int* health;
     int width;
     int height;
+    int numJumps;
 } Character;
 
 double abs_double(double value);
@@ -57,10 +60,6 @@ void initializeCharacter(Character *character, int x, int y, int *idleCharAsset,
 void moveCharacter(Character *character, char* direction, int* distance_travelled);
 
 void drawCharacter(Character *character);
-
-void gravityCharacter(Character *character);
-
-void airdragCharacter(Character *character);
 
 void resolveCollision_CharacterObject(Character *a, GameObject *b);
 

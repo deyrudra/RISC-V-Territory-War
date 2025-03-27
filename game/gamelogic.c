@@ -59,8 +59,7 @@ void startGame() {
 
     initializePlatform(&platform_ground, &ground, 0, SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT, GROUND_WIDTH, GROUND_HEIGHT);
     placePlatform(&platform_ground);
-    // renderIn(platformObj);
-    // renderIn(groundObj);
+   
     renderIn(moveOrStayBannerObj);
 
     // Layer 3 characters
@@ -114,11 +113,6 @@ void handle_team_turn() {
             int distance_travelled = 0;
             while (distance_travelled < 200) {
                 char* control = single_poll_input();
-
-                if (control != NULL) {
-                    printf("%s\n", control);
-                }
-
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
                             &distance_travelled);
                 drawCharacter(team_a[game_state_ptr->character_turn_team_a]);
@@ -206,11 +200,6 @@ void handle_team_turn() {
             int distance_travelled = 0;
             while (distance_travelled < 15) {
                 char* control = single_poll_input();
-
-                if (control != NULL) {
-                    printf("%s\n", control);
-                }
-
                 moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
                             &distance_travelled);
                 drawCharacter(team_b[game_state_ptr->character_turn_team_b]);

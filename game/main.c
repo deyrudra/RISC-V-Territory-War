@@ -52,8 +52,6 @@ int main(void) {
   skyObj->width = SKY_WIDTH;
   skyObj->prevPixelData = &skyPrevData;
   skyObj->isGround = 0;
-  
-
 
   // 320 x 40 move or stay banner
   moveOrStayBannerObj = (GameObject*)malloc(sizeof(GameObject));
@@ -93,34 +91,6 @@ int main(void) {
   mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData;  // prev data for keeping track of background
   mainMenuTitleObj->isGround = 0;
 
-  // initialize platform
-  platformObj = (GameObject*)malloc(sizeof(GameObject));
-  int platformPrevData[PLATFORM_HEIGHT][PLATFORM_WIDTH];
-  platformObj->x =
-      &(int){SCREEN_WIDTH / 2};  // casting to addr since x and y as ptrs
-  platformObj->y = &(int){SCREEN_HEIGHT - 90};
-  platformObj->asset = &platform;
-  platformObj->collidable = &(int){1};
-  platformObj->height = PLATFORM_HEIGHT;
-  platformObj->width = PLATFORM_WIDTH;
-  platformObj->prevPixelData = &platformPrevData;  // prev data for keeping track of background
-  platformObj->isGround = 1;
-
-
-  // initialize ground
-  groundObj = (GameObject*)malloc(sizeof(GameObject));
-  int groundPrevData[GROUND_HEIGHT][GROUND_WIDTH];
-  groundObj->x =
-      &(int){0};  // casting to addr since x and y as ptrs
-  groundObj->y = &(int){SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT};
-  groundObj->asset = &ground;
-  groundObj->collidable = &(int){1};
-  groundObj->height = GROUND_HEIGHT;
-  groundObj->width = GROUND_WIDTH;
-  groundObj->prevPixelData = &groundPrevData;  // prev data for keeping track of background
-  groundObj->isGround = 1;
-
-
   // pass in assets and prev backgrounds
 
 
@@ -136,7 +106,7 @@ int main(void) {
   }
 
   // Rendering Main Menu Title
-  renderIn(mainMenuTitleObj);
+  renderIn(mainMenuTitleObj);  
 
   startGame();
 
