@@ -1,5 +1,8 @@
 #include "movementhandler.h"
 
+int move_right_released = 1;
+int move_left_released = 1;
+
 double abs_double(double value) {
     if (value >= 0) {
         return value;
@@ -113,47 +116,48 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
     if (character == NULL) {
         printf("Character does not exist...\n");
     }
-    else if (direction == NULL) {
-        character->prevState = character->state; // Store previous state (Needed)
-    }
     else {
         //Test
-        // printf("%s", direction);
-
-
         // Calling Gravity (y-friction) and Air Drag (x-friction) Functions
         // gravityCharacter(character);
         // airdragCharacter(character);
 
+        printf("HEY\n");
+
         // Saving Prevstate
         character->prevState = character->state;
-    
+        
         // Setting Character States (for assets) based on movement input.
-        if (strcmp(direction, gameControls[0]) == 0) { // Checking for move_left
+        if ((strcmp(direction, gameControls[0]) == 0) || (move_left_released == 0)) { // Checking for move_left
+            move_left_released = 0;
             character->state = LEFTMOVEMENT;
             horizontalAcceleration(character, 0);
             *(character->x) = *(character->x) + *(character->velocityX);
             *distance_travelled += *character->velocityX;
 
         }
-        else if (strcmp(direction, gameControls[1]) == 0) { // Checking for move_right
+        if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
+            move_right_released = 0;
             character->state = RIGHTMOVEMENT;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
             *distance_travelled += *character->velocityX;
+
         }
-        else if (strcmp(direction, gameControls[2]) == 0) { // Checking for move_jump
+        if (strcmp(direction, gameControls[2]) == 0) { // Checking for move_jump
             character->state = JUMPING;
             *(character->velocityY) = -3.0;
             character->isGroundedBool = 0;
             
         }
-        else if (strcmp(direction, gameControls[3]) == 0) { // Checking for move_left_stop
+        if (strcmp(direction, gameControls[3]) == 0) { // Checking for move_left_stop
             *(character->velocityX) = 0;
+            move_left_released = 1;
             
         }
-        else if (strcmp(direction, gameControls[4]) == 0) { // Checking for move_right_stop
+        if (strcmp(direction, gameControls[4]) == 0) { // Checking for move_right_stop
             *(character->velocityX) = 0;
+            move_right_released = 1;
             
         }
 
@@ -327,7 +331,4 @@ void horizontalAcceleration(Character *character, int directionBool) {
             *(character->velocityX) = *(character->velocityX) - (X_ACCELERATION * DELTATIME);
         }
     }
-
-    printf("%lf", *(character->velocityX));
-
 }

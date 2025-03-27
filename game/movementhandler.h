@@ -25,6 +25,8 @@ extern int RVALID;
 extern uint8_t byte1, byte2, byte3;
 extern const char* gameControls[];
 
+extern int move_right_released;
+extern int move_left_released;
 
 typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD} CharacterState;
 // Define character structure
