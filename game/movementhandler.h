@@ -47,6 +47,7 @@ typedef struct Character{
     int* health;
     int width;
     int height;
+    int numJumps;
 } Character;
 
 double abs_double(double value);
@@ -59,10 +60,6 @@ void initializeCharacter(Character *character, int x, int y, int *idleCharAsset,
 void moveCharacter(Character *character, char* direction, int* distance_travelled);
 
 void drawCharacter(Character *character);
-
-void gravityCharacter(Character *character);
-
-void airdragCharacter(Character *character);
 
 void resolveCollision_CharacterObject(Character *a, GameObject *b);
 

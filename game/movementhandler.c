@@ -122,8 +122,6 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         // gravityCharacter(character);
         // airdragCharacter(character);
 
-        printf("HEY\n");
-
         // Saving Prevstate
         character->prevState = character->state;
         
@@ -144,10 +142,11 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
             *distance_travelled += *character->velocityX;
 
         }
-        if (strcmp(direction, gameControls[2]) == 0) { // Checking for move_jump
+        if ((strcmp(direction, gameControls[2]) == 0) && (character->numJumps < 2)) { // Checking for move_jump
             character->state = JUMPING;
             *(character->velocityY) = -3.0;
             character->isGroundedBool = 0;
+            character->numJumps++;
             
         }
         if (strcmp(direction, gameControls[3]) == 0) { // Checking for move_left_stop
@@ -185,6 +184,9 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         *(character->velocityY) = *(character->velocityY) + (GRAVITY * DELTATIME);
         // Update to position with current velocity 
         *(character->y) = *(character->y) + *(character->velocityY);
+    }
+    else {
+        character->numJumps = 0;
     }
 
     // Must call after we check isGroundedBool == 0.
@@ -285,26 +287,6 @@ void drawCharacter(Character *character){
 
 
 }
-
-void gravityCharacter(Character *character) {
-    // If grounded stop.
-    *(character->velocityY) += GRAVITY * DELTATIME;
-}
-
-void airdragCharacter(Character *character) {
-    // if ((*(character->velocityX) + AIRDRAG * DELTATIME) >= 0) {
-    //     *(character->velocityX) += AIRDRAG * DELTATIME;
-    // }
-    // else {
-
-    // }
-}
-
-void jumpCharacter(Character *character) {
-
-
-}
-
 
 void horizontalAcceleration(Character *character, int directionBool) {
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
