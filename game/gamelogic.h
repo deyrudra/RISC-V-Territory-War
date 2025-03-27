@@ -7,16 +7,14 @@
 #include <stdbool.h>
 #include "renderhandler.h"
 #include "platformhandler.h"
+#include "backgroundhandler.h"
 
 #define NUM_CHARACTERS_PER_TEAM 3
 #define DISPLACEMENT_LIMIT 120
 
 // Global Game Objects
-extern GameObject* backgroundObj;
 extern GameObject* mainMenuTitleObj;
 extern GameObject* platformObj;
-extern GameObject* skyObj;
-extern GameObject* groundObj;
 extern GameObject* moveOrStayBannerObj;
 extern GameObject* grenadeOrStayBannerObj;
 extern GameObject* movementControlBannerObj;

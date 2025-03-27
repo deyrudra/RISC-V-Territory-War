@@ -1,10 +1,8 @@
 // gamelogic.c
 #include "gamelogic.h"
 
-GameObject* backgroundObj;
 GameObject* mainMenuTitleObj;
 GameObject* platformObj;
-GameObject* skyObj;
 GameObject* moveOrStayBannerObj;
 GameObject* grenadeOrStayBannerObj;
 GameObject* movementControlBannerObj;
@@ -38,20 +36,18 @@ void startGame() {
     poll_start_input();
     game_state_ptr->game_running = true;
 
+    // Delete the memory taken up for the menu background.
+    destroyBackground(&menuBackground);
+
     // Render out title screen
     renderOut(mainMenuTitleObj);
 
 
     // Render in initial game map, players, and objects in layers
 
-    // Layer 1 background
-    for (int ypos = 0; ypos < SCREEN_HEIGHT - 40; ypos += 40) {
-    for (int xpos = 0; xpos < SCREEN_WIDTH; xpos += 40) {
-        skyObj->x = &xpos;
-        skyObj->y = &ypos;
-        renderIn(skyObj);
-    }
-    }
+    initializeBackground(&skyBackground, &sky, SKY_WIDTH, SKY_HEIGHT);
+    placeBackground(&skyBackground);
+
 
     // Layer 2 map objects and banners
 
