@@ -16,6 +16,7 @@
 #include "inputhandler.h"
 #include "loadassets.h"
 #include "platformhandler.h"
+#include "renderhandler.h"
 
 
 // PS/2 Keyboard related variables
@@ -48,6 +49,7 @@ typedef struct Character{
     int width;
     int height;
     int numJumps;
+    RenderView characterView;
 } Character;
 
 double abs_double(double value);

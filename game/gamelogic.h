@@ -8,6 +8,7 @@
 #include "renderhandler.h"
 #include "platformhandler.h"
 #include "backgroundhandler.h"
+#include <stdio.h>
 
 #define NUM_CHARACTERS_PER_TEAM 3
 #define DISPLACEMENT_LIMIT 100
