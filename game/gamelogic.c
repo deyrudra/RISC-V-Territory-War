@@ -112,7 +112,7 @@ void handle_team_turn() {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj);
             int distance_travelled = 0;
-            while (distance_travelled < 200) {
+            while (distance_travelled < DISPLACEMENT_LIMIT) {
                 char* control = single_poll_input();
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
                             &distance_travelled);

@@ -9,6 +9,7 @@
 #include "platformhandler.h"
 
 #define NUM_CHARACTERS_PER_TEAM 3
+#define DISPLACEMENT_LIMIT 120
 
 // Global Game Objects
 extern GameObject* backgroundObj;
