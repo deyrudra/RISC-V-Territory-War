@@ -28,7 +28,6 @@ void renderIn(GameObject *obj) {
         for (int x_pix = 0; x_pix < obj->width; x_pix++) {
             if (((*obj->x + x_pix) > SCREEN_WIDTH) || ((*obj->x + x_pix) < 0) ){
                 if (currentRender == LEFTVIEW) {
-                    printf("LEFTVIEW\n");
                 }
                 continue;
             }
