@@ -131,7 +131,6 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         // Setting Character States (for assets) based on movement input.
         if (strcmp(direction, gameControls[0]) == 0) { // Checking for move_left
             character->state = LEFTMOVEMENT;
-            // *(character->velocityX) = -3.0;
             horizontalAcceleration(character, 0);
             *(character->x) = *(character->x) + *(character->velocityX);
             *distance_travelled += *character->velocityX;
@@ -139,61 +138,59 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         }
         else if (strcmp(direction, gameControls[1]) == 0) { // Checking for move_right
             character->state = RIGHTMOVEMENT;
-            // *(character->velocityX) = 3.0;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
             *distance_travelled += *character->velocityX;
         }
         else if (strcmp(direction, gameControls[2]) == 0) { // Checking for move_jump
-            printf("HEY %s", direction);
             character->state = JUMPING;
-
-
-            // *(character->velocityY) = 10.0;
+            *(character->velocityY) = -3.0;
+            character->isGroundedBool = 0;
             
         }
         else if (strcmp(direction, gameControls[3]) == 0) { // Checking for move_left_stop
-            character->state = IDLE;
             *(character->velocityX) = 0;
             
         }
         else if (strcmp(direction, gameControls[4]) == 0) { // Checking for move_right_stop
-            character->state = IDLE;
             *(character->velocityX) = 0;
             
         }
 
-
-
-        // Setting Character States based on Velocity (for idle asset)
-        // if (*(character->velocityX) == 0) {
-        //     character->state = IDLE;
-        // }
-        // if (*(character->velocityY) != 0) {
-        //     character->state = JUMPING;
-        // }
-
+        
     }
 
-    // Must calls
+    // Setting Character States based on Velocity (for idle asset)
+    if ((((int) *(character->velocityX) == 0) && ((int) *(character->velocityY) == 0))) {
+        character->state = IDLE;
+    }
+
+    if ((int) *(character->velocityY) != 0) {
+        if (character->isGroundedBool == 1) {
+            *(character->velocityY) = 0;
+            character->state = IDLE;
+        }
+        else {
+            character->state = JUMPING;
+        }
+    }
 
     // Y-Direction Logic (Gravity Affect on y-velocity, isGrounded poll, y-direction update)
-    
-    // isGrounded poll
-    checkGrounded(character);
-
-    // Gravity Affect on Y-Velocity
-    if (character->isGroundedBool == 0) {
+    if (character->isGroundedBool == 0) { // Gravity Affect on Y-Velocity
         // Update to velocity with constant acceleration
         *(character->velocityY) = *(character->velocityY) + (GRAVITY * DELTATIME);
         // Update to position with current velocity 
         *(character->y) = *(character->y) + *(character->velocityY);
-
     }
 
+    // Must call after we check isGroundedBool == 0.
+    checkGrounded(character); // isGrounded poll
 }
 
 void checkGrounded(Character *character) {
+    if (character == NULL) {
+        printf("Character does not exist...\n");
+    }
     int right_char = *(character->x) + character->width;
     int left_char = *(character->x);
     int top_char = *(character->y);
@@ -214,10 +211,11 @@ void checkGrounded(Character *character) {
 
         // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_char, bottom_char, right_char, left_char);
         // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_plat, bottom_plat, right_plat, left_plat);
-        if ((bottom_char >= top_plat) && (top_char <= bottom_plat)) { // Character is between the platform
-            if ((right_char <= right_plat) && (left_char >= left_plat)) {
+        if ((bottom_char >= top_plat) && (bottom_char <= bottom_plat)) { // Character is between the platform
+            if ((left_char <= right_plat) && (right_char >= left_plat)) {
                 character->isGroundedBool = 1;
-                character->velocityY = 0;
+                *(character->velocityY) = 0.0;
+                *(character->y) = top_plat - character->height;
                 return;     
             }
         }
