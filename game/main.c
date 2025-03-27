@@ -59,6 +59,17 @@ int main(void) {
   grenadeOrStayBannerObj->prevPixelData = &grenadeOrStayBannerPrevData;
   grenadeOrStayBannerObj->isGround = 0;
 
+  movementControlBannerObj = (GameObject*)malloc(sizeof(GameObject));
+  int movementControlBannerPrevData[BANNER_HEIGHT][BANNER_WIDTH];
+  movementControlBannerObj->asset = &movementcontrolbanner;
+  movementControlBannerObj->x = &(int){0};  // casting to addr since x and y as ptrs
+  movementControlBannerObj->y = &(int){SCREEN_HEIGHT - BANNER_HEIGHT};   
+  movementControlBannerObj->collidable = &(int){0};
+  movementControlBannerObj->height = BANNER_HEIGHT;
+  movementControlBannerObj->width = BANNER_WIDTH;
+  movementControlBannerObj->prevPixelData = &movementControlBannerPrevData;
+  movementControlBannerObj->isGround = 0;
+
 
   // game title screen
   mainMenuTitleObj = (GameObject*)malloc(sizeof(GameObject));

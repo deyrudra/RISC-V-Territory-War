@@ -1,12 +1,4 @@
 .vscode/settings.json
 .vscode/launch.json
 .vscode/c_cpp_properties.json
-game/inputhandler.c.o
-game/loadassets.c.o
-game/main.c.o
-game/movementhandler.c.o
-game/objecthandler.c.o
-
-
-
-
+game/*.o

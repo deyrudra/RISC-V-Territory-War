@@ -126,12 +126,13 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         character->prevState = character->state;
         
         // Setting Character States (for assets) based on movement input.
+        //Move left released 1 means released while 0 means it is being pressed (this is for the moving jump where we need sense of both controls at same time)
         if ((strcmp(direction, gameControls[0]) == 0) || (move_left_released == 0)) { // Checking for move_left
-            move_left_released = 0;
-            character->state = LEFTMOVEMENT;
-            horizontalAcceleration(character, 0);
-            *(character->x) = *(character->x) + *(character->velocityX);
-            *distance_travelled += *character->velocityX;
+            move_left_released = 0; // tells us key is still being pressed in case next control is a jump
+            character->state = LEFTMOVEMENT; //update state for drawing the correct asset 
+            horizontalAcceleration(character, 0); //update the character's velocity
+            *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
+            *distance_travelled += *character->velocityX; //update dist travelled for movement limit
 
         }
         if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
@@ -168,6 +169,7 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
         character->state = IDLE;
     }
 
+    // If character is jumping, as soon as we detect that they are grounded set their y velocity to 0 and update asset
     if ((int) *(character->velocityY) != 0) {
         if (character->isGroundedBool == 1) {
             *(character->velocityY) = 0;
@@ -216,8 +218,10 @@ void checkGrounded(Character *character) {
         left_plat = boxNode->x1;
 
         // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_char, bottom_char, right_char, left_char);
-        // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_plat, bottom_plat, right_plat, left_plat);
-        if ((bottom_char >= top_plat) && (bottom_char <= bottom_plat)) { // Character is between the platform
+        // printf("Top: %d, Bottom: %d, Right: %d, Left: %d\n", top_plat, bottom_plat, right_plat, left_plat);'
+
+        // Character is between the platform, we check this b/c acceleration logic may skip pixels as it is double math
+        if ((bottom_char >= top_plat) && (bottom_char <= bottom_plat)) { 
             if ((left_char <= right_plat) && (right_char >= left_plat)) {
                 character->isGroundedBool = 1;
                 *(character->velocityY) = 0.0;
@@ -252,7 +256,49 @@ void resolveCollision_CharacterObject(Character *a, GameObject *b) {
     else *(a->y) += 5;
 }
 
+void removeCharacter(Character *character){
 
+    //render out character based on current state
+    if (character->prevState == IDLE) {
+        renderOut(character->idleCharacter);
+    }
+    else if (character->prevState == LEFTMOVEMENT) {
+        renderOut(character->walkLeftCharacter);
+    }
+    else if (character->prevState == RIGHTMOVEMENT) {
+        renderOut(character->walkRightCharacter);
+    }
+    else if (character->prevState == JUMPING) {
+        renderOut(character->jumpingCharacter);
+    }
+    else{
+        printf("Unknown state\n");
+    }
+}
+
+void destroyCharacter(Character *character){
+    if (character == NULL) return;
+    removeCharacter(character);
+
+
+
+    free(character->idleCharacter->prevPixelData);
+    free(character->walkLeftCharacter->prevPixelData);
+    free(character->walkRightCharacter->prevPixelData);
+    free(character->jumpingCharacter->prevPixelData);
+
+    //uncomment when we add these states 
+    // free(character->leftBootCharacter->prevPixelData);
+    // free(character->rightBootCharacter->prevPixelData);
+    // free(character->deadCharacter->prevPixelData);
+
+    if (character->x != NULL) free(character->x);
+    if (character->y != NULL) free(character->y);
+    if (character->velocityX != NULL) free(character->velocityX);
+    if (character->velocityY != NULL) free(character->velocityY);
+    if (character->collidable != NULL) free(character->collidable);
+    if (character->health != NULL) free(character->health);
+}
 
 void drawCharacter(Character *character){
     // If character state didn't change, then don't do nothing.
@@ -291,6 +337,7 @@ void drawCharacter(Character *character){
 void horizontalAcceleration(Character *character, int directionBool) {
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
     if (directionBool == 1) {
+        // velocity is bounded by 1 m/s and 4m/s and we update velocity by adding acceleration*dt
         if (*(character->velocityX) > 4) {
             *(character->velocityX) = 4;
         }

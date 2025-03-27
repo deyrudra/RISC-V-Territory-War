@@ -5,6 +5,7 @@ GameObject* mainMenuTitleObj;
 GameObject* platformObj;
 GameObject* moveOrStayBannerObj;
 GameObject* grenadeOrStayBannerObj;
+GameObject* movementControlBannerObj;
 GameObject* groundObj;
 
 Character player_a0;
@@ -56,8 +57,6 @@ void startGame() {
     initializePlatform(&platform_ground, &ground, 0, SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT, GROUND_WIDTH, GROUND_HEIGHT);
     placePlatform(&platform_ground);
    
-    renderIn(moveOrStayBannerObj);
-
     // Layer 3 characters
     drawCharacter(&player_a0);
     drawCharacter(&player_b0);
@@ -74,6 +73,7 @@ void handle_team_turn() {
 
     // Team A's Turn
     if (game_state_ptr->team_turn == 'a') {
+        renderIn(moveOrStayBannerObj);
         printf("Team A's Turn\n");
         printf("Character %d's turn: Press 1 to move or 2 to stay\n",
                game_state_ptr->character_turn_team_a);
@@ -106,6 +106,7 @@ void handle_team_turn() {
 
         if (!end_turn) {
             // Input handler logic for moving controls
+            renderIn(movementControlBannerObj);
             int distance_travelled = 0;
             while (distance_travelled < 200) {
                 char* control = single_poll_input();

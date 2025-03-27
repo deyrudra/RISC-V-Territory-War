@@ -61,6 +61,10 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
 
 void drawCharacter(Character *character);
 
+void destroyCharacter(Character *character);
+
+void removeCharacter(Character *character);
+
 void resolveCollision_CharacterObject(Character *a, GameObject *b);
 
 int checkCollision_CharacterObject(Character *a, GameObject *b);
