@@ -7,6 +7,7 @@
 #include "objecthandler.h"
 #include "gamelogic.h"
 #include "renderhandler.h"
+#include "backgroundhandler.h"
 
 // Screen Functions
 
@@ -32,26 +33,6 @@ int main(void) {
   clear_screen();  // pixel_buffer_start points to the pixel buffer
 
   initializeGame();
-
-  // 40x40 brick wall,
-  backgroundObj = (GameObject*)malloc(sizeof(GameObject));
-  int backgroundPrevData[BACKGROUND_HEIGHT][BACKGROUND_WIDTH];
-  backgroundObj->asset = &background;
-  backgroundObj->collidable = &(int){0};
-  backgroundObj->height = BACKGROUND_HEIGHT;
-  backgroundObj->width = BACKGROUND_WIDTH;
-  backgroundObj->prevPixelData = &backgroundPrevData;
-  backgroundObj->isGround = 0;
-
-  // 40x40 sky block
-  skyObj = (GameObject*)malloc(sizeof(GameObject));
-  int skyPrevData[SKY_HEIGHT][SKY_WIDTH];
-  skyObj->asset = &sky;
-  skyObj->collidable = &(int){0};
-  skyObj->height = SKY_HEIGHT;
-  skyObj->width = SKY_WIDTH;
-  skyObj->prevPixelData = &skyPrevData;
-  skyObj->isGround = 0;
 
   // 320 x 40 move or stay banner
   moveOrStayBannerObj = (GameObject*)malloc(sizeof(GameObject));
@@ -91,22 +72,14 @@ int main(void) {
   mainMenuTitleObj->prevPixelData = &mainMenuTitlePrevData;  // prev data for keeping track of background
   mainMenuTitleObj->isGround = 0;
 
-  // pass in assets and prev backgrounds
-
 
   //----- RENDER IN START SCREEN AND INITIALIZE GAME
 
-  // Rendering Background
-  for (int ypos = 0; ypos < SCREEN_HEIGHT; ypos += 40) {
-    for (int xpos = 0; xpos < SCREEN_WIDTH; xpos += 40) {
-      backgroundObj->x = &xpos;
-      backgroundObj->y = &ypos;
-      renderIn(backgroundObj);
-    }
-  }
-
+  initializeBackground(&menuBackground, &background, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+  placeBackground(&menuBackground);
+  
   // Rendering Main Menu Title
-  renderIn(mainMenuTitleObj);  
+  renderIn(mainMenuTitleObj);
 
   startGame();
 
