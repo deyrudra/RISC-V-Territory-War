@@ -57,7 +57,7 @@ double abs_double(double value);
 void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset);
 
 
-void moveCharacter(Character *character, char* direction, int* distance_travelled);
+void moveCharacter(Character *character, char* direction, int* displacement);
 
 void drawCharacter(Character *character);
 

@@ -112,7 +112,7 @@ void initializeCharacter(Character *character, int x, int y, int *idleCharAsset,
 }
 
 // Function to handle character movement
-void moveCharacter(Character *character, char* direction, int* distance_travelled){
+void moveCharacter(Character *character, char* direction, int* displacement){
     if (character == NULL) {
         printf("Character does not exist...\n");
     }
@@ -132,7 +132,8 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
             character->state = LEFTMOVEMENT; //update state for drawing the correct asset 
             horizontalAcceleration(character, 0); //update the character's velocity
             *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
-            *distance_travelled += *character->velocityX; //update dist travelled for movement limit
+            *displacement += *character->velocityX; //update dist travelled for movement limit
+
 
         }
         if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
@@ -140,7 +141,7 @@ void moveCharacter(Character *character, char* direction, int* distance_travelle
             character->state = RIGHTMOVEMENT;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
-            *distance_travelled += *character->velocityX;
+            *displacement += *character->velocityX; //update dist travelled for movement limit
 
         }
         if ((strcmp(direction, gameControls[2]) == 0) && (character->numJumps < 2)) { // Checking for move_jump

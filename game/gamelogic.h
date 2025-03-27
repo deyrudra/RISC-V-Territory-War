@@ -10,7 +10,8 @@
 #include "backgroundhandler.h"
 
 #define NUM_CHARACTERS_PER_TEAM 3
-#define DISPLACEMENT_LIMIT 120
+#define DISPLACEMENT_LIMIT 100
+#define NUM_DISPLACEMENT_BAR_PARTITIONS 25
 
 // Global Game Objects
 extern GameObject* mainMenuTitleObj;
@@ -44,5 +45,7 @@ void initializeGame();
 int getCharacterIndexForNextTurn(struct Character* team_array[NUM_CHARACTERS_PER_TEAM], 
                                 int current_character_turn_index);
 char checkWinCondition();
+void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y);
+// void drawBar(GameObject** bar_obj);
 
 #endif // GAMELOGIC_H

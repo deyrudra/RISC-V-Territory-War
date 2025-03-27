@@ -8,6 +8,8 @@ GameObject* grenadeOrStayBannerObj;
 GameObject* movementControlBannerObj;
 GameObject* groundObj;
 
+GameObject** displacementBarObj;
+
 Character player_a0;
 Character player_b0;
 
@@ -19,7 +21,7 @@ Character* team_a[NUM_CHARACTERS_PER_TEAM];
 Character* team_b[NUM_CHARACTERS_PER_TEAM];
 
 void startGame() {
-    initializeCharacter(&player_a0, 20 + PLAYER_WIDTH,
+    initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
                         &rightmovement, &jump);
 
@@ -107,16 +109,51 @@ void handle_team_turn() {
         if (!end_turn) {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj);
-            int distance_travelled = 0;
-            while (distance_travelled < DISPLACEMENT_LIMIT) {
+            initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
+            
+            int displacement = 0;
+            int lastPartitionRendered = 0;
+            while (displacement < DISPLACEMENT_LIMIT) {
+                bool flipped = false;
                 char* control = single_poll_input();
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
-                            &distance_travelled);
+                            &displacement);
                 drawCharacter(team_a[game_state_ptr->character_turn_team_a]);
+
+                if(displacement < 0){
+                    displacement *=-1;
+                    flipped = true;
+                }
+
+                double ratio = (double)displacement / DISPLACEMENT_LIMIT;
+
+                if(ratio > 1) ratio = 1;
+
+                int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
+
+                if(num_partitions_filled > lastPartitionRendered){
+                    for(int i = lastPartitionRendered; i < num_partitions_filled; i++){
+                        renderIn(displacementBarObj[i]);
+                    }
+
+                } else if(num_partitions_filled < lastPartitionRendered){
+                    for(int i = lastPartitionRendered; i >= num_partitions_filled; i--){
+                        renderOut(displacementBarObj[i]);
+                    }
+                }
+
+                lastPartitionRendered = num_partitions_filled;
+
+                // Restore negative displacement
+                if(flipped){
+                    displacement*=-1;
+                }
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 pixel_buffer_start = *(buffer_register + 1);  // new back buffer
             }
+
+            //Should I render out green bar and prev banner or is it ok to just draw on top??
 
             //----------Stage 2 of turn, output bar for weapon or stay
             printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->character_turn_team_a);
@@ -305,3 +342,31 @@ void initializeGame() {
     }
   }
   
+  void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y){
+
+    *barObj = malloc((num_partitions) * sizeof(GameObject*));
+
+
+    for(int i = 0; i < num_partitions; i++){
+        (*barObj)[i] = malloc(sizeof(GameObject));
+
+        (*barObj)[i]->asset = asset;
+        (*barObj)[i]->height = height;
+        (*barObj)[i]->width = width;
+        (*barObj)[i]->prevPixelData = malloc(width * height * sizeof(int));
+        (*barObj)[i]->x = malloc(sizeof(int));
+        (*barObj)[i]->y = malloc(sizeof(int));
+        (*barObj)[i]->velocityX = malloc(sizeof(double));
+        (*barObj)[i]->velocityY = malloc(sizeof(double));
+        (*barObj)[i]->collidable = malloc(sizeof(int));
+
+
+        //Set values (decide how to deal with setting velocity and x and y for moving health bars)
+        *((*barObj)[i]->x) = start_x + i*width;
+        *((*barObj)[i]->y) = start_y;
+        *((*barObj)[i]->velocityX) = 0;
+        *((*barObj)[i]->velocityY) = 0;
+        *((*barObj)[i]->collidable) = 0;
+    }
+
+};
