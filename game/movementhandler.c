@@ -32,6 +32,16 @@ void initializeCharacter(Character *character, int x, int y, int *idleCharAsset,
     character->isGroundedBool = 0;
     character->width = PLAYER_WIDTH;
     character->height = PLAYER_HEIGHT;
+
+    if (x < SCREEN_WIDTH) {
+        character->characterView = LEFTVIEW;
+    }
+    else if ((SCREEN_WIDTH <= x) && (x < SCREEN_WIDTH*2)) {
+        character->characterView = MIDDLEVIEW;
+    }
+    else if (SCREEN_WIDTH*2 <= x) {
+        character->characterView = RIGHTVIEW;
+    }
             
     *(character->collidable) = 1;
     *(character->x) = x;
@@ -132,7 +142,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = LEFTMOVEMENT; //update state for drawing the correct asset 
             horizontalAcceleration(character, 0); //update the character's velocity
             *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
-            *displacement += *character->velocityX; //update dist travelled for movement limit
+            // *displacement += *character->velocityX; //update dist travelled for movement limit
 
 
         }
@@ -141,7 +151,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = RIGHTMOVEMENT;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
-            *displacement += *character->velocityX; //update dist travelled for movement limit
+            // *displacement += *character->velocityX; //update dist travelled for movement limit
 
         }
         if ((strcmp(direction, gameControls[2]) == 0) && (character->numJumps < 2)) { // Checking for move_jump
@@ -149,7 +159,6 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             *(character->velocityY) = -3.0;
             character->isGroundedBool = 0;
             character->numJumps++;
-            
         }
         if (strcmp(direction, gameControls[3]) == 0) { // Checking for move_left_stop
             *(character->velocityX) = 0;
@@ -191,6 +200,18 @@ void moveCharacter(Character *character, char* direction, int* displacement){
     else {
         character->numJumps = 0;
     }
+
+    // Checking which screen the character is on.
+    if (*(character->x) < SCREEN_WIDTH) {
+        character->characterView = LEFTVIEW;
+    }
+    else if ((SCREEN_WIDTH <= *(character->x)) && (*(character->x) < SCREEN_WIDTH*2)) {
+        character->characterView = MIDDLEVIEW;
+    }
+    else if (SCREEN_WIDTH*2 <= *(character->x)) {
+        character->characterView = RIGHTVIEW;
+    }
+
 
     // Must call after we check isGroundedBool == 0.
     checkGrounded(character); // isGrounded poll

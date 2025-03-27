@@ -6,8 +6,8 @@ Background skyBackground;
 
 // Function prototypes
 void initializeBackground(Background *background, int *asset, int width, int height) {
-    background->cols = (SCREEN_WIDTH / width) + (SCREEN_WIDTH % width != 0); // Ceiling division
-    background->rows = (SCREEN_HEIGHT / height) + (SCREEN_HEIGHT % height != 0); // Ceiling division
+    background->cols = (WORLD_WIDTH / width) + (WORLD_WIDTH % width != 0); // Ceiling division
+    background->rows = (WORLD_HEIGHT / height) + (WORLD_HEIGHT % height != 0); // Ceiling division
     
     background->backgroundPrevData = malloc(sizeof(int) * width * height);
     background->x = malloc(sizeof(int));

@@ -16,7 +16,8 @@ short int * LEFT[SCREEN_HEIGHT][SCREEN_WIDTH];
 short int * MIDDLE[SCREEN_HEIGHT][SCREEN_WIDTH];
 short int * RIGHT[SCREEN_HEIGHT][SCREEN_WIDTH];
 
-RenderView currentRender = LEFTVIEW;
+RenderView currentView = LEFTVIEW;
+RenderView prevView = LEFTVIEW;
 
 void initializeWorld() {
   for (int y = 0; y < SCREEN_HEIGHT; y++) {

@@ -24,7 +24,9 @@ extern short int * RIGHT[SCREEN_HEIGHT][SCREEN_WIDTH];
 
 typedef enum {LEFTVIEW, MIDDLEVIEW, RIGHTVIEW} RenderView;
 
-extern RenderView currentRender;
+extern RenderView currentView;
+extern RenderView prevView;
+
 
 void initializeWorld();
 void renderLeft();

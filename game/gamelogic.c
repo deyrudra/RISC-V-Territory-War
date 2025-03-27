@@ -77,8 +77,7 @@ void handle_team_turn() {
     if (game_state_ptr->team_turn == 'a') {
         renderIn(moveOrStayBannerObj);
         printf("Team A's Turn\n");
-        printf("Character %d's turn: Press 1 to move or 2 to stay\n",
-               game_state_ptr->character_turn_team_a);
+        printf("Character %d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->character_turn_team_a);
 
         //-----------------------Stage 1 of turn, draw bottom bar here
         while (1) {
@@ -119,6 +118,7 @@ void handle_team_turn() {
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
                             &displacement);
                 drawCharacter(team_a[game_state_ptr->character_turn_team_a]);
+                currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
 
                 if(displacement < 0){
                     displacement *=-1;
@@ -150,7 +150,52 @@ void handle_team_turn() {
                 }
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-                pixel_buffer_start = *(buffer_register + 1);  // new back buffer
+                
+                if (currentView == LEFTVIEW) {
+                    if (prevView == LEFTVIEW) {
+                        // Do Nothing
+                    }
+                    else if (prevView == MIDDLEVIEW) {
+                        saveMiddle();
+                        renderLeft();
+                    }
+                    else if (prevView == RIGHTVIEW) {
+                        saveRight();
+                        renderLeft();
+                    }
+                    
+                }
+                else if (currentView == MIDDLEVIEW) {
+                    if (prevView == LEFTVIEW) {
+                        saveLeft();
+                        renderMiddle();
+                    }
+                    else if (prevView == MIDDLEVIEW) {
+                        // Do Nothing
+                    }
+                    else if (prevView == RIGHTVIEW) {
+                        saveRight();
+                        renderMiddle();
+                    }
+                    
+                }
+                else if (currentView == RIGHTVIEW) {
+                    if (prevView == LEFTVIEW) {
+                        saveLeft();
+                        renderRight();
+                    }
+                    else if (prevView == MIDDLEVIEW) {
+                        saveMiddle();
+                        renderRight();
+                    }
+                    else if (prevView == RIGHTVIEW) {
+                        // Do Nothing
+                    }
+                    
+                }
+                prevView = currentView;
+
+
             }
 
             //Should I render out green bar and prev banner or is it ok to just draw on top??
@@ -191,8 +236,7 @@ void handle_team_turn() {
         }
 
         // END TURN LOGIC
-        game_state_ptr->character_turn_team_a = getCharacterIndexForNextTurn(
-            team_a, game_state_ptr->character_turn_team_a);
+        game_state_ptr->character_turn_team_a = getCharacterIndexForNextTurn(team_a, game_state_ptr->character_turn_team_a);
         game_state_ptr->team_turn = 'b';
 
         char game_result = checkWinCondition();
@@ -237,12 +281,14 @@ void handle_team_turn() {
                 moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
                             &distance_travelled);
                 drawCharacter(team_b[game_state_ptr->character_turn_team_b]);
-
+                currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 pixel_buffer_start = *(buffer_register + 1);  // new back buffer
                     
                 printf("after vsync\n");
                 distance_travelled++;
+
+
             }
 
             //----------Stage 2 of turn, output bar for weapon or stay

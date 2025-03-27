@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "movementhandler.h": "c",
-        "backgroundhandler.h": "c"
+        "backgroundhandler.h": "c",
+        "renderhandler.h": "c"
     }
 }

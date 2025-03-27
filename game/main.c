@@ -77,11 +77,9 @@ int main(void) {
   renderIn(mainMenuTitleObj);
 
   // saveLeft();
-
-  // renderRight();
-
-  // renderLeft();
-
+  // saveMiddle();
+  // saveRight();
+  // renderMiddle();
   startGame();
 
 
