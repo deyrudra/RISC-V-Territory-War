@@ -23,6 +23,8 @@ extern GameObject* moveOrStayBannerObj;
 extern GameObject* grenadeOrStayBannerObj;
 extern GameObject* movementControlBannerObj;
 
+
+
 // Game state structure
 typedef struct GameState {
     char team_turn; // 'a' for team A, 'b' for team B

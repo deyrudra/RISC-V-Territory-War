@@ -137,7 +137,7 @@ void renderOut(GameObject *obj) {
                 continue;
             }
             for (int x_pix = 0; x_pix < obj->width; x_pix++) {
-                int prevPixel = obj->prevPixelData[x_pix + y_pix * obj->width];
+                short int prevPixel = obj->prevPixelData[x_pix + y_pix * obj->width];
                 if (prevPixel != -1) {
                     // Rendering new pixels onto buffer and onto other views.
                     if (currentView == LEFTVIEW) {
@@ -227,8 +227,6 @@ int checkCollision(GameObject *a, GameObject *b) {
             *(a->y) + a->height > *(b->y));
 }
 
-
-
 void resolveCollision(GameObject *a, GameObject *b) {
     if (*(a->x) < *(b->x)) *(a->x) -= 5;
     else *(a->x) += 5;
@@ -237,5 +235,38 @@ void resolveCollision(GameObject *a, GameObject *b) {
     else *(a->y) += 5;
 }
 
+void initializeGeneralObject(GameObject **gameObject, short int *asset, int collidable, int x, int y, int width, int height) {
+    (*gameObject) = (GameObject*)malloc(sizeof(GameObject));
+    short int* gameObjectPrevData = malloc(sizeof(short int) * width * height);
 
+    (*gameObject)->x = malloc(sizeof(int));
+    (*gameObject)->y = malloc(sizeof(int));
+
+    (*gameObject)->velocityX = malloc(sizeof(double));
+    (*gameObject)->velocityY = malloc(sizeof(double));
+    (*gameObject)->collidable = malloc(sizeof(int));
+    (*gameObject)->width = width;
+    (*gameObject)->height = height;
+    (*gameObject)->asset = asset;
+    (*gameObject)->prevPixelData = gameObjectPrevData;
+
+    *((*gameObject)->collidable) = collidable;
+    *((*gameObject)->x) = x;
+    *((*gameObject)->y) = y;
+    *((*gameObject)->velocityX) = 0;
+    *((*gameObject)->velocityY) = 0;
+
+}
+
+void destroyGeneralObject(GameObject *obj) {
+    if (obj == NULL) return;
+
+    free(obj->x);
+    free(obj->y);
+    free(obj->velocityX);
+    free(obj->velocityY);
+    free(obj->collidable);
+    free(obj->prevPixelData);
+    free(obj); 
+}
 

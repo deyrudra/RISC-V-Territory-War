@@ -17,9 +17,42 @@ Character player_b0;
 Platform platform1;
 Platform platform_ground;
 
+// Background objects, assets, and platforms
+GameObject* ballAsset;
+GameObject* coolerAsset;
+GameObject* groundAsset;
+GameObject* lifeguardAsset;
+GameObject* netAsset1;
+GameObject* netAsset2;
+GameObject* netAsset3;
+GameObject* sandcastleAsset;
+GameObject* tressureAsset;
+GameObject* umbrellaAsset;
+
+Platform ballPlatform;
+Platform chestPlatform;
+Platform coolerPlatform;
+Platform groundPlatform1;
+Platform groundPlatform2;
+Platform groundPlatform3;
+Platform groundPlatform4;
+Platform lifeguardPlatform1;
+Platform lifeguardPlatform2;
+Platform lifeguardPlatform3;
+Platform lifeguardPlatform4;
+Platform lifeguardPlatform5;
+Platform lifeguardPlatform6;
+Platform netPlatform;
+Platform umbrellaPlatform;
+
+
+
+
 GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
 Character* team_b[NUM_CHARACTERS_PER_TEAM];
+
+
 
 void startGame() {
     initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
@@ -48,19 +81,96 @@ void startGame() {
 
     // Render in initial game map, players, and objects in layers
 
+
+    // Layer 1 Background Data
+    // Initializations and Renderings of background objects, assets, and platforms
     initializeBackground(&skyBackground, &sky, SKY_WIDTH, SKY_HEIGHT);
     placeBackground(&skyBackground);
+    destroyBackground(&skyBackground);
+
+    initializeGeneralObject(&ballAsset, &ballAsset282_39, 1, 282, 39, BALLASSET282_39_WIDTH, BALLASSET282_39_HEIGHT);
+    renderIn(ballAsset);
+    destroyGeneralObject(ballAsset);
+
+    initializeGeneralObject(&coolerAsset, &coolerAsset75_140, 1, 75, 140, COOLERASSET75_140_WIDTH, COOLERASSET75_140_HEIGHT);
+    renderIn(coolerAsset);
+    destroyGeneralObject(coolerAsset);
+
+    initializeGeneralObject(&groundAsset, &groundAsset0_173, 1, 0, 173, GROUNDASSET0_173_WIDTH, GROUNDASSET0_173_HEIGHT);
+    renderIn(groundAsset);
+    destroyGeneralObject(groundAsset);
+
+    initializeGeneralObject(&lifeguardAsset, &lifeguardAsset652_11, 1, 652, 11, LIFEGUARDASSET652_11_WIDTH, LIFEGUARDASSET652_11_HEIGHT);
+    renderIn(lifeguardAsset);
+    destroyGeneralObject(lifeguardAsset);
+
+    initializeGeneralObject(&umbrellaAsset, &umbrellaAsset137_88, 1, 137, 88, UMBRELLAASSET137_88_WIDTH, UMBRELLAASSET137_88_HEIGHT);
+    renderIn(umbrellaAsset);
+    destroyGeneralObject(umbrellaAsset);
+    
+    initializeGeneralObject(&sandcastleAsset, &sandcastleAsset774_130, 1, 774, 130, SANDCASTLEASSET774_130_WIDTH, SANDCASTLEASSET774_130_HEIGHT);
+    renderIn(sandcastleAsset);
+    destroyGeneralObject(sandcastleAsset);
+
+    initializeGeneralObject(&tressureAsset, &tressureAsset522_153, 1, 522, 153, TRESSUREASSET522_153_WIDTH, TRESSUREASSET522_153_HEIGHT);
+    renderIn(tressureAsset);
+    destroyGeneralObject(tressureAsset);
+
+    initializeGeneralObject(&netAsset1, &netAsset1_349_29, 1, 349, 29, NETASSET1_349_29_WIDTH, NETASSET1_349_29_HEIGHT);
+    renderIn(netAsset1);
+    destroyGeneralObject(netAsset1);
+
+    initializeGeneralObject(&netAsset2, &netAsset2_336_95, 1, 336, 95, NETASSET2_336_95_WIDTH, NETASSET2_336_95_HEIGHT);
+    renderIn(netAsset2);
+    destroyGeneralObject(netAsset2);
+
+    initializeGeneralObject(&netAsset3, &netAsset3_617_95, 1, 617, 95, NETASSET3_617_95_WIDTH, NETASSET3_617_95_HEIGHT);
+    renderIn(netAsset3);
+    destroyGeneralObject(netAsset3);
 
 
-    // Layer 2 map objects and banners
+    // Rendering of background objects, assets, and platforms
 
-    initializePlatform(&platform1, &platform, 100, 50, PLATFORM_WIDTH, PLATFORM_HEIGHT);
-    placePlatform(&platform1);
 
-    initializePlatform(&platform_ground, &ground, 0, SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT, GROUND_WIDTH, GROUND_HEIGHT);
-    placePlatform(&platform_ground);
+    // Layer 2 Map objects, Platforms, and banners
+    initializePlatform(&ballPlatform, &ballPlatform282_45, 282, 45, BALLPLATFORM282_45_WIDTH, BALLPLATFORM282_45_HEIGHT);
+    placePlatform(&ballPlatform);
+    initializePlatform(&chestPlatform, &chestPlatform522_153, 522, 153, CHESTPLATFORM522_153_WIDTH, CHESTPLATFORM522_153_HEIGHT);
+    placePlatform(&chestPlatform);
+    initializePlatform(&coolerPlatform, &coolerPlatform78_154, 78, 154, COOLERPLATFORM78_154_WIDTH, COOLERPLATFORM78_154_HEIGHT);
+    placePlatform(&coolerPlatform);
+    initializePlatform(&groundPlatform1, &groundPlatform1_0_173, 0, 173, GROUNDPLATFORM1_0_173_WIDTH, GROUNDPLATFORM1_0_173_HEIGHT);
+    placePlatform(&groundPlatform1);
+    initializePlatform(&groundPlatform2, &groundPlatform2_610_173, 610, 173, GROUNDPLATFORM2_610_173_WIDTH, GROUNDPLATFORM2_610_173_HEIGHT);
+    placePlatform(&groundPlatform2);
+    initializePlatform(&groundPlatform3, &groundPlatform3_316_178, 316, 178, GROUNDPLATFORM3_316_178_WIDTH, GROUNDPLATFORM3_316_178_HEIGHT);
+    placePlatform(&groundPlatform3);
+    initializePlatform(&groundPlatform4, &groundPlatform4_501_178, 501, 178, GROUNDPLATFORM4_501_178_WIDTH, GROUNDPLATFORM4_501_178_HEIGHT);
+    placePlatform(&groundPlatform4);
+    initializePlatform(&lifeguardPlatform1, &lifeguardPlatform1_650_67, 650, 67, LIFEGUARDPLATFORM1_650_67_WIDTH, LIFEGUARDPLATFORM1_650_67_HEIGHT);
+    placePlatform(&lifeguardPlatform1);
+    initializePlatform(&lifeguardPlatform2, &lifeguardPlatform2_684_79, 684, 79, LIFEGUARDPLATFORM2_684_79_WIDTH, LIFEGUARDPLATFORM2_684_79_HEIGHT);
+    placePlatform(&lifeguardPlatform2);
+    initializePlatform(&lifeguardPlatform3, &lifeguardPlatform3_684_97, 684, 97, LIFEGUARDPLATFORM3_684_97_WIDTH, LIFEGUARDPLATFORM3_684_97_HEIGHT);
+    placePlatform(&lifeguardPlatform3);
+    initializePlatform(&lifeguardPlatform4, &lifeguardPlatform4_683_115, 683, 115, LIFEGUARDPLATFORM4_683_115_WIDTH, LIFEGUARDPLATFORM4_683_115_HEIGHT);
+    placePlatform(&lifeguardPlatform4);
+    initializePlatform(&lifeguardPlatform5, &lifeguardPlatform5_682_131, 682, 131, LIFEGUARDPLATFORM5_682_131_WIDTH, LIFEGUARDPLATFORM5_682_131_HEIGHT);
+    placePlatform(&lifeguardPlatform5);
+    initializePlatform(&lifeguardPlatform6, &lifeguardPlatform6_682_150, 682, 150, LIFEGUARDPLATFORM6_682_150_WIDTH, LIFEGUARDPLATFORM6_682_150_HEIGHT);
+    placePlatform(&lifeguardPlatform6);
+    initializePlatform(&netPlatform, &netPlatform356_29, 356, 29, NETPLATFORM356_29_WIDTH, NETPLATFORM356_29_HEIGHT);
+    placePlatform(&netPlatform);
+    initializePlatform(&umbrellaPlatform, &umbrellaPlatform148_97, 148, 97, UMBRELLAPLATFORM148_97_WIDTH, UMBRELLAPLATFORM148_97_HEIGHT);
+    placePlatform(&umbrellaPlatform);
+
+    // initializePlatform(&platform1, &platform, 100, 50, PLATFORM_WIDTH, PLATFORM_HEIGHT);
+    // placePlatform(&platform1);
+
+    // initializePlatform(&platform_ground, &ground, 0, SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT, GROUND_WIDTH, GROUND_HEIGHT);
+    // placePlatform(&platform_ground);
    
-    // Layer 3 characters
+    // Layer 3 Characters
     drawCharacter(&player_a0);
     drawCharacter(&player_b0);
 
