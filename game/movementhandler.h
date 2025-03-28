@@ -17,6 +17,7 @@
 #include "loadassets.h"
 #include "platformhandler.h"
 #include "renderhandler.h"
+#include "barhandler.h"
 
 
 // PS/2 Keyboard related variables
@@ -50,6 +51,7 @@ typedef struct Character{
     int height;
     int numJumps;
     RenderView characterView;
+    //Bar* healthBar;
 } Character;
 
 double abs_double(double value);
@@ -57,7 +59,7 @@ int abs_int(int value);
 
 
 // Function prototypes
-void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset);
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset, char team);
 
 
 void moveCharacter(Character *character, char* direction, int* displacement);

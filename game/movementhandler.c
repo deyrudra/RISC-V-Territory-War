@@ -21,7 +21,7 @@ int abs_int(int value) {
     }
 }
 
-void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset) {
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset, char team) {
     // Replace all local array declarations with malloc calls
     short int* walkLeftPrevData = malloc(sizeof(short int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
     short int* walkRightPrevData = malloc(sizeof(short int) * RIGHTMOVEMENT_WIDTH * RIGHTMOVEMENT_HEIGHT);
@@ -30,6 +30,7 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     short int* leftbootPrev = malloc(sizeof(short int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
     short int* rightbootPrev = malloc(sizeof(short int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
     short int* deadPrev = malloc(sizeof(short int) * DEAD_WIDTH * DEAD_HEIGHT);
+    
     
     character->x = malloc(sizeof(int));
     character->y = malloc(sizeof(int));
@@ -41,6 +42,7 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->isGroundedBool = 0;
     character->width = PLAYER_WIDTH;
     character->height = PLAYER_HEIGHT;
+    //character->healthBar = malloc(sizeof(Bar));
 
     if (x < SCREEN_WIDTH) {
         character->characterView = LEFTVIEW;
@@ -57,7 +59,18 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     *(character->y) = y;
     *(character->velocityX) = 0;
     *(character->velocityY) = 0;
-    *(character->health) = 0;
+    *(character->health) = 100;
+
+    // if(team == 'a'){
+    //     printf("Before we init health bar a\n");
+    //     initializeBar(character->healthBar, &redhealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x, y);
+    //     printf("After we init health bar a\n");
+    // } else {
+    //     initializeBar(character->healthBar, &bluehealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x, y);
+
+    // }
+
+
     
     GameObject * idleCharacterObj = (GameObject *)malloc(sizeof(GameObject));
     character->idleCharacter = idleCharacterObj;
@@ -361,6 +374,7 @@ void drawCharacter(Character *character){
         renderIn(character->jumpingCharacter);
     }
 
+    // renderIn(character->healthBar);
 
 
 }

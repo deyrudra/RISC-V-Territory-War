@@ -6,6 +6,8 @@
 #include "objectHandler.h"
 #include "renderHandler.h"
 
+#define NUM_DISPLACEMENT_BAR_PARTITIONS 25
+#define NUM_HEALTH_BAR_PARTITIONS 10
 
 // Define Platform structure
 typedef struct Bar{
@@ -15,12 +17,15 @@ typedef struct Bar{
     int partitionWidth;
     int partitionHeight;
     int numPartitions;
+    int lastRenderedPartition;
 } Bar;
 
 
 
 // Function prototypes
-void initializeBar(Bar* bar, int *asset, int partitionWidth, int partitionHeight, int numPartitions, int x, int y);
+void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partitionHeight, int numPartitions, int x, int y);
+
+void setLastRenderedPartition(Bar* bar, int num);
 
 void resetBar(Bar* bar, int lastRenderedIdx);
 

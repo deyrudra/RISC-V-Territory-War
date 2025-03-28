@@ -14,7 +14,7 @@
 
 #define NUM_CHARACTERS_PER_TEAM 3
 #define DISPLACEMENT_LIMIT 100
-#define NUM_DISPLACEMENT_BAR_PARTITIONS 25
+
 
 // Global Game Objects
 extern GameObject* mainMenuTitleObj;

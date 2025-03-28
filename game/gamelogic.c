@@ -57,11 +57,11 @@ Character* team_b[NUM_CHARACTERS_PER_TEAM];
 void startGame() {
     initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
-                        &rightmovement, &jump);
+                        &rightmovement, &jump, 'a');
 
     initializeCharacter(&player_b0, SCREEN_WIDTH - 20 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
-                        &rightmovement, &jump);
+                        &rightmovement, &jump, 'b');
 
     initializeGame();
     
@@ -198,10 +198,12 @@ void handle_team_turn() {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj);
             //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
+            printf("Before initialize displacemetn bar\n");
+
             initializeBar(&displacementBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             
+            printf("After initialize displacemetn bar\n");
             int displacement = 0;
-            int lastPartitionRendered = 0;
             while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
@@ -226,18 +228,18 @@ void handle_team_turn() {
 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
 
-                if(num_partitions_filled > lastPartitionRendered){
-                    for(int i = lastPartitionRendered; i < num_partitions_filled; i++){
+                if(num_partitions_filled > displacementBar.lastRenderedPartition){
+                    for(int i = displacementBar.lastRenderedPartition; i < num_partitions_filled; i++){
                         renderIn(displacementBar.barObj[i]);
                     }
 
-                } else if(num_partitions_filled < lastPartitionRendered){
-                    for(int i = lastPartitionRendered; i >= num_partitions_filled; i--){
+                } else if(num_partitions_filled < displacementBar.lastRenderedPartition){
+                    for(int i = displacementBar.lastRenderedPartition; i >= num_partitions_filled; i--){
                         renderOut(displacementBar.barObj[i]);
                     }
                 }
-
-                lastPartitionRendered = num_partitions_filled;
+                
+                setLastRenderedPartition(&displacementBar, num_partitions_filled);
 
                 // Restore negative displacement
                 if(flipped){
@@ -245,6 +247,9 @@ void handle_team_turn() {
                 }
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+
+                printf("After wait for vsync\n");
+
                 
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
@@ -292,8 +297,8 @@ void handle_team_turn() {
 
             }
 
-            // printf("Last partition rendered is: %d\n", lastPartitionRendered);
-            resetBar(&displacementBar, lastPartitionRendered-1);
+            // printf("Last partition rendered is: %d\n", displacementBar.lastRenderedPartition);
+            resetBar(&displacementBar, displacementBar.lastRenderedPartition-1);
             resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
@@ -332,7 +337,6 @@ void handle_team_turn() {
             //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             
             int displacement = 0;
-            int lastPartitionRendered = 0;
             while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
@@ -357,18 +361,19 @@ void handle_team_turn() {
 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
 
-                if(num_partitions_filled > lastPartitionRendered){
-                    for(int i = lastPartitionRendered; i < num_partitions_filled; i++){
+                if(num_partitions_filled > displacementBar.lastRenderedPartition){
+                    for(int i = displacementBar.lastRenderedPartition; i < num_partitions_filled; i++){
                         renderIn(displacementBar.barObj[i]);
                     }
 
-                } else if(num_partitions_filled < lastPartitionRendered){
-                    for(int i = lastPartitionRendered; i >= num_partitions_filled; i--){
+                } else if(num_partitions_filled < displacementBar.lastRenderedPartition){
+                    for(int i = displacementBar.lastRenderedPartition; i >= num_partitions_filled; i--){
                         renderOut(displacementBar.barObj[i]);
                     }
                 }
 
-                lastPartitionRendered = num_partitions_filled;
+                setLastRenderedPartition(&displacementBar, num_partitions_filled);
+                //displacementBar.lastRenderedPartition = num_partitions_filled;
 
                 // Restore negative displacement
                 if(flipped){
@@ -424,7 +429,7 @@ void handle_team_turn() {
             }
             
 
-            resetBar(&displacementBar, lastPartitionRendered-1);
+            resetBar(&displacementBar, displacementBar.lastRenderedPartition-1);
             resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
