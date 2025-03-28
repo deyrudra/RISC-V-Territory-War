@@ -21,7 +21,7 @@ void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partition
         bar->barObj[i]->asset = asset;
         bar->barObj[i]->height = partitionHeight;
         bar->barObj[i]->width = partitionWidth;
-        bar->barObj[i]->prevPixelData = malloc(partitionWidth * partitionHeight * sizeof(int));
+        bar->barObj[i]->prevPixelData = malloc(partitionWidth * partitionHeight * sizeof(short int));
         bar->barObj[i]->x = malloc(sizeof(int));
         bar->barObj[i]->y = malloc(sizeof(int));
         bar->barObj[i]->velocityX = malloc(sizeof(double));

@@ -62,9 +62,9 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     *(character->health) = 100;
 
     if(team == 'a'){
-        initializeBar(character->healthBar, &redhealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x+3, y, NUM_HEALTH_BAR_PARTITIONS);
+        initializeBar(character->healthBar, &redhealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x+3, y-3, NUM_HEALTH_BAR_PARTITIONS);
     } else {
-        initializeBar(character->healthBar, &bluehealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x+3, y, NUM_HEALTH_BAR_PARTITIONS);
+        initializeBar(character->healthBar, &bluehealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x+3, y-3, NUM_HEALTH_BAR_PARTITIONS);
     }
 
 
@@ -402,7 +402,7 @@ void updateHealthBar(Character* character){
 
     //advanced updating of x and y positions
     *(character->healthBar->x) = *(character->x) + 3;
-    *(character->healthBar->y) = *(character->y);
+    *(character->healthBar->y) = *(character->y) - 3;
 
     for(int i = 0; i < NUM_HEALTH_BAR_PARTITIONS; i++){
         *(character->healthBar->barObj[i]->x) = *(character->healthBar->x) + i*character->healthBar->partitionWidth;
