@@ -8,7 +8,9 @@
 #include "renderhandler.h"
 #include "platformhandler.h"
 #include "backgroundhandler.h"
+#include "barhandler.h"
 #include <stdio.h>
+
 
 #define NUM_CHARACTERS_PER_TEAM 3
 #define DISPLACEMENT_LIMIT 100
@@ -46,7 +48,7 @@ void initializeGame();
 int getCharacterIndexForNextTurn(struct Character* team_array[NUM_CHARACTERS_PER_TEAM], 
                                 int current_character_turn_index);
 char checkWinCondition();
-void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y);
+//void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y);
 // void drawBar(GameObject** bar_obj);
 
 #endif // GAMELOGIC_H

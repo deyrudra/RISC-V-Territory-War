@@ -1,4 +1,3 @@
-// gamelogic.c
 #include "gamelogic.h"
 
 GameObject* mainMenuTitleObj;
@@ -8,7 +7,9 @@ GameObject* grenadeOrStayBannerObj;
 GameObject* movementControlBannerObj;
 GameObject* groundObj;
 
-GameObject** displacementBarObj;
+// GameObject** displacementBarObj;
+Bar displacementBar;
+
 
 Character player_a0;
 Character player_b0;
@@ -63,51 +64,31 @@ void startGame() {
     drawCharacter(&player_a0);
     drawCharacter(&player_b0);
 
-
-    handle_team_turn();
+    while(game_state_ptr->game_running){
+        handle_team_turn();
+    }
 }
 
 void handle_team_turn() {
     bool end_turn = false;
     volatile int* ps2_ptr = (int*)PS2_BASE;
-    char byte1 = 0, byte2 = 0, byte3 = 0;
+    byte1 = 0, byte2 = 0, byte3 = 0;
 
     // Team A's Turn
     if (game_state_ptr->team_turn == 'a') {
-        renderIn(moveOrStayBannerObj);
-        printf("Team A's Turn\n");
-        printf("Character %d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->character_turn_team_a);
 
         //-----------------------Stage 1 of turn, draw bottom bar here
-        while (1) {
-            ps2_data = *ps2_ptr;
-            RVALID = ps2_data & 0x8000;
-
-            if (RVALID) {
-                byte1 = byte2;
-                byte2 = byte3;
-                byte3 = ps2_data & 0xFF;
-            }
-
-            if (byte3 == 0x16) {  // User pressed 1
-                if (byte2 == 0xF0) {
-                    printf("You selected move\n");
-                    break;
-                }
-            } else if (byte3 == 0x1E) {  // User pressed 2
-                if (byte2 == 0xF0) {
-                    printf("You selected stay\n");
-                    end_turn = true;
-                    break;
-                }
-            }
-        }
-        byte1 = byte2 = byte3 = 0;
+        renderIn(moveOrStayBannerObj);
+        printf("Team A's Turn\n");
+        printf("Character %c%d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
+        end_turn = poll_move_or_stay_input();
+        //-----------------------------
 
         if (!end_turn) {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj);
-            initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
+            //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
+            initializeBar(&displacementBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             
             int displacement = 0;
             int lastPartitionRendered = 0;
@@ -137,12 +118,12 @@ void handle_team_turn() {
 
                 if(num_partitions_filled > lastPartitionRendered){
                     for(int i = lastPartitionRendered; i < num_partitions_filled; i++){
-                        renderIn(displacementBarObj[i]);
+                        renderIn(displacementBar.barObj[i]);
                     }
 
                 } else if(num_partitions_filled < lastPartitionRendered){
                     for(int i = lastPartitionRendered; i >= num_partitions_filled; i--){
-                        renderOut(displacementBarObj[i]);
+                        renderOut(displacementBar.barObj[i]);
                     }
                 }
 
@@ -201,37 +182,17 @@ void handle_team_turn() {
 
             }
 
-            //Should I render out green bar and prev banner or is it ok to just draw on top??
+            // printf("Last partition rendered is: %d\n", lastPartitionRendered);
+            resetBar(&displacementBar, lastPartitionRendered-1);
+            resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
+            //CURRENTLY just rendering on top of prev banner and displacememt bar
 
             //----------Stage 2 of turn, output bar for weapon or stay
-            printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->character_turn_team_a);
+            printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
             renderIn(grenadeOrStayBannerObj);
 
-            while (1) {
-                ps2_data = *ps2_ptr;
-                RVALID = ps2_data & 0x8000;
-
-                if (RVALID) {
-                    byte1 = byte2;
-                    byte2 = byte3;
-                    byte3 = ps2_data & 0xFF;
-                }
-
-                if (byte3 == 0x16) {  // User pressed 1
-                    if (byte2 == 0xF0) {
-                        printf("You selected throw grenade\n");
-                        break;
-                    }
-                } else if (byte3 == 0x1E) {  // User pressed 2
-                    if (byte2 == 0xF0) {
-                        printf("You selected stay\n");
-                        end_turn = true;
-                        break;
-                    }
-                }
-            }
-            byte1 = byte2 = byte3 = 0;
+            end_turn = poll_grenade_or_stay_input();
         }
 
         if (!end_turn) {
@@ -246,84 +207,129 @@ void handle_team_turn() {
         char game_result = checkWinCondition();
         printf("\nCurrent game result is %c\n", game_result);
     }
-    // Team B's Turn
+    // Team B's Turn (DISPLACEMENT BAR DOES NOT WORK FOR TEAM B CHARACER YET, WILL FIX IT TMRW)
     else {
-        printf("Team B's Turn\n");
-        printf("Character %d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->character_turn_team_b);
-
         //-----------------------Stage 1 of turn, draw bottom bar here
-        while (1) {
-            ps2_data = *ps2_ptr;
-            RVALID = ps2_data & 0x8000;
-
-            if (RVALID) {
-                byte1 = byte2;
-                byte2 = byte3;
-                byte3 = ps2_data & 0xFF;
-            }
-
-            if (byte3 == 0x16) {  // User pressed 1
-                if (byte2 == 0xF0) {
-                    printf("You selected move\n");
-                    break;
-                }
-            } else if (byte3 == 0x1E) {  // User pressed 2
-                if (byte2 == 0xF0) {
-                    printf("You selected stay\n");
-                    end_turn = true;
-                    break;
-                }
-            }
-        }
-        byte1 = byte2 = byte3 = 0;
+        renderIn(moveOrStayBannerObj);
+        printf("Team B's Turn\n");
+        printf("Character %c%d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
+        end_turn = poll_move_or_stay_input();
+        //-----------------------------
 
         if (!end_turn) {
             // Input handler logic for moving controls
-            int distance_travelled = 0;
-            while (distance_travelled < 15) {
+            renderIn(movementControlBannerObj);
+            //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
+            
+            int displacement = 0;
+            int lastPartitionRendered = 0;
+            while (displacement < DISPLACEMENT_LIMIT) {
+                bool flipped = false;
                 char* control = single_poll_input();
+
+                if(control == gameControls[6]){
+                    break; //user pressed stay
+                }
+
                 moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
-                            &distance_travelled);
+                            &displacement);
                 drawCharacter(team_b[game_state_ptr->character_turn_team_b]);
                 currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-                pixel_buffer_start = *(buffer_register + 1);  // new back buffer
-                    
-                printf("after vsync\n");
-                distance_travelled++;
 
+                if(displacement < 0){
+                    displacement *=-1;
+                    flipped = true;
+                }
+
+                double ratio = (double)displacement / DISPLACEMENT_LIMIT;
+
+                if(ratio > 1) ratio = 1;
+
+                int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
+
+                if(num_partitions_filled > lastPartitionRendered){
+                    for(int i = lastPartitionRendered; i < num_partitions_filled; i++){
+                        renderIn(displacementBar.barObj[i]);
+                    }
+
+                } else if(num_partitions_filled < lastPartitionRendered){
+                    for(int i = lastPartitionRendered; i >= num_partitions_filled; i--){
+                        renderOut(displacementBar.barObj[i]);
+                    }
+                }
+
+                lastPartitionRendered = num_partitions_filled;
+
+                // Restore negative displacement
+                if(flipped){
+                    displacement*=-1;
+                }
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                
+                if (currentView == LEFTVIEW) {
+                    if (prevView == LEFTVIEW) {
+                        // Do Nothing
+                    }
+                    else if (prevView == MIDDLEVIEW) {
+                        saveMiddle();
+                        renderLeft();
+                    }
+                    else if (prevView == RIGHTVIEW) {
+                        saveRight();
+                        renderLeft();
+                    }
+                    
+                }
+                else if (currentView == MIDDLEVIEW) {
+                    if (prevView == LEFTVIEW) {
+                        saveLeft();
+                        renderMiddle();
+                    }
+                    else if (prevView == MIDDLEVIEW) {
+                        // Do Nothing
+                    }
+                    else if (prevView == RIGHTVIEW) {
+                        saveRight();
+                        renderMiddle();
+                    }
+                    
+                }
+                else if (currentView == RIGHTVIEW) {
+                    if (prevView == LEFTVIEW) {
+                        saveLeft();
+                        renderRight();
+                    }
+                    else if (prevView == MIDDLEVIEW) {
+                        saveMiddle();
+                        renderRight();
+                    }
+                    else if (prevView == RIGHTVIEW) {
+                        // Do Nothing
+                    }
+                    
+                }
+                prevView = currentView;
 
             }
+            
+
+            resetBar(&displacementBar, lastPartitionRendered-1);
+            resetArrowKeyReleaseFlags();
+            byte1 = byte2 = byte3 = 0;
+            //CURRENTLY just rendering on top of prev banner and displacememt bar
 
             //----------Stage 2 of turn, output bar for weapon or stay
-            printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->character_turn_team_b);
+            printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
             renderIn(grenadeOrStayBannerObj);
-
-            while (1) {
-                ps2_data = *ps2_ptr;
-                RVALID = ps2_data & 0x8000;
-
-                if (RVALID) {
-                    byte1 = byte2;
-                    byte2 = byte3;
-                    byte3 = ps2_data & 0xFF;
-                }
-
-                if (byte3 == 0x16) {  // User pressed 1
-                    if (byte2 == 0xF0) {
-                        printf("You selected throw grenade\n");
-                        break;
-                    }
-                } else if (byte3 == 0x1E) {  // User pressed 2
-                    if (byte2 == 0xF0) {
-                        printf("You selected stay\n");
-                        end_turn = true;
-                        break;
-                    }
-                }
-            }
-            byte1 = byte2 = byte3 = 0;
+            end_turn = poll_grenade_or_stay_input();
         }
+
+        if (!end_turn) {
+            // grenade logic
+            printf("call grenade logic controls!\n");
+        }
+        
 
         if (!end_turn) {
             // grenade logic
@@ -392,31 +398,31 @@ void initializeGame() {
     }
   }
   
-  void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y){
+//   void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y){
 
-    *barObj = malloc((num_partitions) * sizeof(GameObject*));
-
-
-    for(int i = 0; i < num_partitions; i++){
-        (*barObj)[i] = malloc(sizeof(GameObject));
-
-        (*barObj)[i]->asset = asset;
-        (*barObj)[i]->height = height;
-        (*barObj)[i]->width = width;
-        (*barObj)[i]->prevPixelData = malloc(width * height * sizeof(int));
-        (*barObj)[i]->x = malloc(sizeof(int));
-        (*barObj)[i]->y = malloc(sizeof(int));
-        (*barObj)[i]->velocityX = malloc(sizeof(double));
-        (*barObj)[i]->velocityY = malloc(sizeof(double));
-        (*barObj)[i]->collidable = malloc(sizeof(int));
+//     *barObj = malloc((num_partitions) * sizeof(GameObject*));
 
 
-        //Set values (decide how to deal with setting velocity and x and y for moving health bars)
-        *((*barObj)[i]->x) = start_x + i*width;
-        *((*barObj)[i]->y) = start_y;
-        *((*barObj)[i]->velocityX) = 0;
-        *((*barObj)[i]->velocityY) = 0;
-        *((*barObj)[i]->collidable) = 0;
-    }
+//     for(int i = 0; i < num_partitions; i++){
+//         (*barObj)[i] = malloc(sizeof(GameObject));
 
-};
+//         (*barObj)[i]->asset = asset;
+//         (*barObj)[i]->height = height;
+//         (*barObj)[i]->width = width;
+//         (*barObj)[i]->prevPixelData = malloc(width * height * sizeof(int));
+//         (*barObj)[i]->x = malloc(sizeof(int));
+//         (*barObj)[i]->y = malloc(sizeof(int));
+//         (*barObj)[i]->velocityX = malloc(sizeof(double));
+//         (*barObj)[i]->velocityY = malloc(sizeof(double));
+//         (*barObj)[i]->collidable = malloc(sizeof(int));
+
+
+//         //Set values (decide how to deal with setting velocity and x and y for moving health bars)
+//         *((*barObj)[i]->x) = start_x + i*width;
+//         *((*barObj)[i]->y) = start_y;
+//         *((*barObj)[i]->velocityX) = 0;
+//         *((*barObj)[i]->velocityY) = 0;
+//         *((*barObj)[i]->collidable) = 0;
+//     }
+
+// };

@@ -73,4 +73,6 @@ int checkCollision_CharacterObject(Character *a, GameObject *b);
 
 void checkGrounded(Character *character);
 
+void resetArrowKeyReleaseFlags();
+
 #endif // MOVEMENTHANDLER_H

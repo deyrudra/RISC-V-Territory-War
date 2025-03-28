@@ -42,6 +42,58 @@ void poll_start_input(){
 
 }
 
+bool poll_move_or_stay_input(){
+    while (1) {
+        ps2_data = *ps2_ptr;
+        RVALID = ps2_data & 0x8000;
+
+        if (RVALID) {
+            byte1 = byte2;
+            byte2 = byte3;
+            byte3 = ps2_data & 0xFF;
+        }
+
+        if (byte3 == 0x16) {  // User pressed 1
+            if (byte2 == 0xF0) {
+                printf("You selected move\n");
+                return false;
+            }
+        } else if (byte3 == 0x1E) {  // User pressed 2
+            if (byte2 == 0xF0) {
+                printf("You selected stay\n");
+                return true;
+            }
+        }
+    }
+    byte1 = byte2 = byte3 = 0;
+}
+
+bool poll_grenade_or_stay_input(){
+    while (1) {
+        ps2_data = *ps2_ptr;
+        RVALID = ps2_data & 0x8000;
+
+        if (RVALID) {
+            byte1 = byte2;
+            byte2 = byte3;
+            byte3 = ps2_data & 0xFF;
+        }
+
+        if (byte3 == 0x16) {  // User pressed 1
+            if (byte2 == 0xF0) {
+                printf("You selected throw grenade\n");
+                return false;
+            }
+        } else if (byte3 == 0x1E) {  // User pressed 2
+            if (byte2 == 0xF0) {
+                printf("You selected stay\n");
+                return true;
+            }
+        }
+    }
+    byte1 = byte2 = byte3 = 0;
+}
+
 char* single_poll_input() {
     ps2_data = *ps2_ptr;  // Read data from PS/2 port
     RVALID = ps2_data & 0x8000;
@@ -76,40 +128,35 @@ char* single_poll_input() {
                 return gameControls[6]; //user wants to stay
             }
         }
-
-    // } else if (byte3 == 0x1E) {  // User pressed 2
-    //     if (byte2 == 0xF0) {
-    //         printf("You selected stay\n");
-    //         end_turn = true;
-    //         break;
-    //     }
-    // }
-
     }
+
     
     return NULL;
 }
 
-void clearPS2Fifo(){
-    while(1){
-        ps2_data = *ps2_ptr;  // Read data from PS/2 port
-        RVALID = ps2_data & 0x8000;
+//goofy ahh function
+// void clearPS2Fifo(){
 
-        int numItemsInFIFO = ps2_data & 0xFFFF0000;
-        printf("top of loop: # items is %d\n", numItemsInFIFO);
+//     printf("START OF CLEAR FIFO FUNCTION BEFORE LOOP\n-----------------\n");
 
-        if(numItemsInFIFO > 0){
-            int tempData = ps2_data & 0xFF;
-            printf("after tempData: # items is %d\n", numItemsInFIFO);
-
-        }
-        else{
-            printf("cleared: # items is %d\n", numItemsInFIFO);
-            return;
-        }
-    }
-    
+//     while(1){
+//         ps2_data = *(ps2_ptr);  // Read data from PS/2 port
+//         RVALID = ps2_data & 0x8000;
 
 
-}
+        
+//         if(RVALID){
+//             byte1 = byte2;
+//             byte2 = byte3;
+//             byte3 = ps2_data & 0xFF;
+
+//             printf("Data Just Read in: %d\n", byte3);
+//         }
+//         else{
+//             printf("Exiting loop since RVALID == 0\n");
+//             return;
+//         }
+//     }
+
+// }
 
