@@ -23,7 +23,7 @@ typedef struct Platform{
 extern BoundingBox *groundBoxHead;
 
 // Function prototypes
-void initializePlatform(Platform *platform, int *asset, int x, int y, int width, int height);
+void initializePlatform(Platform *platform, short int *asset, int x, int y, int width, int height);
 
 void placePlatform(Platform *platform);
 

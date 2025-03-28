@@ -21,6 +21,8 @@ extern GameObject* moveOrStayBannerObj;
 extern GameObject* grenadeOrStayBannerObj;
 extern GameObject* movementControlBannerObj;
 
+
+
 // Game state structure
 typedef struct GameState {
     char team_turn; // 'a' for team A, 'b' for team B
@@ -46,7 +48,7 @@ void initializeGame();
 int getCharacterIndexForNextTurn(struct Character* team_array[NUM_CHARACTERS_PER_TEAM], 
                                 int current_character_turn_index);
 char checkWinCondition();
-void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y);
+void initializeBar(GameObject*** barObj, short int* asset, int width, int height, int num_partitions, int start_x, int start_y);
 // void drawBar(GameObject** bar_obj);
 
 #endif // GAMELOGIC_H

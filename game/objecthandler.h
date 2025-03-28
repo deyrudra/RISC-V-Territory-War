@@ -7,6 +7,7 @@
 #define SCREEN_WIDTH 320
 
 #include "renderhandler.h"
+#include <stddef.h>
 
 // Global Variables
 extern short int Buffer1[480][640];
@@ -20,14 +21,18 @@ typedef struct {
     int width, height; // Size
     int *collidable; // 1 for collidable, 0 for non-collidable
     double *velocityX, *velocityY; // Velocity for movement
-    int *asset; // Pointer to the asset (e.g., sprite data)
-    int *prevPixelData; // Pointer to store previous pixel data
+    short int *asset; // Pointer to the asset (e.g., sprite data)
+    short int *prevPixelData; // Pointer to store previous pixel data
     int currentlyRendered; // 1 if currently rendered, 0 otherwise
     int isGround;
 } GameObject;
 
 
 // Function prototypes
+
+void initializeGeneralObject(GameObject **gameObject, short int *asset, int collidable, int x, int y, int width, int height);
+
+void destroyGeneralObject(GameObject *obj);
 
 void resetPrevPixelData(GameObject *obj);
 

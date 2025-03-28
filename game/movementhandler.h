@@ -56,7 +56,7 @@ double abs_double(double value);
 
 
 // Function prototypes
-void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset);
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset);
 
 
 void moveCharacter(Character *character, char* direction, int* displacement);

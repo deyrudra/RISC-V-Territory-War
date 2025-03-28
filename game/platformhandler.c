@@ -2,8 +2,8 @@
 
 BoundingBox *groundBoxHead = NULL; // Head of linked list
 
-void initializePlatform(Platform *platform, int *asset, int x, int y, int width, int height) {
-    int* platformPrevData = malloc(sizeof(int) * width * height);
+void initializePlatform(Platform *platform, short int *asset, int x, int y, int width, int height) {
+    short int* platformPrevData = malloc(sizeof(short int) * width * height);
 
     platform->x = malloc(sizeof(int));
     platform->y = malloc(sizeof(int));

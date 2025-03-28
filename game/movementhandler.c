@@ -12,15 +12,15 @@ double abs_double(double value) {
     }
 }
 
-void initializeCharacter(Character *character, int x, int y, int *idleCharAsset, int *walkLeftCharAsset, int *walkRightCharAsset, int *jumpCharAsset) {
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset) {
     // Replace all local array declarations with malloc calls
-    int* walkLeftPrevData = malloc(sizeof(int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
-    int* walkRightPrevData = malloc(sizeof(int) * RIGHTMOVEMENT_WIDTH * RIGHTMOVEMENT_HEIGHT);
-    int* jumpPrevData = malloc(sizeof(int) * JUMP_WIDTH * JUMP_HEIGHT);
-    int* idlePrevData = malloc(sizeof(int) * IDLE_WIDTH * IDLE_HEIGHT);
-    int* leftbootPrev = malloc(sizeof(int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
-    int* rightbootPrev = malloc(sizeof(int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
-    int* deadPrev = malloc(sizeof(int) * DEAD_WIDTH * DEAD_HEIGHT);
+    short int* walkLeftPrevData = malloc(sizeof(short int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
+    short int* walkRightPrevData = malloc(sizeof(short int) * RIGHTMOVEMENT_WIDTH * RIGHTMOVEMENT_HEIGHT);
+    short int* jumpPrevData = malloc(sizeof(short int) * JUMP_WIDTH * JUMP_HEIGHT);
+    short int* idlePrevData = malloc(sizeof(short int) * IDLE_WIDTH * IDLE_HEIGHT);
+    short int* leftbootPrev = malloc(sizeof(short int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
+    short int* rightbootPrev = malloc(sizeof(short int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
+    short int* deadPrev = malloc(sizeof(short int) * DEAD_WIDTH * DEAD_HEIGHT);
     
     character->x = malloc(sizeof(int));
     character->y = malloc(sizeof(int));

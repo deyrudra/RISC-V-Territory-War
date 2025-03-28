@@ -24,7 +24,7 @@ extern Background menuBackground;
 extern Background skyBackground;
 
 // Function prototypes
-void initializeBackground(Background *background, int *asset, int width, int height);
+void initializeBackground(Background *background, short int *asset, int width, int height);
 
 void placeBackground(Background *background);
 
