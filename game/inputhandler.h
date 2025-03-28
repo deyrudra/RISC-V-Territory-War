@@ -41,6 +41,7 @@ extern int ps2_data, RVALID;
 // Polling Functions
 void poll_start_input();
 char* single_poll_input(); // returns key
+void clearPS2Fifo();
 
 
 #endif // INPUTHANDLER_H

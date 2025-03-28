@@ -63,7 +63,6 @@ void startGame() {
     drawCharacter(&player_a0);
     drawCharacter(&player_b0);
 
-    int count = 0;
 
     handle_team_turn();
 }
@@ -115,6 +114,11 @@ void handle_team_turn() {
             while (displacement < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
+
+                if(control == gameControls[6]){
+                    break; //user pressed stay
+                }
+
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
                             &displacement);
                 drawCharacter(team_a[game_state_ptr->character_turn_team_a]);
@@ -195,10 +199,10 @@ void handle_team_turn() {
                 }
                 prevView = currentView;
 
-
             }
 
             //Should I render out green bar and prev banner or is it ok to just draw on top??
+            byte1 = byte2 = byte3 = 0;
 
             //----------Stage 2 of turn, output bar for weapon or stay
             printf("Character %d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->character_turn_team_a);
