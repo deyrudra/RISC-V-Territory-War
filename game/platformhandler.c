@@ -63,6 +63,9 @@ void addGroundingBox(Platform *platform) {
     newBox->x1 = *(platform->x);
     newBox->y1 = *(platform->y);
     newBox->x2 = *(platform->x) + platform->width;
+    if (platform->height < 10) {
+        platform->height = 10;
+    }
     newBox->y2 = *(platform->y) + platform->height;
     newBox->next = groundBoxHead;
     groundBoxHead = newBox;
