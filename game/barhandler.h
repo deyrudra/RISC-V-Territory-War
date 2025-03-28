@@ -8,6 +8,7 @@
 
 #define NUM_DISPLACEMENT_BAR_PARTITIONS 25
 #define NUM_HEALTH_BAR_PARTITIONS 10
+#define HEALTH_LIMIT 100
 
 // Define Platform structure
 typedef struct Bar{
@@ -23,7 +24,7 @@ typedef struct Bar{
 
 
 // Function prototypes
-void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partitionHeight, int numPartitions, int x, int y);
+void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partitionHeight, int numPartitions, int x, int y, int lastRenderedPartition);
 
 void setLastRenderedPartition(Bar* bar, int num);
 

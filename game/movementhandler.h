@@ -51,7 +51,7 @@ typedef struct Character{
     int height;
     int numJumps;
     RenderView characterView;
-    //Bar* healthBar;
+    Bar* healthBar;
 } Character;
 
 double abs_double(double value);
@@ -61,10 +61,13 @@ int abs_int(int value);
 // Function prototypes
 void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset, char team);
 
+void drawInitialHealthBar(Character *character);
+
+void updateHealthBar(Character* character);
 
 void moveCharacter(Character *character, char* direction, int* displacement);
 
-void drawCharacter(Character *character);
+void drawCharacter(Character *character, bool firstRun);
 
 void destroyCharacter(Character *character);
 

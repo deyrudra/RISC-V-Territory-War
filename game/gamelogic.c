@@ -171,8 +171,14 @@ void startGame() {
     // placePlatform(&platform_ground);
    
     // Layer 3 Characters
-    drawCharacter(&player_a0);
-    drawCharacter(&player_b0);
+
+    
+
+    drawCharacter(&player_a0, true);
+    drawCharacter(&player_b0, true);
+
+    drawInitialHealthBar(&player_a0);
+    drawInitialHealthBar(&player_b0);
 
     while(game_state_ptr->game_running){
         handle_team_turn();
@@ -200,7 +206,7 @@ void handle_team_turn() {
             //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             printf("Before initialize displacemetn bar\n");
 
-            initializeBar(&displacementBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
+            initializeBar(&displacementBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
             
             printf("After initialize displacemetn bar\n");
             int displacement = 0;
@@ -214,7 +220,7 @@ void handle_team_turn() {
 
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
                             &displacement);
-                drawCharacter(team_a[game_state_ptr->character_turn_team_a]);
+                drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
                 currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
 
                 if(displacement < 0){
@@ -247,9 +253,6 @@ void handle_team_turn() {
                 }
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-
-                printf("After wait for vsync\n");
-
                 
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
@@ -334,7 +337,6 @@ void handle_team_turn() {
         if (!end_turn) {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj);
-            //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             
             int displacement = 0;
             while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
@@ -347,7 +349,7 @@ void handle_team_turn() {
 
                 moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
                             &displacement);
-                drawCharacter(team_b[game_state_ptr->character_turn_team_b]);
+                drawCharacter(team_b[game_state_ptr->character_turn_team_b], false);
                 currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
 
                 if(displacement < 0){
@@ -373,7 +375,6 @@ void handle_team_turn() {
                 }
 
                 setLastRenderedPartition(&displacementBar, num_partitions_filled);
-                //displacementBar.lastRenderedPartition = num_partitions_filled;
 
                 // Restore negative displacement
                 if(flipped){

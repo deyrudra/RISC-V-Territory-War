@@ -1,6 +1,6 @@
 #include "barhandler.h"
 
-void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partitionHeight, int numPartitions, int x, int y){
+void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partitionHeight, int numPartitions, int x, int y, int lastRenderedPartition){
 
     bar->x = malloc(sizeof(int));
     bar->y = malloc(sizeof(int));
@@ -9,7 +9,7 @@ void initializeBar(Bar* bar, short int *asset, int partitionWidth, int partition
     bar->partitionHeight = partitionHeight;
     bar->numPartitions = numPartitions;
     *(bar->collidable) = 0;
-    bar->lastRenderedPartition = 0;
+    bar->lastRenderedPartition = lastRenderedPartition;
 
 
     bar->barObj = malloc((numPartitions) * sizeof(GameObject*));

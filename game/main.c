@@ -37,6 +37,6 @@ int main(void) {
   // Start the game!
   startGame();
 
-
+  return 0;
 
 }

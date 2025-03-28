@@ -42,7 +42,7 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->isGroundedBool = 0;
     character->width = PLAYER_WIDTH;
     character->height = PLAYER_HEIGHT;
-    //character->healthBar = malloc(sizeof(Bar));
+    character->healthBar = malloc(sizeof(Bar));
 
     if (x < SCREEN_WIDTH) {
         character->characterView = LEFTVIEW;
@@ -61,14 +61,11 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     *(character->velocityY) = 0;
     *(character->health) = 100;
 
-    // if(team == 'a'){
-    //     printf("Before we init health bar a\n");
-    //     initializeBar(character->healthBar, &redhealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x, y);
-    //     printf("After we init health bar a\n");
-    // } else {
-    //     initializeBar(character->healthBar, &bluehealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x, y);
-
-    // }
+    if(team == 'a'){
+        initializeBar(character->healthBar, &redhealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x+3, y, NUM_HEALTH_BAR_PARTITIONS);
+    } else {
+        initializeBar(character->healthBar, &bluehealthbarpartition, HEALTHBARPARTITION_WIDTH, HEALTHBARPARTITION_HEIGHT, NUM_HEALTH_BAR_PARTITIONS, x+3, y, NUM_HEALTH_BAR_PARTITIONS);
+    }
 
 
     
@@ -165,7 +162,6 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             horizontalAcceleration(character, 0); //update the character's velocity
             *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
             *displacement += *character->velocityX; //update dist travelled for movement limit
-
 
         }
         if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
@@ -344,7 +340,7 @@ void destroyCharacter(Character *character){
     if (character->health != NULL) free(character->health);
 }
 
-void drawCharacter(Character *character){
+void drawCharacter(Character *character, bool firstRun){
     // If character state didn't change, then don't do nothing.
     // Rendering out Old Asset
     if (character->prevState == IDLE) {
@@ -374,10 +370,70 @@ void drawCharacter(Character *character){
         renderIn(character->jumpingCharacter);
     }
 
-    // renderIn(character->healthBar);
+    if(firstRun){
+        return;
+    }
 
-
+    updateHealthBar(character);
+   
 }
+
+
+void drawInitialHealthBar(Character* character){
+    for(int i = 0; i < NUM_HEALTH_BAR_PARTITIONS; i++){
+        // printf("health idx%d\n", i);
+        renderIn(character->healthBar->barObj[i]);
+    }
+    setLastRenderedPartition(character->healthBar, NUM_HEALTH_BAR_PARTITIONS);
+}
+
+
+void updateHealthBar(Character* character){
+     // // This is for change!!! (num_parititons filled will never be > lastRendered since you cant gain health)
+
+    //render out prev bar
+    // printf("debug output 1\n");
+    for(int i = 0; i < character->healthBar->lastRenderedPartition; i++){
+        // printf("render out idx: %d\n", i);
+        renderOut(character->healthBar->barObj[i]);
+    }
+
+    // printf("Rendered out old bar");
+
+    //advanced updating of x and y positions
+    *(character->healthBar->x) = *(character->x) + 3;
+    *(character->healthBar->y) = *(character->y);
+
+    for(int i = 0; i < NUM_HEALTH_BAR_PARTITIONS; i++){
+        *(character->healthBar->barObj[i]->x) = *(character->healthBar->x) + i*character->healthBar->partitionWidth;
+        *(character->healthBar->barObj[i]->y) = *(character->healthBar->y);
+    }
+    
+    // printf("debug output 2\n");
+
+    double ratio = *(character->health) / HEALTH_LIMIT;
+    //printf("ratio: %lf\n", ratio);
+
+    // if(ratio > 1) ratio = 1;
+
+    int num_partitions_filled = ratio * NUM_HEALTH_BAR_PARTITIONS;
+    // printf("num partitions filed: %d\n", num_partitions_filled);
+
+
+    // printf("debug output 3\n");
+
+    //render in new bar
+    for(int i = 0; i < num_partitions_filled; i++){
+        // printf("render in idx: %d\n", i);
+        renderIn(character->healthBar->barObj[i]);
+    }
+
+    // printf("debug output 4\n");
+
+    setLastRenderedPartition(character->healthBar, num_partitions_filled);
+}
+
+
 
 void horizontalAcceleration(Character *character, int directionBool) {
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
