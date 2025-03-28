@@ -53,6 +53,7 @@ typedef struct Character{
 } Character;
 
 double abs_double(double value);
+int abs_int(int value);
 
 
 // Function prototypes

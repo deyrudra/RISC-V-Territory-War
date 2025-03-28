@@ -202,7 +202,7 @@ void handle_team_turn() {
             
             int displacement = 0;
             int lastPartitionRendered = 0;
-            while (displacement < DISPLACEMENT_LIMIT) {
+            while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
 
@@ -333,7 +333,7 @@ void handle_team_turn() {
             
             int displacement = 0;
             int lastPartitionRendered = 0;
-            while (displacement < DISPLACEMENT_LIMIT) {
+            while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
 

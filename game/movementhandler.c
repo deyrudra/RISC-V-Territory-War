@@ -12,6 +12,15 @@ double abs_double(double value) {
     }
 }
 
+int abs_int(int value) {
+    if (value >= 0) {
+        return value;
+    }
+    else {
+        return -value;
+    }
+}
+
 void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset) {
     // Replace all local array declarations with malloc calls
     short int* walkLeftPrevData = malloc(sizeof(short int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
