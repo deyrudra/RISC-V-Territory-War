@@ -44,7 +44,12 @@ typedef struct GameState {
 
 // Global game objects
 extern Character player_a0;
+extern Character player_a1;
+extern Character player_a2;
 extern Character player_b0;
+extern Character player_b1;
+extern Character player_b2;
+
 extern Platform platform1;
 
 // Global game state

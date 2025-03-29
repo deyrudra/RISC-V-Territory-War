@@ -24,7 +24,11 @@ Bar displacementBar;
 
 
 Character player_a0;
+Character player_a1;
+Character player_a2;
 Character player_b0;
+Character player_b1;
+Character player_b2;
 
 Platform platform1;
 Platform platform_ground;
@@ -68,18 +72,34 @@ Character* team_b[NUM_CHARACTERS_PER_TEAM];
 
 void startGame() {
     initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
-                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
-                        &rightmovement, &jump, 'a');
+                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a0_idle, &player_a0_leftmovement,
+                        &player_a0_rightmovement, &player_a0_jump, 'a');
+    initializeCharacter(&player_a1, 150 + PLAYER_WIDTH,
+                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a1_idle, &player_a1_leftmovement,
+                        &player_a1_rightmovement, &player_a1_jump, 'a');
+    initializeCharacter(&player_a2, 200 + PLAYER_WIDTH,
+                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a2_idle, &player_a2_leftmovement,
+                        &player_a2_rightmovement, &player_a2_jump, 'a');
 
-    initializeCharacter(&player_b0, SCREEN_WIDTH - 20 - PLAYER_WIDTH,
-                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &idle, &leftmovement,
-                        &rightmovement, &jump, 'b');
+    initializeCharacter(&player_b0, WORLD_WIDTH - 20 - PLAYER_WIDTH,
+                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b0_idle, &player_b0_leftmovement,
+                        &player_b0_rightmovement, &player_b0_jump, 'b');
+    initializeCharacter(&player_b1, WORLD_WIDTH - 70 - PLAYER_WIDTH,
+                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b1_idle, &player_b1_leftmovement,
+                        &player_b1_rightmovement, &player_b1_jump, 'b');
+    initializeCharacter(&player_b2, WORLD_WIDTH - 120 - PLAYER_WIDTH,
+                        SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b2_idle, &player_b2_leftmovement,
+                        &player_b2_rightmovement, &player_b2_jump, 'b');
 
     initializeGame();
     
     // Add characters to teams
     team_a[0] = &player_a0;
+    team_a[1] = &player_a1;
+    team_a[2] = &player_a2;
     team_b[0] = &player_b0;
+    team_b[1] = &player_b1;
+    team_b[2] = &player_b2;
 
     poll_start_input();
     game_state_ptr->game_running = true;
@@ -187,10 +207,18 @@ void startGame() {
     
 
     drawCharacter(&player_a0, true);
+    drawCharacter(&player_a1, true);
+    drawCharacter(&player_a2, true);
     drawCharacter(&player_b0, true);
+    drawCharacter(&player_b1, true);
+    drawCharacter(&player_b2, true);
 
     drawInitialHealthBar(&player_a0);
+    drawInitialHealthBar(&player_a1);
+    drawInitialHealthBar(&player_a2);
     drawInitialHealthBar(&player_b0);
+    drawInitialHealthBar(&player_b1);
+    drawInitialHealthBar(&player_b2);
 
     while(game_state_ptr->game_running){
         handle_team_turn();
