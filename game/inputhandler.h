@@ -44,6 +44,7 @@ void poll_start_input();
 bool poll_move_or_stay_input();
 bool poll_grenade_or_stay_input(); //same as 1 above just diff debug print statements for now
 char* single_poll_input(); // returns key
+char* grenade_control_input();
 void clearPS2Fifo();
 
 

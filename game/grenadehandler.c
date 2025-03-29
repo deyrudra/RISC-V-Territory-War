@@ -1,5 +1,10 @@
 #include "grenadehandler.h"
 
+rotate_up_grenade_released = 1; // 1 means the key has been released
+rotate_down_grenade_released = 1;
+throw_grenade_released = 1;
+
+
 void initializeGrenade(Grenade* grenade, int x, int y, short int* asset){
 
     // grenade->x = malloc(sizeof(int));
@@ -22,6 +27,9 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset){
     grenade->grenadeObj->height = GRENADE_HEIGHT;
     grenade->grenadeObj->asset = asset;
     grenade->grenadeObj->prevPixelData = malloc(GRENADE_HEIGHT * GRENADE_WIDTH * sizeof(short int));
+    
+    grenade->angle = malloc(sizeof(double));
+    grenade->power = malloc(sizeof(double));
 
     // Populate gameObject data
     *(grenade->grenadeObj->x) = x;
@@ -33,6 +41,9 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset){
     // Populate Grenade extra Grenade struct fields
     grenade->isExplodedBool = 0;
     grenade->isGroundedBool = 0;
+    *(grenade->angle) = 0;
+    *(grenade->power) = 0;
+
 
     if (x < SCREEN_WIDTH) {
         grenade->grenadeView = LEFTVIEW;
@@ -52,6 +63,9 @@ void destroyGrenade(Grenade* grenade){
     free(grenade->grenadeObj->velocityY);
     free(grenade->grenadeObj->collidable);
     free(grenade->grenadeObj->prevPixelData);
+
+    free(grenade->angle);
+    free(grenade->power);
 
     free(grenade->grenadeObj);
 }   

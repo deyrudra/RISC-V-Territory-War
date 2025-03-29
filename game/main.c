@@ -22,12 +22,22 @@ int main(void) {
   initializeGeneralObject(&moveOrStayBannerObj1, &moveorstaybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj1, &grenadeorstaybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj1, &movementcontrolbanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+  initializeGeneralObject(&grenadeControlBannerObj1, &grenadecontrolbanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+
+
+  
   initializeGeneralObject(&moveOrStayBannerObj2, &moveorstaybanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj2, &grenadeorstaybanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj2, &movementcontrolbanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+  initializeGeneralObject(&grenadeControlBannerObj2, &grenadecontrolbanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+
+
+
   initializeGeneralObject(&moveOrStayBannerObj3, &moveorstaybanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj3, &grenadeorstaybanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj3, &movementcontrolbanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+  initializeGeneralObject(&grenadeControlBannerObj3, &grenadecontrolbanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+
   
   // Game Title Screen
   initializeGeneralObject(&mainMenuTitleObj, &main_menu_title, 0, (SCREEN_WIDTH / 2) - (MAIN_MENU_TITLE_WIDTH / 2), 30, MAIN_MENU_TITLE_WIDTH, MAIN_MENU_TITLE_HEIGHT);

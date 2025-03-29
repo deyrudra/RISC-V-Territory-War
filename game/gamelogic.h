@@ -13,7 +13,7 @@
 
 
 #define NUM_CHARACTERS_PER_TEAM 3
-#define DISPLACEMENT_LIMIT 100
+#define DISPLACEMENT_LIMIT 200
 
 
 // Global Game Objects
@@ -28,6 +28,9 @@ extern GameObject* movementControlBannerObj2;
 extern GameObject* moveOrStayBannerObj3;
 extern GameObject* grenadeOrStayBannerObj3;
 extern GameObject* movementControlBannerObj3;
+extern GameObject* grenadeControlBannerObj1;
+extern GameObject* grenadeControlBannerObj2;
+extern GameObject* grenadeControlBannerObj3;
 
 
 

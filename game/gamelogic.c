@@ -5,12 +5,18 @@ GameObject* platformObj;
 GameObject* moveOrStayBannerObj1;
 GameObject* grenadeOrStayBannerObj1;
 GameObject* movementControlBannerObj1;
+GameObject* grenadeControlBannerObj1;
+
 GameObject* moveOrStayBannerObj2;
 GameObject* grenadeOrStayBannerObj2;
 GameObject* movementControlBannerObj2;
+GameObject* grenadeControlBannerObj2;
+
 GameObject* moveOrStayBannerObj3;
 GameObject* grenadeOrStayBannerObj3;
 GameObject* movementControlBannerObj3;
+GameObject* grenadeControlBannerObj3;
+
 GameObject* groundObj;
 
 // GameObject** displacementBarObj;
@@ -327,8 +333,15 @@ void handle_team_turn() {
         }
 
         if (!end_turn) {
+            renderIn(grenadeControlBannerObj1);
+            renderIn(grenadeControlBannerObj2);
+            renderIn(grenadeControlBannerObj3);
             // grenade logic
             printf("call grenade logic controls!\n");
+            while(1){
+                char* control = grenade_control_input();
+                printf("%s\n", control);
+            }
         }
 
         // END TURN LOGIC
