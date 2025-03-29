@@ -21,11 +21,12 @@ int abs_int(int value) {
     }
 }
 
-void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset, char team) {
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpLeftCharAsset, short int *jumpRightCharAsset, char team) {
     // Replace all local array declarations with malloc calls
     short int* walkLeftPrevData = malloc(sizeof(short int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
     short int* walkRightPrevData = malloc(sizeof(short int) * RIGHTMOVEMENT_WIDTH * RIGHTMOVEMENT_HEIGHT);
-    short int* jumpPrevData = malloc(sizeof(short int) * JUMP_WIDTH * JUMP_HEIGHT);
+    short int* jumpLeftPrevData = malloc(sizeof(short int) * JUMP_WIDTH * JUMP_HEIGHT);
+    short int* jumpRightPrevData = malloc(sizeof(short int) * JUMP_WIDTH * JUMP_HEIGHT);
     short int* idlePrevData = malloc(sizeof(short int) * IDLE_WIDTH * IDLE_HEIGHT);
     short int* leftbootPrev = malloc(sizeof(short int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
     short int* rightbootPrev = malloc(sizeof(short int) * LEFTBOOT_WIDTH * LEFTBOOT_HEIGHT);
@@ -39,6 +40,7 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->collidable = malloc(sizeof(int));
     character->health = malloc(sizeof(int));
     character->state = IDLE;
+    character->lastMovementMade = LEFTMOVEMENT;
     character->isGroundedBool = 0;
     character->width = PLAYER_WIDTH;
     character->height = PLAYER_HEIGHT;
@@ -105,17 +107,29 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->walkRightCharacter->velocityY = malloc(sizeof(double));  // Allocate memory
     character->walkRightCharacter->collidable = malloc(sizeof(int));  // Allocate memory
     
-    GameObject * jumpingCharacterObj = (GameObject *)malloc(sizeof(GameObject));
-    character->jumpingCharacter = jumpingCharacterObj;
-    character->jumpingCharacter->asset = jumpCharAsset;
-    character->jumpingCharacter->height = PLAYER_HEIGHT;
-    character->jumpingCharacter->width = PLAYER_WIDTH;
-    character->jumpingCharacter->prevPixelData = jumpPrevData;
-    character->jumpingCharacter->x = malloc(sizeof(int));  // Allocate memory
-    character->jumpingCharacter->y = malloc(sizeof(int));  // Allocate memory
-    character->jumpingCharacter->velocityX = malloc(sizeof(double));  // Allocate memory
-    character->jumpingCharacter->velocityY = malloc(sizeof(double));  // Allocate memory
-    character->jumpingCharacter->collidable = malloc(sizeof(int));  // Allocate memory
+    GameObject * leftJumpingCharacterObj = (GameObject *)malloc(sizeof(GameObject));
+    character->leftJumpingCharacter = leftJumpingCharacterObj;
+    character->leftJumpingCharacter->asset = jumpLeftCharAsset;
+    character->leftJumpingCharacter->height = PLAYER_HEIGHT;
+    character->leftJumpingCharacter->width = PLAYER_WIDTH;
+    character->leftJumpingCharacter->prevPixelData = jumpLeftPrevData;
+    character->leftJumpingCharacter->x = malloc(sizeof(int));  // Allocate memory
+    character->leftJumpingCharacter->y = malloc(sizeof(int));  // Allocate memory
+    character->leftJumpingCharacter->velocityX = malloc(sizeof(double));  // Allocate memory
+    character->leftJumpingCharacter->velocityY = malloc(sizeof(double));  // Allocate memory
+    character->leftJumpingCharacter->collidable = malloc(sizeof(int));  // Allocate memory
+    
+    GameObject * rightJumpingCharacterObj = (GameObject *)malloc(sizeof(GameObject));
+    character->rightJumpingCharacter = rightJumpingCharacterObj;
+    character->rightJumpingCharacter->asset = jumpRightCharAsset;
+    character->rightJumpingCharacter->height = PLAYER_HEIGHT;
+    character->rightJumpingCharacter->width = PLAYER_WIDTH;
+    character->rightJumpingCharacter->prevPixelData = jumpRightPrevData;
+    character->rightJumpingCharacter->x = malloc(sizeof(int));  // Allocate memory
+    character->rightJumpingCharacter->y = malloc(sizeof(int));  // Allocate memory
+    character->rightJumpingCharacter->velocityX = malloc(sizeof(double));  // Allocate memory
+    character->rightJumpingCharacter->velocityY = malloc(sizeof(double));  // Allocate memory
+    character->rightJumpingCharacter->collidable = malloc(sizeof(int));  // Allocate memory
     
     // printf("Test: %d\n", *character->idleCharacter->x);
     character->idleCharacter->x = character->x;
@@ -133,11 +147,16 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->walkRightCharacter->velocityX = character->velocityX;
     character->walkRightCharacter->velocityY = character->velocityY;
     character->walkRightCharacter->collidable = character->collidable;
-    character->jumpingCharacter->x = character->x;
-    character->jumpingCharacter->y = character->y;
-    character->jumpingCharacter->velocityX = character->velocityX;
-    character->jumpingCharacter->velocityY = character->velocityY;
-    character->jumpingCharacter->collidable = character->collidable;
+    character->leftJumpingCharacter->x = character->x;
+    character->leftJumpingCharacter->y = character->y;
+    character->leftJumpingCharacter->velocityX = character->velocityX;
+    character->leftJumpingCharacter->velocityY = character->velocityY;
+    character->leftJumpingCharacter->collidable = character->collidable;
+    character->rightJumpingCharacter->x = character->x;
+    character->rightJumpingCharacter->y = character->y;
+    character->rightJumpingCharacter->velocityX = character->velocityX;
+    character->rightJumpingCharacter->velocityY = character->velocityY;
+    character->rightJumpingCharacter->collidable = character->collidable;
 }
 
 // Function to handle character movement
@@ -162,7 +181,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             horizontalAcceleration(character, 0); //update the character's velocity
             *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
             *displacement += *character->velocityX; //update dist travelled for movement limit
-
+            character->lastMovementMade = LEFTMOVEMENT;
         }
         if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
             move_right_released = 0;
@@ -170,10 +189,15 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
             *displacement += *character->velocityX; //update dist travelled for movement limit
-
+            character->lastMovementMade = RIGHTMOVEMENT;
         }
         if ((strcmp(direction, gameControls[2]) == 0) && (character->numJumps < 2)) { // Checking for move_jump
-            character->state = JUMPING;
+            if(character->lastMovementMade == RIGHTMOVEMENT) {
+                character->state = JUMPINGRIGHT;
+            }
+            else if (character->lastMovementMade == LEFTMOVEMENT) {
+                character->state = JUMPINGLEFT;
+            }
             *(character->velocityY) = -3.0;
             character->isGroundedBool = 0;
             character->numJumps++;
@@ -204,13 +228,23 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = IDLE;
         }
         else {
-            character->state = JUMPING;
+            if(character->lastMovementMade == RIGHTMOVEMENT) {
+                character->state = JUMPINGRIGHT;
+            }
+            else if (character->lastMovementMade == LEFTMOVEMENT) {
+                character->state = JUMPINGLEFT;
+            }
         }
     }
 
     // Y-Direction Logic (Gravity Affect on y-velocity, isGrounded poll, y-direction update)
     if (character->isGroundedBool == 0) { // Gravity Affect on Y-Velocity
-        character->state = JUMPING;
+        if(character->lastMovementMade == RIGHTMOVEMENT) {
+            character->state = JUMPINGRIGHT;
+        }
+        else if (character->lastMovementMade == LEFTMOVEMENT) {
+            character->state = JUMPINGLEFT;
+        }
         // Update to velocity with constant acceleration
         *(character->velocityY) = *(character->velocityY) + (GRAVITY * DELTATIME);
         // Update to position with current velocity 
@@ -309,8 +343,11 @@ void removeCharacter(Character *character){
     else if (character->prevState == RIGHTMOVEMENT) {
         renderOut(character->walkRightCharacter);
     }
-    else if (character->prevState == JUMPING) {
-        renderOut(character->jumpingCharacter);
+    else if (character->prevState == JUMPINGLEFT) {
+        renderOut(character->leftJumpingCharacter);
+    }
+    else if (character->prevState == JUMPINGRIGHT) {
+        renderOut(character->rightJumpingCharacter);
     }
     else{
         printf("Unknown state\n");
@@ -326,7 +363,8 @@ void destroyCharacter(Character *character){
     free(character->idleCharacter->prevPixelData);
     free(character->walkLeftCharacter->prevPixelData);
     free(character->walkRightCharacter->prevPixelData);
-    free(character->jumpingCharacter->prevPixelData);
+    free(character->leftJumpingCharacter->prevPixelData);
+    free(character->rightJumpingCharacter->prevPixelData);
 
     //uncomment when we add these states 
     // free(character->leftBootCharacter->prevPixelData);
@@ -357,8 +395,11 @@ void drawCharacter(Character *character, bool firstRun){
     else if (character->prevState == RIGHTMOVEMENT) {
         renderOut(character->walkRightCharacter);
     }
-    else if (character->prevState == JUMPING) {
-        renderOut(character->jumpingCharacter);
+    else if (character->prevState == JUMPINGLEFT) {
+        renderOut(character->leftJumpingCharacter);
+    }
+    else if (character->prevState == JUMPINGRIGHT) {
+        renderOut(character->rightJumpingCharacter);
     }
 
     // Rendering in New Asset
@@ -371,21 +412,13 @@ void drawCharacter(Character *character, bool firstRun){
     else if (character->state == RIGHTMOVEMENT) {
         renderIn(character->walkRightCharacter);
     }
-    else if (character->state == JUMPING) {
-        renderIn(character->jumpingCharacter);
+    else if (character->state == JUMPINGLEFT) {
+        renderIn(character->leftJumpingCharacter);
+    }
+    else if (character->state == JUMPINGRIGHT) {
+        renderIn(character->rightJumpingCharacter);
     }
     
-    // if (character->state == JUMPING || character->prevState == JUMPING || character->prevState == IDLE) {
-    //     for(int i = 0; i < character->healthBar->lastRenderedPartition; i++){
-    //         // printf("render out idx: %d\n", i);
-    //         if (character->healthBar->barObj[i]->currentlyRendered == 1) {
-    //             renderOut(character->healthBar->barObj[i]);
-    //         }
-    //     }
-    // }
-    // else {
-    // }
-   
 }
 
 
@@ -435,7 +468,7 @@ void updateHealthBar(Character* character){
     //render in new bar
     for(int i = 0; i < num_partitions_filled; i++){
         // printf("render in idx: %d\n", i);
-        if (character->state == JUMPING || character->prevState == JUMPING) {
+        if (character->state == JUMPINGLEFT || character->prevState == JUMPINGLEFT || character->state == JUMPINGRIGHT || character->prevState == JUMPINGRIGHT) {
         
         }
         else {
@@ -454,11 +487,11 @@ void horizontalAcceleration(Character *character, int directionBool) {
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
     if (directionBool == 1) {
         // velocity is bounded by 1 m/s and 4m/s and we update velocity by adding acceleration*dt
-        if (*(character->velocityX) > 4) {
-            *(character->velocityX) = 4;
+        if (*(character->velocityX) > 3) {
+            *(character->velocityX) = 3;
         }
-        else if (*(character->velocityX) < 1) {
-            *(character->velocityX) = 1;
+        else if (*(character->velocityX) < 0.8) {
+            *(character->velocityX) = 0.8;
         }
         else {
             *(character->velocityX) = *(character->velocityX) + (X_ACCELERATION * DELTATIME);
@@ -466,11 +499,11 @@ void horizontalAcceleration(Character *character, int directionBool) {
 
     }
     else {
-        if (*(character->velocityX) < -4) {
-            *(character->velocityX) = -4;
+        if (*(character->velocityX) < -3) {
+            *(character->velocityX) = -3;
         }
-        else if (*(character->velocityX) > -1) {
-            *(character->velocityX) = -1;
+        else if (*(character->velocityX) > -0.8) {
+            *(character->velocityX) = -0.8;
         }
         else {
             *(character->velocityX) = *(character->velocityX) - (X_ACCELERATION * DELTATIME);

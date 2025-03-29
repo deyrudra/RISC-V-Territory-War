@@ -8,7 +8,7 @@
 #define GRAVITY 9.81
 #define AIRDRAG -2
 
-#define X_ACCELERATION 10 // For x movement walking.
+#define X_ACCELERATION 1.1 // For x movement walking.
 
 #include <stdlib.h>
 #include <stddef.h>
@@ -30,13 +30,14 @@ extern const char* gameControls[];
 extern int move_right_released;
 extern int move_left_released;
 
-typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPING, DEAD} CharacterState;
+typedef enum { IDLE, LEFTMOVEMENT, RIGHTMOVEMENT, GUN, GRENADE, BOOT, JUMPINGLEFT, JUMPINGRIGHT, DEAD} CharacterState;
 // Define character structure
 typedef struct Character{
     GameObject *idleCharacter; // GameObject for the character
     GameObject *walkLeftCharacter; // GameObject for the character
     GameObject *walkRightCharacter; // GameObject for the character
-    GameObject *jumpingCharacter; // GameObject for the character
+    GameObject *leftJumpingCharacter; // GameObject for the character
+    GameObject *rightJumpingCharacter; // GameObject for the character
     GameObject *leftBootCharacter; // GameObject for the character
     GameObject *rightBootCharacter; // GameObject for the character
     GameObject *deadCharacter; // GameObject for the character
@@ -52,6 +53,7 @@ typedef struct Character{
     int numJumps;
     RenderView characterView;
     Bar* healthBar;
+    CharacterState lastMovementMade;
 } Character;
 
 double abs_double(double value);
@@ -59,7 +61,7 @@ int abs_int(int value);
 
 
 // Function prototypes
-void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpCharAsset, char team);
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *leftJumpCharAsset, short int *rightJumpCharAsset, char team);
 
 void drawInitialHealthBar(Character *character);
 

@@ -81,23 +81,23 @@ Character* team_b[NUM_CHARACTERS_PER_TEAM];
 void startGame() {
     initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a0_idle, &player_a0_leftmovement,
-                        &player_a0_rightmovement, &player_a0_jump, 'a');
+                        &player_a0_rightmovement, &player_a0_jump_left, &player_a0_jump_right, 'a');
     initializeCharacter(&player_a1, 150 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a1_idle, &player_a1_leftmovement,
-                        &player_a1_rightmovement, &player_a1_jump, 'a');
+                        &player_a1_rightmovement, &player_a1_jump_left, &player_a1_jump_right, 'a');
     initializeCharacter(&player_a2, 200 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a2_idle, &player_a2_leftmovement,
-                        &player_a2_rightmovement, &player_a2_jump, 'a');
+                        &player_a2_rightmovement, &player_a2_jump_left, &player_a2_jump_right, 'a');
 
     initializeCharacter(&player_b0, WORLD_WIDTH - 20 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b0_idle, &player_b0_leftmovement,
-                        &player_b0_rightmovement, &player_b0_jump, 'b');
+                        &player_b0_rightmovement, &player_b0_jump_left, &player_b0_jump_right, 'b');
     initializeCharacter(&player_b1, WORLD_WIDTH - 70 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b1_idle, &player_b1_leftmovement,
-                        &player_b1_rightmovement, &player_b1_jump, 'b');
+                        &player_b1_rightmovement, &player_b1_jump_left, &player_b1_jump_right, 'b');
     initializeCharacter(&player_b2, WORLD_WIDTH - 120 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b2_idle, &player_b2_leftmovement,
-                        &player_b2_rightmovement, &player_b2_jump, 'b');
+                        &player_b2_rightmovement, &player_b2_jump_left, &player_b2_jump_right, 'b');
 
     initializeGame();
     
@@ -261,7 +261,6 @@ void handle_team_turn() {
             initializeBar(&displacementBarLeft, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
             initializeBar(&displacementBarMiddle, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, SCREEN_WIDTH + 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
             initializeBar(&displacementBarRight, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, SCREEN_WIDTH*2 + 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
-
             
             printf("After initialize displacemetn bar\n");
             int displacement = 0;
@@ -282,36 +281,12 @@ void handle_team_turn() {
                     displacement *=-1;
                     flipped = true;
                 }
-
-                double ratio = (double)displacement / DISPLACEMENT_LIMIT;
-
-                if(ratio > 1) ratio = 1;
-
-                int num_partitions_filled = ceil_custom(ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS);
-
-                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
-                            renderIn(displacementBarLeft.barObj[i]);
-                            renderIn(displacementBarMiddle.barObj[i]);
-                            renderIn(displacementBarRight.barObj[i]);
-                    }
-
-                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
-                            renderOut(displacementBarLeft.barObj[i]);
-                            renderOut(displacementBarMiddle.barObj[i]);
-                            renderOut(displacementBarRight.barObj[i]);
-                    }
-                }
                 
-                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
-
-                // Restore negative displacement
-                if(flipped){
-                    displacement*=-1;
-                }
-
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                double ratio = (double)displacement / DISPLACEMENT_LIMIT;
+                
+                if(ratio > 1) ratio = 1;
+                
+                int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
                 
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
@@ -356,6 +331,31 @@ void handle_team_turn() {
                     
                 }
                 prevView = currentView;
+                
+                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+                            renderIn(displacementBarLeft.barObj[i]);
+                            renderIn(displacementBarMiddle.barObj[i]);
+                            renderIn(displacementBarRight.barObj[i]);
+                    }
+
+                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i > num_partitions_filled; i--){
+                            renderOut(displacementBarLeft.barObj[i]);
+                            renderOut(displacementBarMiddle.barObj[i]);
+                            renderOut(displacementBarRight.barObj[i]);
+                    }
+                }
+                
+                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
+
+                // Restore negative displacement
+                if(flipped){
+                    displacement*=-1;
+                }
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                
 
             }
 
@@ -439,44 +439,6 @@ void handle_team_turn() {
 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
 
-                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
-
-                        if(currentView == LEFTVIEW){
-                            renderIn(displacementBarLeft.barObj[i]);
-                        }
-                        else if(currentView == MIDDLEVIEW){
-                            renderIn(displacementBarMiddle.barObj[i]);
-                        }
-                        else{
-                            renderIn(displacementBarRight.barObj[i]);
-
-                        }
-                    }
-
-                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
-                        if(currentView == LEFTVIEW){
-                            renderOut(displacementBarLeft.barObj[i]);
-                        }
-                        else if(currentView == MIDDLEVIEW){
-                            renderOut(displacementBarMiddle.barObj[i]);
-                        }
-                        else{
-                            renderOut(displacementBarRight.barObj[i]);
-                        }
-                    }
-                }
-
-                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
-
-                // Restore negative displacement
-                if(flipped){
-                    displacement*=-1;
-                }
-
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-                
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
                         // Do Nothing
@@ -520,6 +482,45 @@ void handle_team_turn() {
                     
                 }
                 prevView = currentView;
+
+                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+
+                        if(currentView == LEFTVIEW){
+                            renderIn(displacementBarLeft.barObj[i]);
+                        }
+                        else if(currentView == MIDDLEVIEW){
+                            renderIn(displacementBarMiddle.barObj[i]);
+                        }
+                        else{
+                            renderIn(displacementBarRight.barObj[i]);
+
+                        }
+                    }
+
+                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
+                        if(currentView == LEFTVIEW){
+                            renderOut(displacementBarLeft.barObj[i]);
+                        }
+                        else if(currentView == MIDDLEVIEW){
+                            renderOut(displacementBarMiddle.barObj[i]);
+                        }
+                        else{
+                            renderOut(displacementBarRight.barObj[i]);
+                        }
+                    }
+                }
+
+                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
+
+                // Restore negative displacement
+                if(flipped){
+                    displacement*=-1;
+                }
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                
 
             }
             
