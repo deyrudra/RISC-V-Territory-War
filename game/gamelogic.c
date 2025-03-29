@@ -1,5 +1,10 @@
 #include "gamelogic.h"
 
+int ceil_custom(double x) {
+    int i = (int)x;
+    return (x > i) ? (i + 1) : i;
+}
+
 GameObject* mainMenuTitleObj;
 GameObject* platformObj;
 GameObject* moveOrStayBannerObj1;
@@ -20,7 +25,10 @@ GameObject* grenadeControlBannerObj3;
 GameObject* groundObj;
 
 // GameObject** displacementBarObj;
-Bar displacementBar;
+Bar displacementBarLeft;
+Bar displacementBarMiddle;
+Bar displacementBarRight;
+
 
 
 Character player_a0;
@@ -250,7 +258,10 @@ void handle_team_turn() {
             //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             printf("Before initialize displacemetn bar\n");
 
-            initializeBar(&displacementBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            initializeBar(&displacementBarLeft, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            initializeBar(&displacementBarMiddle, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, SCREEN_WIDTH + 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            initializeBar(&displacementBarRight, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, SCREEN_WIDTH*2 + 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+
             
             printf("After initialize displacemetn bar\n");
             int displacement = 0;
@@ -276,20 +287,24 @@ void handle_team_turn() {
 
                 if(ratio > 1) ratio = 1;
 
-                int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
+                int num_partitions_filled = ceil_custom(ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS);
 
-                if(num_partitions_filled > displacementBar.lastRenderedPartition){
-                    for(int i = displacementBar.lastRenderedPartition; i < num_partitions_filled; i++){
-                        renderIn(displacementBar.barObj[i]);
+                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+                            renderIn(displacementBarLeft.barObj[i]);
+                            renderIn(displacementBarMiddle.barObj[i]);
+                            renderIn(displacementBarRight.barObj[i]);
                     }
 
-                } else if(num_partitions_filled < displacementBar.lastRenderedPartition){
-                    for(int i = displacementBar.lastRenderedPartition; i >= num_partitions_filled; i--){
-                        renderOut(displacementBar.barObj[i]);
+                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
+                            renderOut(displacementBarLeft.barObj[i]);
+                            renderOut(displacementBarMiddle.barObj[i]);
+                            renderOut(displacementBarRight.barObj[i]);
                     }
                 }
                 
-                setLastRenderedPartition(&displacementBar, num_partitions_filled);
+                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
 
                 // Restore negative displacement
                 if(flipped){
@@ -345,7 +360,10 @@ void handle_team_turn() {
             }
 
             // printf("Last partition rendered is: %d\n", displacementBar.lastRenderedPartition);
-            resetBar(&displacementBar, displacementBar.lastRenderedPartition-1);
+            resetBar(&displacementBarLeft, displacementBarLeft.lastRenderedPartition-1);
+            resetBar(&displacementBarMiddle, displacementBarLeft.lastRenderedPartition-1);
+            resetBar(&displacementBarRight, displacementBarLeft.lastRenderedPartition-1);
+
             resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
@@ -421,18 +439,36 @@ void handle_team_turn() {
 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
 
-                if(num_partitions_filled > displacementBar.lastRenderedPartition){
-                    for(int i = displacementBar.lastRenderedPartition; i < num_partitions_filled; i++){
-                        renderIn(displacementBar.barObj[i]);
+                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+
+                        if(currentView == LEFTVIEW){
+                            renderIn(displacementBarLeft.barObj[i]);
+                        }
+                        else if(currentView == MIDDLEVIEW){
+                            renderIn(displacementBarMiddle.barObj[i]);
+                        }
+                        else{
+                            renderIn(displacementBarRight.barObj[i]);
+
+                        }
                     }
 
-                } else if(num_partitions_filled < displacementBar.lastRenderedPartition){
-                    for(int i = displacementBar.lastRenderedPartition; i >= num_partitions_filled; i--){
-                        renderOut(displacementBar.barObj[i]);
+                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
+                        if(currentView == LEFTVIEW){
+                            renderOut(displacementBarLeft.barObj[i]);
+                        }
+                        else if(currentView == MIDDLEVIEW){
+                            renderOut(displacementBarMiddle.barObj[i]);
+                        }
+                        else{
+                            renderOut(displacementBarRight.barObj[i]);
+                        }
                     }
                 }
 
-                setLastRenderedPartition(&displacementBar, num_partitions_filled);
+                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
 
                 // Restore negative displacement
                 if(flipped){
@@ -488,7 +524,9 @@ void handle_team_turn() {
             }
             
 
-            resetBar(&displacementBar, displacementBar.lastRenderedPartition-1);
+            resetBar(&displacementBarLeft, displacementBarLeft.lastRenderedPartition-1);
+            resetBar(&displacementBarMiddle, displacementBarLeft.lastRenderedPartition-1);
+            resetBar(&displacementBarRight, displacementBarLeft.lastRenderedPartition-1);
             resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
