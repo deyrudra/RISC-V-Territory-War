@@ -332,7 +332,7 @@ void destroyCharacter(Character *character){
     // free(character->leftBootCharacter->prevPixelData);
     // free(character->rightBootCharacter->prevPixelData);
     // free(character->deadCharacter->prevPixelData);
-
+    
     if (character->x != NULL) free(character->x);
     if (character->y != NULL) free(character->y);
     if (character->velocityX != NULL) free(character->velocityX);
@@ -344,6 +344,10 @@ void destroyCharacter(Character *character){
 void drawCharacter(Character *character, bool firstRun){
     // If character state didn't change, then don't do nothing.
     // Rendering out Old Asset
+    if (!firstRun) {
+        updateHealthBar(character);
+    }
+
     if (character->prevState == IDLE) {
         renderOut(character->idleCharacter);
     }
@@ -370,22 +374,17 @@ void drawCharacter(Character *character, bool firstRun){
     else if (character->state == JUMPING) {
         renderIn(character->jumpingCharacter);
     }
-
-    if(firstRun){
-        return;
-    }
     
-    if (character->state == JUMPING || character->prevState == JUMPING) {
-        for(int i = 0; i < character->healthBar->lastRenderedPartition; i++){
-            // printf("render out idx: %d\n", i);
-            if (character->healthBar->barObj[i]->currentlyRendered == 1) {
-                renderOut(character->healthBar->barObj[i]);
-            }
-        }
-    }
-    else {
-        updateHealthBar(character);
-    }
+    // if (character->state == JUMPING || character->prevState == JUMPING || character->prevState == IDLE) {
+    //     for(int i = 0; i < character->healthBar->lastRenderedPartition; i++){
+    //         // printf("render out idx: %d\n", i);
+    //         if (character->healthBar->barObj[i]->currentlyRendered == 1) {
+    //             renderOut(character->healthBar->barObj[i]);
+    //         }
+    //     }
+    // }
+    // else {
+    // }
    
 }
 
@@ -436,7 +435,12 @@ void updateHealthBar(Character* character){
     //render in new bar
     for(int i = 0; i < num_partitions_filled; i++){
         // printf("render in idx: %d\n", i);
-        renderIn(character->healthBar->barObj[i]);
+        if (character->state == JUMPING || character->prevState == JUMPING) {
+        
+        }
+        else {
+            renderIn(character->healthBar->barObj[i]);
+        }
     }
 
     // printf("debug output 4\n");
