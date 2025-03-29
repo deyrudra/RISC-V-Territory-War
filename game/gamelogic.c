@@ -2,9 +2,15 @@
 
 GameObject* mainMenuTitleObj;
 GameObject* platformObj;
-GameObject* moveOrStayBannerObj;
-GameObject* grenadeOrStayBannerObj;
-GameObject* movementControlBannerObj;
+GameObject* moveOrStayBannerObj1;
+GameObject* grenadeOrStayBannerObj1;
+GameObject* movementControlBannerObj1;
+GameObject* moveOrStayBannerObj2;
+GameObject* grenadeOrStayBannerObj2;
+GameObject* movementControlBannerObj2;
+GameObject* moveOrStayBannerObj3;
+GameObject* grenadeOrStayBannerObj3;
+GameObject* movementControlBannerObj3;
 GameObject* groundObj;
 
 // GameObject** displacementBarObj;
@@ -194,7 +200,9 @@ void handle_team_turn() {
     if (game_state_ptr->team_turn == 'a') {
 
         //-----------------------Stage 1 of turn, draw bottom bar here
-        renderIn(moveOrStayBannerObj);
+        renderIn(moveOrStayBannerObj1);
+        renderIn(moveOrStayBannerObj2);
+        renderIn(moveOrStayBannerObj3);
         printf("Team A's Turn\n");
         printf("Character %c%d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
         end_turn = poll_move_or_stay_input();
@@ -202,7 +210,9 @@ void handle_team_turn() {
 
         if (!end_turn) {
             // Input handler logic for moving controls
-            renderIn(movementControlBannerObj);
+            renderIn(movementControlBannerObj1);
+            renderIn(movementControlBannerObj2);
+            renderIn(movementControlBannerObj3);
             //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             printf("Before initialize displacemetn bar\n");
 
@@ -307,8 +317,11 @@ void handle_team_turn() {
             //CURRENTLY just rendering on top of prev banner and displacememt bar
 
             //----------Stage 2 of turn, output bar for weapon or stay
+            // updateHealthBar(team_a[game_state_ptr->character_turn_team_a]);
             printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
-            renderIn(grenadeOrStayBannerObj);
+            renderIn(grenadeOrStayBannerObj1);
+            renderIn(grenadeOrStayBannerObj2);
+            renderIn(grenadeOrStayBannerObj3);
 
             end_turn = poll_grenade_or_stay_input();
         }
@@ -328,7 +341,9 @@ void handle_team_turn() {
     // Team B's Turn (DISPLACEMENT BAR DOES NOT WORK FOR TEAM B CHARACER YET, WILL FIX IT TMRW)
     else {
         //-----------------------Stage 1 of turn, draw bottom bar here
-        renderIn(moveOrStayBannerObj);
+        renderIn(moveOrStayBannerObj1);
+        renderIn(moveOrStayBannerObj2);
+        renderIn(moveOrStayBannerObj3);
         printf("Team B's Turn\n");
         printf("Character %c%d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
         end_turn = poll_move_or_stay_input();
@@ -336,7 +351,9 @@ void handle_team_turn() {
 
         if (!end_turn) {
             // Input handler logic for moving controls
-            renderIn(movementControlBannerObj);
+            renderIn(movementControlBannerObj1);
+            renderIn(movementControlBannerObj2);
+            renderIn(movementControlBannerObj3);
             
             int displacement = 0;
             while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
@@ -437,7 +454,9 @@ void handle_team_turn() {
 
             //----------Stage 2 of turn, output bar for weapon or stay
             printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
-            renderIn(grenadeOrStayBannerObj);
+            renderIn(grenadeOrStayBannerObj1);
+            renderIn(grenadeOrStayBannerObj2);
+            renderIn(grenadeOrStayBannerObj3);
             end_turn = poll_grenade_or_stay_input();
         }
 

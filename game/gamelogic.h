@@ -19,9 +19,15 @@
 // Global Game Objects
 extern GameObject* mainMenuTitleObj;
 extern GameObject* platformObj;
-extern GameObject* moveOrStayBannerObj;
-extern GameObject* grenadeOrStayBannerObj;
-extern GameObject* movementControlBannerObj;
+extern GameObject* moveOrStayBannerObj1;
+extern GameObject* grenadeOrStayBannerObj1;
+extern GameObject* movementControlBannerObj1;
+extern GameObject* moveOrStayBannerObj2;
+extern GameObject* grenadeOrStayBannerObj2;
+extern GameObject* movementControlBannerObj2;
+extern GameObject* moveOrStayBannerObj3;
+extern GameObject* grenadeOrStayBannerObj3;
+extern GameObject* movementControlBannerObj3;
 
 
 
