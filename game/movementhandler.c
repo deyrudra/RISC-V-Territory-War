@@ -161,7 +161,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = LEFTMOVEMENT; //update state for drawing the correct asset 
             horizontalAcceleration(character, 0); //update the character's velocity
             *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
-            *displacement += *character->velocityX; //update dist travelled for movement limit
+            // *displacement += *character->velocityX; //update dist travelled for movement limit
 
         }
         if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
@@ -169,7 +169,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = RIGHTMOVEMENT;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
-            *displacement += *character->velocityX; //update dist travelled for movement limit
+            // *displacement += *character->velocityX; //update dist travelled for movement limit
 
         }
         if ((strcmp(direction, gameControls[2]) == 0) && (character->numJumps < 2)) { // Checking for move_jump
@@ -210,6 +210,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
 
     // Y-Direction Logic (Gravity Affect on y-velocity, isGrounded poll, y-direction update)
     if (character->isGroundedBool == 0) { // Gravity Affect on Y-Velocity
+        character->state = JUMPING;
         // Update to velocity with constant acceleration
         *(character->velocityY) = *(character->velocityY) + (GRAVITY * DELTATIME);
         // Update to position with current velocity 
@@ -373,8 +374,18 @@ void drawCharacter(Character *character, bool firstRun){
     if(firstRun){
         return;
     }
-
-    updateHealthBar(character);
+    
+    if (character->state == JUMPING || character->prevState == JUMPING) {
+        for(int i = 0; i < character->healthBar->lastRenderedPartition; i++){
+            // printf("render out idx: %d\n", i);
+            if (character->healthBar->barObj[i]->currentlyRendered == 1) {
+                renderOut(character->healthBar->barObj[i]);
+            }
+        }
+    }
+    else {
+        updateHealthBar(character);
+    }
    
 }
 
