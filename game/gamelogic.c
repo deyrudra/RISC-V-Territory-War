@@ -255,20 +255,49 @@ void handle_team_turn() {
         currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
         updateScreenView();
 
+        GameObject* jump_right1;
+        GameObject* jump_right2;
+        GameObject* jump_right3;
+        if (game_state_ptr->character_turn_team_a == 0) {
+            initializeGeneralObject(&jump_right1, player_a0_jump_right, 0, SCREEN_WIDTH-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right2, player_a0_jump_right, 0, SCREEN_WIDTH*2-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right3, player_a0_jump_right, 0, SCREEN_WIDTH*3-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
+        else if (game_state_ptr->character_turn_team_a == 1) {
+            initializeGeneralObject(&jump_right1, player_a1_jump_right, 0, SCREEN_WIDTH-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right2, player_a1_jump_right, 0, SCREEN_WIDTH*2-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right3, player_a1_jump_right, 0, SCREEN_WIDTH*3-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
+        else if (game_state_ptr->character_turn_team_a == 2) {
+            initializeGeneralObject(&jump_right1, player_a2_jump_right, 0, SCREEN_WIDTH-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right2, player_a2_jump_right, 0, SCREEN_WIDTH*2-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right3, player_a2_jump_right, 0, SCREEN_WIDTH*3-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
+
         //-----------------------Stage 1 of turn, draw bottom bar here
         renderIn(moveOrStayBannerObj1);
         renderIn(moveOrStayBannerObj2);
         renderIn(moveOrStayBannerObj3);
+        renderIn(jump_right1);
+        renderIn(jump_right2);
+        renderIn(jump_right3);
         printf("Team A's Turn\n");
         printf("Character %c%d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
         end_turn = poll_move_or_stay_input();
         //-----------------------------
+
+
 
         if (!end_turn) {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj1);
             renderIn(movementControlBannerObj2);
             renderIn(movementControlBannerObj3);
+
+            renderIn(jump_right1);
+            renderIn(jump_right2);
+            renderIn(jump_right3);
+
             //initializeBar(&displacementBarObj, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22);
             printf("Before initialize displacemetn bar\n");
 
@@ -417,6 +446,10 @@ void handle_team_turn() {
             renderIn(grenadeOrStayBannerObj2);
             renderIn(grenadeOrStayBannerObj3);
 
+            renderIn(jump_right1);
+            renderIn(jump_right2);
+            renderIn(jump_right3);
+
             end_turn = poll_grenade_or_stay_input();
         }
 
@@ -424,6 +457,10 @@ void handle_team_turn() {
             renderIn(grenadeControlBannerObj1);
             renderIn(grenadeControlBannerObj2);
             renderIn(grenadeControlBannerObj3);
+
+            renderIn(jump_right1);
+            renderIn(jump_right2);
+            renderIn(jump_right3);
 
             // MIGHT NEED TO CHANGE THIS HOW THE DISPLACEMENT BAR WORKS OF INTIALIZING THREE BARS AT ONCE
             if(currentView == LEFTVIEW){
@@ -615,21 +652,47 @@ void handle_team_turn() {
         //inital view setup
         currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
         updateScreenView();
-
+        
+        GameObject* jump_right1;
+        GameObject* jump_right2;
+        GameObject* jump_right3;
+        if (game_state_ptr->character_turn_team_b == 0) {
+            initializeGeneralObject(&jump_right1, player_b0_jump_right, 0, SCREEN_WIDTH-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right2, player_b0_jump_right, 0, SCREEN_WIDTH*2-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right3, player_b0_jump_right, 0, SCREEN_WIDTH*3-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
+        else if (game_state_ptr->character_turn_team_b == 1) {
+            initializeGeneralObject(&jump_right1, player_b1_jump_right, 0, SCREEN_WIDTH-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right2, player_b1_jump_right, 0, SCREEN_WIDTH*2-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right3, player_b1_jump_right, 0, SCREEN_WIDTH*3-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
+        else if (game_state_ptr->character_turn_team_b == 2) {
+            initializeGeneralObject(&jump_right1, player_b2_jump_right, 0, SCREEN_WIDTH-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right2, player_b2_jump_right, 0, SCREEN_WIDTH*2-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+            initializeGeneralObject(&jump_right3, player_b2_jump_right, 0, SCREEN_WIDTH*3-10 - PLAYER_WIDTH, SCREEN_HEIGHT - 5 - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
         //-----------------------Stage 1 of turn, draw bottom bar here
         renderIn(moveOrStayBannerObj1);
         renderIn(moveOrStayBannerObj2);
         renderIn(moveOrStayBannerObj3);
+        renderIn(jump_right1);
+        renderIn(jump_right2);
+        renderIn(jump_right3);
         printf("Team B's Turn\n");
         printf("Character %c%d's turn: Press 1 to move or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
         end_turn = poll_move_or_stay_input();
         //-----------------------------
+
+
 
         if (!end_turn) {
             // Input handler logic for moving controls
             renderIn(movementControlBannerObj1);
             renderIn(movementControlBannerObj2);
             renderIn(movementControlBannerObj3);
+            renderIn(jump_right1);
+            renderIn(jump_right2);
+            renderIn(jump_right3);
             
             int displacement = 0;
             int starting_x = *(team_b[game_state_ptr->character_turn_team_b]->x);
@@ -767,6 +830,9 @@ void handle_team_turn() {
             renderIn(grenadeOrStayBannerObj1);
             renderIn(grenadeOrStayBannerObj2);
             renderIn(grenadeOrStayBannerObj3);
+            renderIn(jump_right1);
+            renderIn(jump_right2);
+            renderIn(jump_right3);
             end_turn = poll_grenade_or_stay_input();
         }
 
