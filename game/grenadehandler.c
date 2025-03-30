@@ -203,7 +203,7 @@ void checkGrenadeGrounded(Grenade* grenade){
 }
 
 // not sure if pointer arithmetic is working pls doublecheck, we need to make sure that
-void checkWithinBlastRadius(Grenade* grenade, Character** team_a, Character** team_b){
+void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, Character** team_b){
     for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
         if(team_a[i]->state == DEAD){
             continue;
@@ -219,17 +219,21 @@ void checkWithinBlastRadius(Grenade* grenade, Character** team_a, Character** te
             int bottom_bound = *(grenade->grenadeObj->y) + BLAST_RADIUS;
             int top_bound = *(grenade->grenadeObj->y) - BLAST_RADIUS;
 
-            printf("A%d-------\ncogX = %d\ncogY = %d\nleftbound = %d\nrightbound = %d\nbottombound = %d\ntopbound = %d\n\n", i, cog_x, cog_y, left_bound, right_bound, bottom_bound, top_bound);
+            // printf("A%d-------\ncogX = %d\ncogY = %d\nleftbound = %d\nrightbound = %d\nbottombound = %d\ntopbound = %d\n\n", i, cog_x, cog_y, left_bound, right_bound, bottom_bound, top_bound);
 
 
             if(cog_x >= left_bound && cog_x <= right_bound && cog_y >= top_bound && cog_y <= bottom_bound){
                 //set to within radius
                 team_a[i]->withinBlastRadiusBool = 1;
-                printf("A%d within radius\n", i);
-            } else {
-                printf("A%d NOT within radius\n", i);
+                *(team_a[i]->health) -=30;
+
+                printf("A%d health is %d\n", i, *(team_a[i]->health));
+
+                // printf("A%d within radius\n", i);
+            } // else {
+            //     printf("A%d NOT within radius\n", i);
                 
-            }
+            // }
         }
     }
 
@@ -248,17 +252,22 @@ void checkWithinBlastRadius(Grenade* grenade, Character** team_a, Character** te
             int bottom_bound = *(grenade->grenadeObj->y) + BLAST_RADIUS;
             int top_bound = *(grenade->grenadeObj->y) - BLAST_RADIUS;
 
-            printf("B%d-------\ncogX = %d\ncogY = %d\nleftbound = %d\nrightbound = %d\nbottombound = %d\ntopbound = %d\n\n", i, cog_x, cog_y, left_bound, right_bound, bottom_bound, top_bound);
+            // printf("B%d-------\ncogX = %d\ncogY = %d\nleftbound = %d\nrightbound = %d\nbottombound = %d\ntopbound = %d\n\n", i, cog_x, cog_y, left_bound, right_bound, bottom_bound, top_bound);
 
 
             if(cog_x >= left_bound && cog_x <= right_bound && cog_y >= top_bound && cog_y <= bottom_bound){
                 //set to within radius
                 team_b[i]->withinBlastRadiusBool = 1;
-                printf("B%d within radius\n", i);
-            } else {
-                printf("B%d NOT within radius\n", i);
+                *(team_b[i]->health) -=30;
+
+                printf("B%d health is %d\n", i, *(team_b[i]->health));
                 
-            }
+
+                // printf("B%d within radius\n", i);
+            }// else {
+            //     printf("B%d NOT within radius\n", i);
+                
+            // }
         }
     }
 }

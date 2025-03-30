@@ -62,7 +62,7 @@ void destroyGrenade(Grenade* grenade);
 
 void checkGrenadeGrounded(Grenade* grenade);
 
-void checkWithinBlastRadius(Grenade* grenade, Character** team_a, Character** team_b);
+void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, Character** team_b);
 
 
 #endif

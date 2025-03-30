@@ -555,17 +555,17 @@ void handle_team_turn() {
 
 
             //logic for damage
-            checkWithinBlastRadius(&grenade, team_a, team_b);
+            checkWithinBlastRadiusAndApplyDamage(&grenade, team_a, team_b);
 
             for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
                 if(team_a[i]->withinBlastRadiusBool == 1){
-                    printf("A%d within radius\n", i);
+                    printf("A%d within radius and health is %d\n", i, *(team_a[i]->health));
                 }
             }
 
             for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
                 if(team_b[i]->withinBlastRadiusBool == 1){
-                    printf("B%d within radius\n", i);
+                    printf("B%d within radius and health is %d\n", i, *(team_b[i]->health));
                 }
             }
 
