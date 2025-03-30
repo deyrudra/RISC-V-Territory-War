@@ -72,6 +72,8 @@ Platform lifeguardPlatform6;
 Platform netPlatform;
 Platform umbrellaPlatform;
 
+Grenade grenade;
+
 GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
 Character* team_b[NUM_CHARACTERS_PER_TEAM];
@@ -295,10 +297,10 @@ void handle_team_turn() {
                         
                     }    
                 }
+
                 if (ifCollision == 0) {
                     // Remove all instances within the linked lists
                     drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
-                    currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
                 }
                 else {
                     // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
@@ -325,7 +327,6 @@ void handle_team_turn() {
 
                     drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
 
-
                     for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
                         if (j < NUM_CHARACTERS_PER_TEAM) {
                             if (currentCollisionArray[j]) {
@@ -340,6 +341,8 @@ void handle_team_turn() {
                     }
                     
                 }
+
+                currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
 
                 if(displacement < 0){
                     displacement *=-1;
@@ -377,49 +380,7 @@ void handle_team_turn() {
                     displacement*=-1;
                 }
                 
-                if (currentView == LEFTVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        // Do Nothing
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        saveMiddle();
-                        renderLeft();
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        saveRight();
-                        renderLeft();
-                    }
-                    
-                }
-                else if (currentView == MIDDLEVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        saveLeft();
-                        renderMiddle();
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        // Do Nothing
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        saveRight();
-                        renderMiddle();
-                    }
-                    
-                }
-                else if (currentView == RIGHTVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        saveLeft();
-                        renderRight();
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        saveMiddle();
-                        renderRight();
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        // Do Nothing
-                    }
-                    
-                }
-                prevView = currentView;
+                updateScreenView();
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 
@@ -451,10 +412,63 @@ void handle_team_turn() {
             renderIn(grenadeControlBannerObj3);
             // grenade logic
             printf("call grenade logic controls!\n");
-            while(1){
+            bool grenadeLaunched = false;
+
+
+            grenade_user_angle = 0;
+            grenade_user_power = 0;
+            while(!grenadeLaunched){
                 char* control = grenade_control_input();
-                printf("%s\n", control);
+                //printf("%s\n", control);
+
+                //NEED TO PUT logic for drawing arrow in this while loop
+
+
+                if(control == gameControls[10]){ //if they released up grenade
+                    if(grenade_user_angle != 90){
+                        grenade_user_angle += 10;
+                        printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+                    }
+                }
+                else if(control == gameControls[12]){ // if they released down grenade
+                    if(grenade_user_angle != 0){
+                        grenade_user_angle -=10;
+                        printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+
+
+                    }
+                }
+                else if(control == gameControls[7]){
+                    printf("logic to face right\n");
+                }
+                else if(control == gameControls[8]){
+                    printf("logic to face left\n");
+                }
+                else if(control == gameControls[14]){
+                    grenade_user_power = 4;
+                    printf("FIXED INPUT POWER: %lf\n", grenade_user_power);
+                    initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x), *(team_a[game_state_ptr->character_turn_team_a]->y), &grenadeasset, grenade_user_angle, grenade_user_power);
+                    grenadeLaunched = true;
+                    renderIn(grenade.grenadeObj); //initial render in
+                }
+
             }
+
+            //rendering loop for grenade once user controls are done
+            while(1){
+                renderOut(grenade.grenadeObj);
+                updateGrenadePosition(&grenade);
+                checkGrenadeGrounded(&grenade);
+                // printf("---------\nX: %d\nY: %d\nVelocityX: %lf\nVelocityY: %lf\n--------\n\n", *(grenade.grenadeObj->x), *(grenade.grenadeObj->y), *(grenade.grenadeObj->velocityX), *(grenade.grenadeObj->velocityY));
+                renderIn(grenade.grenadeObj);
+                currentView = grenade.grenadeView;
+
+                updateScreenView();
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+            }
+
+
         }
 
         // END TURN LOGIC
@@ -515,7 +529,6 @@ void handle_team_turn() {
                 if (ifCollision == 0) {
                     // Remove all instances within the linked lists
                     drawCharacter(team_b[game_state_ptr->character_turn_team_b], false);
-                    currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
                 }
                 else {
                     // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
@@ -558,9 +571,8 @@ void handle_team_turn() {
                     
                 }
 
+                currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
 
-
-                
                 if(displacement < 0){
                     displacement *=-1;
                     flipped = true;
@@ -609,49 +621,8 @@ void handle_team_turn() {
                     displacement*=-1;
                 }
 
-                if (currentView == LEFTVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        // Do Nothing
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        saveMiddle();
-                        renderLeft();
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        saveRight();
-                        renderLeft();
-                    }
-                    
-                }
-                else if (currentView == MIDDLEVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        saveLeft();
-                        renderMiddle();
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        // Do Nothing
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        saveRight();
-                        renderMiddle();
-                    }
-                    
-                }
-                else if (currentView == RIGHTVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        saveLeft();
-                        renderRight();
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        saveMiddle();
-                        renderRight();
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        // Do Nothing
-                    }
-                    
-                }
-                prevView = currentView;
+                
+                updateScreenView();
                 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 
@@ -775,3 +746,49 @@ void initializeGame() {
 //     }
 
 // };
+
+void updateScreenView(){
+    if (currentView == LEFTVIEW) {
+        if (prevView == LEFTVIEW) {
+            // Do Nothing
+        }
+        else if (prevView == MIDDLEVIEW) {
+            saveMiddle();
+            renderLeft();
+        }
+        else if (prevView == RIGHTVIEW) {
+            saveRight();
+            renderLeft();
+        }
+        
+    }
+    else if (currentView == MIDDLEVIEW) {
+        if (prevView == LEFTVIEW) {
+            saveLeft();
+            renderMiddle();
+        }
+        else if (prevView == MIDDLEVIEW) {
+            // Do Nothing
+        }
+        else if (prevView == RIGHTVIEW) {
+            saveRight();
+            renderMiddle();
+        }
+        
+    }
+    else if (currentView == RIGHTVIEW) {
+        if (prevView == LEFTVIEW) {
+            saveLeft();
+            renderRight();
+        }
+        else if (prevView == MIDDLEVIEW) {
+            saveMiddle();
+            renderRight();
+        }
+        else if (prevView == RIGHTVIEW) {
+            // Do Nothing
+        }
+        
+    }
+    prevView = currentView;
+}
