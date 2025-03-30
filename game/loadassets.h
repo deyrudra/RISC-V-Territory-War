@@ -48,6 +48,8 @@
 #define HEALTHBARPARTITION_HEIGHT 2
 #define HEALTHBARPARTITION_WIDTH 1
 
+#define GRENADE_HEIGHT 4
+#define GRENADE_WIDTH 4
 
 // array size is 3200
 static const short background[]  = {
@@ -2654,10 +2656,13 @@ static const short int player_b2_rightmovement[]  = {
   65535, 65535, 0, 0, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 0, 0, 65535, 65535
 };
 
-
-
-
-
+// array size is 32
+static const short int grenadeasset[]  = {
+  320, 320, 320, 320, 
+  320, 320, 320, 320, 
+  320, 320, 320, 320, 
+  320, 320, 320, 320
+};
 
 
 
