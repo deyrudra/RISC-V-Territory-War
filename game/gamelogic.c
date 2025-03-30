@@ -8,16 +8,19 @@ int ceil_custom(double x) {
 GameObject* mainMenuTitleObj;
 GameObject* platformObj;
 GameObject* moveOrStayBannerObj1;
+GameObject* emptyBannerObj1;
 GameObject* grenadeOrStayBannerObj1;
 GameObject* movementControlBannerObj1;
 GameObject* grenadeControlBannerObj1;
 
 GameObject* moveOrStayBannerObj2;
+GameObject* emptyBannerObj2;
 GameObject* grenadeOrStayBannerObj2;
 GameObject* movementControlBannerObj2;
 GameObject* grenadeControlBannerObj2;
 
 GameObject* moveOrStayBannerObj3;
+GameObject* emptyBannerObj3;
 GameObject* grenadeOrStayBannerObj3;
 GameObject* movementControlBannerObj3;
 GameObject* grenadeControlBannerObj3;
@@ -73,8 +76,6 @@ GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
 Character* team_b[NUM_CHARACTERS_PER_TEAM];
 
-LinkedListCollection* collectionOfCollidingCharactersLists;
-
 void startGame() {
     initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a0_idle, &player_a0_leftmovement,
@@ -98,8 +99,6 @@ void startGame() {
 
     initializeGame();
     
-    collectionOfCollidingCharactersLists = createCollection(MAX_NUM_CHARACTER_COLLISION_LISTS);
-
     // Add characters to teams
     team_a[0] = &player_a0;
     team_a[1] = &player_a1;
@@ -227,6 +226,10 @@ void startGame() {
     drawInitialHealthBar(&player_b1);
     drawInitialHealthBar(&player_b2);
 
+    renderIn(emptyBannerObj1);
+    renderIn(emptyBannerObj2);
+    renderIn(emptyBannerObj3);
+
     while(game_state_ptr->game_running){
         handle_team_turn();
     }
@@ -263,7 +266,7 @@ void handle_team_turn() {
             
             printf("After initialize displacemetn bar\n");
             int displacement = 0;
-            while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
+            while (abs_double(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
 
@@ -343,27 +346,29 @@ void handle_team_turn() {
                     flipped = true;
                 }
                 
-                double ratio = (double)displacement / DISPLACEMENT_LIMIT;
+                double ratio = (double) displacement / DISPLACEMENT_LIMIT;
                 
                 if(ratio > 1) ratio = 1;
                 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
                 
                 
-                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                
+                if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
+                        renderOut(displacementBarLeft.barObj[i]);
+                        renderOut(displacementBarMiddle.barObj[i]);
+                        renderOut(displacementBarRight.barObj[i]);
+                    }
+                }
+                else if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
                     for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
                             renderIn(displacementBarLeft.barObj[i]);
                             renderIn(displacementBarMiddle.barObj[i]);
                             renderIn(displacementBarRight.barObj[i]);
                     }
 
-                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i > num_partitions_filled; i--){
-                            renderOut(displacementBarLeft.barObj[i]);
-                            renderOut(displacementBarMiddle.barObj[i]);
-                            renderOut(displacementBarRight.barObj[i]);
-                    }
-                }
+                } 
                 
                 setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
 
@@ -371,8 +376,6 @@ void handle_team_turn() {
                 if(flipped){
                     displacement*=-1;
                 }
-                
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
@@ -417,6 +420,9 @@ void handle_team_turn() {
                     
                 }
                 prevView = currentView;
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                
 
             }
 
@@ -476,7 +482,7 @@ void handle_team_turn() {
             renderIn(movementControlBannerObj3);
             
             int displacement = 0;
-            while (abs_int(displacement) < DISPLACEMENT_LIMIT) {
+            while (abs_double(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
 
@@ -603,8 +609,6 @@ void handle_team_turn() {
                     displacement*=-1;
                 }
 
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-                
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
                         // Do Nothing
@@ -648,6 +652,9 @@ void handle_team_turn() {
                     
                 }
                 prevView = currentView;
+                
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                
 
             }
             

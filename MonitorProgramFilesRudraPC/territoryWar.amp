@@ -21,7 +21,6 @@
             <source_file>../game/backgroundhandler.c</source_file>
             <source_file>../game/barhandler.c</source_file>
             <source_file>../game/grenadehandler.c</source_file>
-            <source_file>../game/linkedlist.c</source_file>
         </source_files>
         <options>
             <compiler_flags>-g -O1 -ffunction-sections -fverbose-asm -fno-inline -gdwarf-2</compiler_flags>

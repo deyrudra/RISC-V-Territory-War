@@ -10,11 +10,10 @@
 #include "backgroundhandler.h"
 #include "barhandler.h"
 #include <stdio.h>
-#include "linkedlist.h"
 
 
 #define NUM_CHARACTERS_PER_TEAM 3
-#define DISPLACEMENT_LIMIT 200
+#define DISPLACEMENT_LIMIT 320
 #define MAX_NUM_CHARACTER_COLLISION_LISTS NUM_CHARACTERS_PER_TEAM
 
 
@@ -22,12 +21,15 @@
 extern GameObject* mainMenuTitleObj;
 extern GameObject* platformObj;
 extern GameObject* moveOrStayBannerObj1;
+extern GameObject* emptyBannerObj1;
 extern GameObject* grenadeOrStayBannerObj1;
 extern GameObject* movementControlBannerObj1;
 extern GameObject* moveOrStayBannerObj2;
+extern GameObject* emptyBannerObj2;
 extern GameObject* grenadeOrStayBannerObj2;
 extern GameObject* movementControlBannerObj2;
 extern GameObject* moveOrStayBannerObj3;
+extern GameObject* emptyBannerObj3;
 extern GameObject* grenadeOrStayBannerObj3;
 extern GameObject* movementControlBannerObj3;
 extern GameObject* grenadeControlBannerObj1;

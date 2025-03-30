@@ -20,20 +20,23 @@ int main(void) {
 
   // Banners
   initializeGeneralObject(&moveOrStayBannerObj1, &moveorstaybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+  initializeGeneralObject(&emptyBannerObj1, &emptybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj1, &grenadeorstaybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj1, &movementcontrolbanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeControlBannerObj1, &grenadecontrolbanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
-
-
+  
+  
   
   initializeGeneralObject(&moveOrStayBannerObj2, &moveorstaybanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+  initializeGeneralObject(&emptyBannerObj2, &emptybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj2, &grenadeorstaybanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj2, &movementcontrolbanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeControlBannerObj2, &grenadecontrolbanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
-
-
-
+  
+  
+  
   initializeGeneralObject(&moveOrStayBannerObj3, &moveorstaybanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
+  initializeGeneralObject(&emptyBannerObj3, &emptybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj3, &grenadeorstaybanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj3, &movementcontrolbanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeControlBannerObj3, &grenadecontrolbanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
