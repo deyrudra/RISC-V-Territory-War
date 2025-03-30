@@ -97,7 +97,3 @@ void destroyBackground(Background *background) {
     free(background->y);
     free(background->collidable);
 }
-
-void updateGrenadePosition(){
-    
-}

@@ -6,7 +6,6 @@
 
 #define DELTATIME 0.02
 #define GRAVITY 9.81
-#define AIRDRAG -2
 
 #define X_ACCELERATION 1.1 // For x movement walking.
 

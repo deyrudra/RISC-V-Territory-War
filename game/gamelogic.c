@@ -1,10 +1,5 @@
 #include "gamelogic.h"
 
-int ceil_custom(double x) {
-    int i = (int)x;
-    return (x > i) ? (i + 1) : i;
-}
-
 GameObject* mainMenuTitleObj;
 GameObject* platformObj;
 GameObject* moveOrStayBannerObj1;
@@ -23,6 +18,8 @@ GameObject* movementControlBannerObj3;
 GameObject* grenadeControlBannerObj3;
 
 GameObject* groundObj;
+
+Grenade grenade;
 
 // GameObject** displacementBarObj;
 Bar displacementBarLeft;
@@ -288,49 +285,7 @@ void handle_team_turn() {
                 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
                 
-                if (currentView == LEFTVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        // Do Nothing
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        saveMiddle();
-                        renderLeft();
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        saveRight();
-                        renderLeft();
-                    }
-                    
-                }
-                else if (currentView == MIDDLEVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        saveLeft();
-                        renderMiddle();
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        // Do Nothing
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        saveRight();
-                        renderMiddle();
-                    }
-                    
-                }
-                else if (currentView == RIGHTVIEW) {
-                    if (prevView == LEFTVIEW) {
-                        saveLeft();
-                        renderRight();
-                    }
-                    else if (prevView == MIDDLEVIEW) {
-                        saveMiddle();
-                        renderRight();
-                    }
-                    else if (prevView == RIGHTVIEW) {
-                        // Do Nothing
-                    }
-                    
-                }
-                prevView = currentView;
+                updateScreenView();
                 
                 if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
                     for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
@@ -384,10 +339,71 @@ void handle_team_turn() {
             renderIn(grenadeControlBannerObj3);
             // grenade logic
             printf("call grenade logic controls!\n");
-            while(1){
+            bool grenadeLaunched = false;
+
+
+            grenade_user_angle = 0;
+            grenade_user_power = 0;
+            while(!grenadeLaunched){
                 char* control = grenade_control_input();
-                printf("%s\n", control);
+                //printf("%s\n", control);
+
+                //NEED TO PUT logic for drawing arrow in this while loop
+
+
+                if(control == gameControls[10]){ //if they released up grenade
+                    if(grenade_user_angle != 90){
+                        grenade_user_angle += 10;
+                        printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+                    }
+                }
+                else if(control == gameControls[12]){ // if they released down grenade
+                    if(grenade_user_angle != 0){
+                        grenade_user_angle -=10;
+                        printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+
+
+                    }
+                }
+                else if(control == gameControls[7]){
+                    printf("logic to face right\n");
+                }
+                else if(control == gameControls[8]){
+                    printf("logic to face left\n");
+                }
+                else if(control == gameControls[14]){
+                    grenade_user_power = 4;
+                    printf("FIXED INPUT POWER: %lf\n", grenade_user_power);
+                    initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x), *(team_a[game_state_ptr->character_turn_team_a]->y), &grenadeasset, grenade_user_angle, grenade_user_power);
+                    grenadeLaunched = true;
+                    renderIn(grenade.grenadeObj); //initial render in
+                }
+
             }
+
+            //rendering loop for grenade once user controls are done
+            while(1){
+                renderOut(grenade.grenadeObj);
+                updateGrenadePosition(&grenade);
+                checkGrenadeGrounded(&grenade);
+                // printf("---------\nX: %d\nY: %d\nVelocityX: %lf\nVelocityY: %lf\n--------\n\n", *(grenade.grenadeObj->x), *(grenade.grenadeObj->y), *(grenade.grenadeObj->velocityX), *(grenade.grenadeObj->velocityY));
+                renderIn(grenade.grenadeObj);
+                currentView = grenade.grenadeView;
+                
+                if(currentView == LEFTVIEW){
+                    printf("Current View is LEFT\n");
+                } else if (currentView == MIDDLEVIEW){
+                    printf("Current View is MIDDLE\n");
+                } else if (currentView == RIGHTVIEW){
+                    printf("Current View is RIGHT\n");
+                }
+
+                updateScreenView();
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+            }
+
+
         }
 
         // END TURN LOGIC
@@ -611,6 +627,52 @@ void initializeGame() {
     } else {
       return 'x';  // Unexpected case
     }
+  }
+
+  void updateScreenView(){
+    if (currentView == LEFTVIEW) {
+        if (prevView == LEFTVIEW) {
+            // Do Nothing
+        }
+        else if (prevView == MIDDLEVIEW) {
+            saveMiddle();
+            renderLeft();
+        }
+        else if (prevView == RIGHTVIEW) {
+            saveRight();
+            renderLeft();
+        }
+        
+    }
+    else if (currentView == MIDDLEVIEW) {
+        if (prevView == LEFTVIEW) {
+            saveLeft();
+            renderMiddle();
+        }
+        else if (prevView == MIDDLEVIEW) {
+            // Do Nothing
+        }
+        else if (prevView == RIGHTVIEW) {
+            saveRight();
+            renderMiddle();
+        }
+        
+    }
+    else if (currentView == RIGHTVIEW) {
+        if (prevView == LEFTVIEW) {
+            saveLeft();
+            renderRight();
+        }
+        else if (prevView == MIDDLEVIEW) {
+            saveMiddle();
+            renderRight();
+        }
+        else if (prevView == RIGHTVIEW) {
+            // Do Nothing
+        }
+        
+    }
+    prevView = currentView;
   }
   
 //   void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y){
