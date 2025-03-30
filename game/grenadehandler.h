@@ -5,6 +5,10 @@
 #include <stddef.h>
 #include "objectHandler.h"
 #include "renderHandler.h"
+#include "gamelogic.h"
+
+//BLAST RADIUS CONSTANTS
+#define BLAST_RADIUS 16
 
 #define COS_0 1.0000
 #define COS_10 0.9848
@@ -55,5 +59,8 @@ double getSinRatio(int angle);
 void destroyGrenade(Grenade* grenade);
 
 void checkGrenadeGrounded(Grenade* grenade);
+
+void checkWithinBlastRadius(Grenade* grenade, Character** team_a, Character** team_b);
+
 
 #endif

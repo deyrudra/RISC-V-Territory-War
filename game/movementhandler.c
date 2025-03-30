@@ -37,6 +37,7 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->height = PLAYER_HEIGHT;
     character->healthBar = malloc(sizeof(Bar));
     character->id = id;
+    character->withinBlastRadiusBool = 0; // 0 means character is not within blast radius
 
     if (x < SCREEN_WIDTH) {
         character->characterView = LEFTVIEW;

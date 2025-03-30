@@ -53,6 +53,7 @@ typedef struct Character{
     RenderView characterView;
     Bar* healthBar;
     CharacterState lastMovementMade;
+    int withinBlastRadiusBool;
     int id;
 } Character;
 
