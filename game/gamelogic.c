@@ -528,7 +528,7 @@ void handle_team_turn() {
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
             }
 
-            printf("GRENADE EXPLOSION START");
+            printf("GRENADE EXPLOSION START\n");
 
             renderOut(grenade.grenadeObj);
             
@@ -553,7 +553,7 @@ void handle_team_turn() {
 
             destroyGeneralObject(explosion);
 
-            printf("GRENADE EXPLOSION DESTROYED");
+            printf("GRENADE EXPLOSION DESTROYED\n");
 
 
             //logic for damage
@@ -567,7 +567,7 @@ void handle_team_turn() {
 
             for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
                 if(team_b[i]->withinBlastRadiusBool == 1){
-                    printf("A%d within radius\n", i);
+                    printf("B%d within radius\n", i);
                 }
             }
 
@@ -577,6 +577,26 @@ void handle_team_turn() {
             
 
             destroyGrenade(&grenade);
+
+            //reset within radius bool values
+            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                if(team_a[i]->state == DEAD){
+                    continue;
+                }
+                else{
+                    team_a[i]->withinBlastRadiusBool = 0;
+                }
+            }
+
+            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                if(team_b[i]->state == DEAD){
+                    continue;
+                }
+                else{
+                    team_b[i]->withinBlastRadiusBool = 0;
+                }
+            }
+
 
 
 

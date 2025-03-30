@@ -8,7 +8,7 @@
 #include "gamelogic.h"
 
 //BLAST RADIUS CONSTANTS
-#define BLAST_RADIUS 16
+#define BLAST_RADIUS 30
 #define GRENADE_EXPLOSION_COUNT_LIMIT 100
 
 #define COS_0 1.0000
