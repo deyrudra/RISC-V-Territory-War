@@ -180,30 +180,8 @@ void checkGrenadeGrounded(Grenade* grenade){
         if ((bottom_char >= top_plat) && (bottom_char <= bottom_plat)) { 
             if ((left_char <= right_plat) && (right_char >= left_plat)) {
                 grenade->isGroundedBool = 1;
-                printf("GRENADE HIT GROUND!----\n");
-                        
-                if (*(grenade->grenadeObj->velocityX) > 3) {
-                    *(grenade->grenadeObj->velocityX) = 3; // Max Velocity
-                }
-                else if (*(grenade->grenadeObj->velocityX) < 1) {
-                    *(grenade->grenadeObj->velocityX) = 0; // Min Velocity
-                }
-                else {
                     *(grenade->grenadeObj->velocityX) = *(grenade->grenadeObj->velocityX) *= 0.7;
-                }
-
-
-                if (*(grenade->grenadeObj->velocityY) > 3) {
-                    *(grenade->grenadeObj->velocityY) = 3; // Max Velocity
-                }
-                else if (*(grenade->grenadeObj->velocityY) < 1) {
-                    *(grenade->grenadeObj->velocityY) = 0; // Min Velocity
-                }
-                else {
-                    printf("HEHE%d\n", *(grenade->grenadeObj->velocityY));
                     *(grenade->grenadeObj->velocityY) = *(grenade->grenadeObj->velocityY) *= -0.5;
-                }
-                
 
                 
                 
