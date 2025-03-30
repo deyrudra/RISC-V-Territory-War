@@ -43,20 +43,34 @@ int main(void) {
 
   
   // Game Title Screen
+  initializeGeneralObject(&main_menu_background_1Obj, &main_menu_background_1, 0, 0, 0, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+  renderIn(main_menu_background_1Obj);
+  destroyGeneralObject(main_menu_background_1Obj);
+  initializeGeneralObject(&main_menu_background_2Obj, &main_menu_background_1, 0, SCREEN_WIDTH/2, 0, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+  renderIn(main_menu_background_2Obj);
+  destroyGeneralObject(main_menu_background_2Obj);
+  initializeGeneralObject(&main_menu_background_3Obj, &main_menu_background_1, 0, 0, SCREEN_HEIGHT/2, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+  renderIn(main_menu_background_3Obj);
+  destroyGeneralObject(main_menu_background_3Obj);
+  initializeGeneralObject(&main_menu_background_4Obj, &main_menu_background_1, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+  renderIn(main_menu_background_4Obj);
+  destroyGeneralObject(main_menu_background_4Obj);
+
   initializeGeneralObject(&mainMenuTitleObj, &main_menu_title, 0, (SCREEN_WIDTH / 2) - (MAIN_MENU_TITLE_WIDTH / 2), 30, MAIN_MENU_TITLE_WIDTH, MAIN_MENU_TITLE_HEIGHT);
-  
-  //----- RENDER IN START SCREEN AND INITIALIZE GAME
-  initializeBackground(&menuBackground, &background, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-  placeBackground(&menuBackground);
-  
-  // Rendering Main Menu Title
   renderIn(mainMenuTitleObj);
   destroyGeneralObject(mainMenuTitleObj);
+  initializeGeneralObject(&main_menu_enterObj, &main_menu_enter, 0, (SCREEN_WIDTH / 2) - (MAIN_MENU_ENTER_WIDTH / 2), 200, MAIN_MENU_ENTER_WIDTH, MAIN_MENU_ENTER_HEIGHT);
+  renderIn(main_menu_enterObj);
+  destroyGeneralObject(main_menu_enterObj);
+
+  //----- RENDER IN START SCREEN AND INITIALIZE GAME
+  // initializeBackground(&menuBackground, &background, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+  // placeBackground(&menuBackground);
+
+  // GameObject* gunObject;
   
-  GameObject* gunObject;
-  
-  initializeGeneralObject(&gunObject, &gunAsset, 0, 80, 80, GUNASSET_WIDTH, GUNASSET_HEIGHT);
-  renderIn(gunObject);
+  // initializeGeneralObject(&gunObject, &gunAsset, 0, 80, 80, GUNASSET_WIDTH, GUNASSET_HEIGHT);
+  // renderIn(gunObject);
   
   // Start the game!
   startGame();

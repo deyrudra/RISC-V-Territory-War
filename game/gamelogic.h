@@ -19,6 +19,11 @@
 
 // Global Game Objects
 extern GameObject* mainMenuTitleObj;
+extern GameObject* main_menu_enterObj;
+extern GameObject* main_menu_background_1Obj;
+extern GameObject* main_menu_background_2Obj;
+extern GameObject* main_menu_background_3Obj;
+extern GameObject* main_menu_background_4Obj;
 extern GameObject* platformObj;
 extern GameObject* moveOrStayBannerObj1;
 extern GameObject* emptyBannerObj1;

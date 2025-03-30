@@ -6,6 +6,11 @@ int ceil_custom(double x) {
 }
 
 GameObject* mainMenuTitleObj;
+GameObject* main_menu_enterObj;
+GameObject* main_menu_background_1Obj;
+GameObject* main_menu_background_2Obj;
+GameObject* main_menu_background_3Obj;
+GameObject* main_menu_background_4Obj;
 GameObject* platformObj;
 GameObject* moveOrStayBannerObj1;
 GameObject* emptyBannerObj1;
