@@ -465,14 +465,14 @@ void handle_team_turn() {
             // MIGHT NEED TO CHANGE THIS HOW THE DISPLACEMENT BAR WORKS OF INTIALIZING THREE BARS AT ONCE
             if(currentView == LEFTVIEW){
                 printf("LEFTVIEW\n");
-                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 259, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
             } else if (currentView == MIDDLEVIEW){
                 printf("MIDDLEVIEW\n");
 
-                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 259 + SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258 + SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
             } else if (currentView == RIGHTVIEW){
                 printf("RIGHTVIEW\n");
-                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 259 + SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258 + SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
             }
 
             // grenade logic
