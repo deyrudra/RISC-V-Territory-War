@@ -59,4 +59,20 @@ void placeBar(Bar *bar);
 
 void removeBar(Bar *bar);
 
-void destroyBar(Bar *bar);
+void destroyBar(Bar *bar){
+    for(int i = 0; i < bar->numPartitions; i++){
+        free(bar->barObj[i]->prevPixelData);
+        free(bar->barObj[i]->x = malloc(sizeof(int)));
+        free(bar->barObj[i]->y = malloc(sizeof(int)));
+        free(bar->barObj[i]->velocityX = malloc(sizeof(double)));
+        free(bar->barObj[i]->velocityY = malloc(sizeof(double)));
+        free(bar->barObj[i]->collidable = malloc(sizeof(int)));
+
+        free(bar->barObj[i]);
+    }
+
+    free(bar->barObj);
+    free(bar->x);
+    free(bar->y);
+    free(bar->collidable);
+}
