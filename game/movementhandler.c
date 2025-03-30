@@ -172,7 +172,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = LEFTMOVEMENT; //update state for drawing the correct asset 
             horizontalAcceleration(character, 0); //update the character's velocity
             *(character->x) = *(character->x) + *(character->velocityX); //update position based on new velocity
-            *displacement += (int)*character->velocityX; //update dist travelled for movement limit
+            *displacement += (int) *(character->velocityX); //update dist travelled for movement limit
             character->lastMovementMade = LEFTMOVEMENT;
         }
         if ((strcmp(direction, gameControls[1]) == 0) || (move_right_released == 0)) { // Checking for move_right
@@ -180,7 +180,7 @@ void moveCharacter(Character *character, char* direction, int* displacement){
             character->state = RIGHTMOVEMENT;
             horizontalAcceleration(character, 1);
             *(character->x) = *(character->x) + *(character->velocityX);
-            *displacement += (int)*character->velocityX; //update dist travelled for movement limit
+            *displacement += (int) *(character->velocityX); //update dist travelled for movement limit
             character->lastMovementMade = RIGHTMOVEMENT;
         }
         if ((strcmp(direction, gameControls[2]) == 0) && (character->numJumps < 2)) { // Checking for move_jump

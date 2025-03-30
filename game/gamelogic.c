@@ -268,6 +268,7 @@ void handle_team_turn() {
             
             printf("After initialize displacemetn bar\n");
             int displacement = 0;
+            int starting_x = *(team_a[game_state_ptr->character_turn_team_a]->x);
             while (abs_double(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
@@ -277,8 +278,11 @@ void handle_team_turn() {
                 }
 
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
-                            &displacement);
-                
+                            NULL);
+
+                    
+                displacement = *(team_a[game_state_ptr->character_turn_team_a]->x) - starting_x;
+
                 int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
                 int ifCollision = 0;
                 for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
@@ -366,9 +370,9 @@ void handle_team_turn() {
                 }
                 else if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
                     for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
-                            renderIn(displacementBarLeft.barObj[i]);
-                            renderIn(displacementBarMiddle.barObj[i]);
-                            renderIn(displacementBarRight.barObj[i]);
+                        renderIn(displacementBarLeft.barObj[i]);
+                        renderIn(displacementBarMiddle.barObj[i]);
+                        renderIn(displacementBarRight.barObj[i]);
                     }
 
                 } 
@@ -496,6 +500,7 @@ void handle_team_turn() {
             renderIn(movementControlBannerObj3);
             
             int displacement = 0;
+            int starting_x = *(team_b[game_state_ptr->character_turn_team_b]->x);
             while (abs_double(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
@@ -505,8 +510,9 @@ void handle_team_turn() {
                 }
 
                 moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
-                            &displacement);
-
+                            NULL);
+                
+                displacement = *(team_b[game_state_ptr->character_turn_team_b]->x) - starting_x;
 
     
                 int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
@@ -585,34 +591,21 @@ void handle_team_turn() {
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
 
                 
-                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
-
-                        if(currentView == LEFTVIEW){
-                            renderIn(displacementBarLeft.barObj[i]);
-                        }
-                        else if(currentView == MIDDLEVIEW){
-                            renderIn(displacementBarMiddle.barObj[i]);
-                        }
-                        else{
-                            renderIn(displacementBarRight.barObj[i]);
-
-                        }
-                    }
-
-                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
                     for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
-                        if(currentView == LEFTVIEW){
-                            renderOut(displacementBarLeft.barObj[i]);
-                        }
-                        else if(currentView == MIDDLEVIEW){
-                            renderOut(displacementBarMiddle.barObj[i]);
-                        }
-                        else{
-                            renderOut(displacementBarRight.barObj[i]);
-                        }
+                        renderOut(displacementBarLeft.barObj[i]);
+                        renderOut(displacementBarMiddle.barObj[i]);
+                        renderOut(displacementBarRight.barObj[i]);
                     }
                 }
+                else if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+                            renderIn(displacementBarLeft.barObj[i]);
+                            renderIn(displacementBarMiddle.barObj[i]);
+                            renderIn(displacementBarRight.barObj[i]);
+                    }
+
+                } 
 
                 setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
 

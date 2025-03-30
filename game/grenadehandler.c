@@ -119,9 +119,16 @@ double getSinRatio(int angle){
 
 void updateGrenadePosition(Grenade* grenade){
     // Update positions
-    *(grenade->grenadeObj->x) = *(grenade->grenadeObj->x) + *(grenade->grenadeObj->velocityX) / 2.0;
-    *(grenade->grenadeObj->y) = *(grenade->grenadeObj->y) + *(grenade->grenadeObj->velocityY);
+    
+    // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
 
+        // velocity is bounded by 1 m/s and 4m/s and we update velocity by adding acceleration*dt
+        
+        
+        *(grenade->grenadeObj->x) = *(grenade->grenadeObj->x) + *(grenade->grenadeObj->velocityX);
+        *(grenade->grenadeObj->y) = *(grenade->grenadeObj->y) + *(grenade->grenadeObj->velocityY);
+
+    
     //Update Y velocity (we can update the 1 accordingly)
     *(grenade->grenadeObj->velocityY) += (GRAVITY * DELTATIME) / 5.0;
 
@@ -172,8 +179,32 @@ void checkGrenadeGrounded(Grenade* grenade){
             if ((left_char <= right_plat) && (right_char >= left_plat)) {
                 grenade->isGroundedBool = 1;
                 printf("GRENADE HIT GROUND!----\n");
-                *(grenade->grenadeObj->velocityY) *= -0.5;
-                *(grenade->grenadeObj->velocityX) *= 0.7;
+                        
+                if (*(grenade->grenadeObj->velocityX) > 3) {
+                    *(grenade->grenadeObj->velocityX) = 3; // Max Velocity
+                }
+                else if (*(grenade->grenadeObj->velocityX) < 1) {
+                    *(grenade->grenadeObj->velocityX) = 0; // Min Velocity
+                }
+                else {
+                    *(grenade->grenadeObj->velocityX) = *(grenade->grenadeObj->velocityX) *= 0.7;
+                }
+
+
+                if (*(grenade->grenadeObj->velocityY) > 3) {
+                    *(grenade->grenadeObj->velocityY) = 3; // Max Velocity
+                }
+                else if (*(grenade->grenadeObj->velocityY) < 1) {
+                    *(grenade->grenadeObj->velocityY) = 0; // Min Velocity
+                }
+                else {
+                    printf("HEHE%d\n", *(grenade->grenadeObj->velocityY));
+                    *(grenade->grenadeObj->velocityY) = *(grenade->grenadeObj->velocityY) *= -0.5;
+                }
+                
+
+                
+                
                 // *(grenade->grenadeObj->velocityY) = 0.0;
                 // *(character->y) = top_plat - character->height;
                 return;     
