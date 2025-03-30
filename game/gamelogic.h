@@ -10,10 +10,12 @@
 #include "backgroundhandler.h"
 #include "barhandler.h"
 #include <stdio.h>
+#include "linkedlist.h"
 
 
 #define NUM_CHARACTERS_PER_TEAM 3
 #define DISPLACEMENT_LIMIT 200
+#define MAX_NUM_CHARACTER_COLLISION_LISTS NUM_CHARACTERS_PER_TEAM
 
 
 // Global Game Objects

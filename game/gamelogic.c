@@ -69,38 +69,37 @@ Platform lifeguardPlatform6;
 Platform netPlatform;
 Platform umbrellaPlatform;
 
-
-
-
 GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
 Character* team_b[NUM_CHARACTERS_PER_TEAM];
 
-
+LinkedListCollection* collectionOfCollidingCharactersLists;
 
 void startGame() {
     initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a0_idle, &player_a0_leftmovement,
-                        &player_a0_rightmovement, &player_a0_jump_left, &player_a0_jump_right, 'a');
+                        &player_a0_rightmovement, &player_a0_jump_left, &player_a0_jump_right, 'a', 0);
     initializeCharacter(&player_a1, 150 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a1_idle, &player_a1_leftmovement,
-                        &player_a1_rightmovement, &player_a1_jump_left, &player_a1_jump_right, 'a');
+                        &player_a1_rightmovement, &player_a1_jump_left, &player_a1_jump_right, 'a', 1);
     initializeCharacter(&player_a2, 200 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a2_idle, &player_a2_leftmovement,
-                        &player_a2_rightmovement, &player_a2_jump_left, &player_a2_jump_right, 'a');
+                        &player_a2_rightmovement, &player_a2_jump_left, &player_a2_jump_right, 'a', 2);
 
     initializeCharacter(&player_b0, WORLD_WIDTH - 20 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b0_idle, &player_b0_leftmovement,
-                        &player_b0_rightmovement, &player_b0_jump_left, &player_b0_jump_right, 'b');
+                        &player_b0_rightmovement, &player_b0_jump_left, &player_b0_jump_right, 'b', 3);
     initializeCharacter(&player_b1, WORLD_WIDTH - 70 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b1_idle, &player_b1_leftmovement,
-                        &player_b1_rightmovement, &player_b1_jump_left, &player_b1_jump_right, 'b');
+                        &player_b1_rightmovement, &player_b1_jump_left, &player_b1_jump_right, 'b', 4);
     initializeCharacter(&player_b2, WORLD_WIDTH - 120 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b2_idle, &player_b2_leftmovement,
-                        &player_b2_rightmovement, &player_b2_jump_left, &player_b2_jump_right, 'b');
+                        &player_b2_rightmovement, &player_b2_jump_left, &player_b2_jump_right, 'b', 5);
 
     initializeGame();
     
+    collectionOfCollidingCharactersLists = createCollection(MAX_NUM_CHARACTER_COLLISION_LISTS);
+
     // Add characters to teams
     team_a[0] = &player_a0;
     team_a[1] = &player_a1;
@@ -274,8 +273,70 @@ void handle_team_turn() {
 
                 moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
                             &displacement);
-                drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
-                currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
+                
+                int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                int ifCollision = 0;
+                for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                    // Team A Consideration
+                    if (team_a[game_state_ptr->character_turn_team_a] != team_a[i]) { // Shouldn't collide with itself
+                        if (checkCollision_Characters(team_a[game_state_ptr->character_turn_team_a], team_a[i])) {
+                            ifCollision = 1;
+                            currentCollisionArray[i] = 1;
+                            
+                        }
+                    }
+                    // Team B Consideration
+                    if (checkCollision_Characters(team_a[game_state_ptr->character_turn_team_a], team_b[i])) {
+                        ifCollision = 1;
+                        currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                        
+                    }    
+                }
+                if (ifCollision == 0) {
+                    // Remove all instances within the linked lists
+                    drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
+                    currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
+                }
+                else {
+                    // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                    for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                        if (j < NUM_CHARACTERS_PER_TEAM) {
+                            if (currentCollisionArray[j]) {
+                                for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                    // printf("render out idx: %d\n", i);
+                                    renderOut(team_a[j]->healthBar->barObj[i]);
+                                }
+                                removeCharacter(team_a[j]);
+                            }
+                        }
+                        else {
+                            if (currentCollisionArray[j]) {
+                                for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                    // printf("render out idx: %d\n", i);
+                                    renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                }
+                                removeCharacter(team_b[j-3]);
+                            }
+                        }
+                    }
+
+                    drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
+
+
+                    for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                        if (j < NUM_CHARACTERS_PER_TEAM) {
+                            if (currentCollisionArray[j]) {
+                                drawCharacter(team_a[j], false);
+                            }
+                        }
+                        else {
+                            if (currentCollisionArray[j]) {
+                                drawCharacter(team_b[j-3], false);
+                            }
+                        }
+                    }
+                    
+                }
 
                 if(displacement < 0){
                     displacement *=-1;
@@ -287,6 +348,31 @@ void handle_team_turn() {
                 if(ratio > 1) ratio = 1;
                 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
+                
+                
+                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+                            renderIn(displacementBarLeft.barObj[i]);
+                            renderIn(displacementBarMiddle.barObj[i]);
+                            renderIn(displacementBarRight.barObj[i]);
+                    }
+
+                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i > num_partitions_filled; i--){
+                            renderOut(displacementBarLeft.barObj[i]);
+                            renderOut(displacementBarMiddle.barObj[i]);
+                            renderOut(displacementBarRight.barObj[i]);
+                    }
+                }
+                
+                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
+
+                // Restore negative displacement
+                if(flipped){
+                    displacement*=-1;
+                }
+                
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
                 
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
@@ -331,31 +417,6 @@ void handle_team_turn() {
                     
                 }
                 prevView = currentView;
-                
-                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
-                            renderIn(displacementBarLeft.barObj[i]);
-                            renderIn(displacementBarMiddle.barObj[i]);
-                            renderIn(displacementBarRight.barObj[i]);
-                    }
-
-                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i > num_partitions_filled; i--){
-                            renderOut(displacementBarLeft.barObj[i]);
-                            renderOut(displacementBarMiddle.barObj[i]);
-                            renderOut(displacementBarRight.barObj[i]);
-                    }
-                }
-                
-                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
-
-                // Restore negative displacement
-                if(flipped){
-                    displacement*=-1;
-                }
-
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-                
 
             }
 
@@ -425,9 +486,75 @@ void handle_team_turn() {
 
                 moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
                             &displacement);
-                drawCharacter(team_b[game_state_ptr->character_turn_team_b], false);
-                currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
 
+
+    
+                int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                int ifCollision = 0;
+                for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                    // Team A Consideration
+                    if (checkCollision_Characters(team_b[game_state_ptr->character_turn_team_b], team_a[i])) {
+                        ifCollision = 1;
+                        currentCollisionArray[i] = 1;
+                    }
+
+                    // Team B Consideration
+                    if (team_b[game_state_ptr->character_turn_team_b] != team_b[i]) { // Shouldn't collide with itself
+                        if (checkCollision_Characters(team_b[game_state_ptr->character_turn_team_b], team_b[i])) {
+                            ifCollision = 1;
+                            currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                        }
+                    }
+                }
+                if (ifCollision == 0) {
+                    // Remove all instances within the linked lists
+                    drawCharacter(team_b[game_state_ptr->character_turn_team_b], false);
+                    currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
+                }
+                else {
+                    // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                    for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                        if (j < NUM_CHARACTERS_PER_TEAM) {
+                            if (currentCollisionArray[j]) {
+                                for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                    // printf("render out idx: %d\n", i);
+                                    renderOut(team_a[j]->healthBar->barObj[i]);
+                                }
+                                removeCharacter(team_a[j]);
+                            }
+                        }
+                        else {
+                            if (currentCollisionArray[j]) {
+                                for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                    // printf("render out idx: %d\n", i);
+                                    renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                }
+                                removeCharacter(team_b[j-3]);
+                            }
+                        }
+                    }
+
+                    drawCharacter(team_b[game_state_ptr->character_turn_team_b], false);
+
+
+                    for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                        if (j < NUM_CHARACTERS_PER_TEAM) {
+                            if (currentCollisionArray[j]) {
+                                drawCharacter(team_a[j], false);
+                            }
+                        }
+                        else {
+                            if (currentCollisionArray[j]) {
+                                drawCharacter(team_b[j-3], false);
+                            }
+                        }
+                    }
+                    
+                }
+
+
+
+                
                 if(displacement < 0){
                     displacement *=-1;
                     flipped = true;
@@ -439,6 +566,45 @@ void handle_team_turn() {
 
                 int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
 
+                
+                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
+
+                        if(currentView == LEFTVIEW){
+                            renderIn(displacementBarLeft.barObj[i]);
+                        }
+                        else if(currentView == MIDDLEVIEW){
+                            renderIn(displacementBarMiddle.barObj[i]);
+                        }
+                        else{
+                            renderIn(displacementBarRight.barObj[i]);
+
+                        }
+                    }
+
+                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
+                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
+                        if(currentView == LEFTVIEW){
+                            renderOut(displacementBarLeft.barObj[i]);
+                        }
+                        else if(currentView == MIDDLEVIEW){
+                            renderOut(displacementBarMiddle.barObj[i]);
+                        }
+                        else{
+                            renderOut(displacementBarRight.barObj[i]);
+                        }
+                    }
+                }
+
+                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
+
+                // Restore negative displacement
+                if(flipped){
+                    displacement*=-1;
+                }
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+                
                 if (currentView == LEFTVIEW) {
                     if (prevView == LEFTVIEW) {
                         // Do Nothing
@@ -482,45 +648,6 @@ void handle_team_turn() {
                     
                 }
                 prevView = currentView;
-
-                if(num_partitions_filled > displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i < num_partitions_filled; i++){
-
-                        if(currentView == LEFTVIEW){
-                            renderIn(displacementBarLeft.barObj[i]);
-                        }
-                        else if(currentView == MIDDLEVIEW){
-                            renderIn(displacementBarMiddle.barObj[i]);
-                        }
-                        else{
-                            renderIn(displacementBarRight.barObj[i]);
-
-                        }
-                    }
-
-                } else if(num_partitions_filled < displacementBarLeft.lastRenderedPartition){
-                    for(int i = displacementBarLeft.lastRenderedPartition; i >= num_partitions_filled; i--){
-                        if(currentView == LEFTVIEW){
-                            renderOut(displacementBarLeft.barObj[i]);
-                        }
-                        else if(currentView == MIDDLEVIEW){
-                            renderOut(displacementBarMiddle.barObj[i]);
-                        }
-                        else{
-                            renderOut(displacementBarRight.barObj[i]);
-                        }
-                    }
-                }
-
-                setLastRenderedPartition(&displacementBarLeft, num_partitions_filled);
-
-                // Restore negative displacement
-                if(flipped){
-                    displacement*=-1;
-                }
-
-                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
-                
 
             }
             
