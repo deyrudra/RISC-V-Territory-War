@@ -511,10 +511,12 @@ void handle_team_turn() {
             //rendering loop for grenade once user controls are done
             // bool grenadeExploded = false;
             int grenade_explosion_count = 0;
-            while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT){
+            num_bounces = 0;
+            while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT && num_bounces < 3){
                 renderOut(grenade.grenadeObj);
                 updateGrenadePosition(&grenade);
                 checkGrenadeGrounded(&grenade);
+
 
                 grenade_explosion_count +=1;
                 // printf("---------\nX: %d\nY: %d\nVelocityX: %lf\nVelocityY: %lf\n--------\n\n", *(grenade.grenadeObj->x), *(grenade.grenadeObj->y), *(grenade.grenadeObj->velocityX), *(grenade.grenadeObj->velocityY));
@@ -554,7 +556,22 @@ void handle_team_turn() {
             printf("GRENADE EXPLOSION DESTROYED");
 
 
+            //logic for damage
+            checkWithinBlastRadius(&grenade, team_a, team_b);
 
+            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                if(team_a[i]->withinBlastRadiusBool == 1){
+                    printf("A%d within radius\n", i);
+                }
+            }
+
+            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                if(team_b[i]->withinBlastRadiusBool == 1){
+                    printf("A%d within radius\n", i);
+                }
+            }
+
+            
 
             
             

@@ -4,6 +4,7 @@
 int rotate_up_grenade_released = 1; // 1 means the key has been released
 int rotate_down_grenade_released = 1;
 int throw_grenade_released = 1;
+int num_bounces = 0;
 
 double grenade_user_angle = 0;
 double grenade_user_power = 0;
@@ -178,12 +179,15 @@ void checkGrenadeGrounded(Grenade* grenade){
         // Character is between the platform, we check this b/c acceleration logic may skip pixels as it is double math
         if ((bottom_char >= top_plat) && (bottom_char <= bottom_plat)) { 
             if ((left_char <= right_plat) && (right_char >= left_plat)) {
+                printf("Hit Ground\n");
                 grenade->isGroundedBool = 1;
-                    *(grenade->grenadeObj->velocityX) = *(grenade->grenadeObj->velocityX) *= 0.7;
-                    *(grenade->grenadeObj->velocityY) = *(grenade->grenadeObj->velocityY) *= -0.5;
+                *(grenade->grenadeObj->velocityX) = *(grenade->grenadeObj->velocityX) *= 0.7;
+                *(grenade->grenadeObj->velocityY) = *(grenade->grenadeObj->velocityY) *= -0.5;
 
                 
-                
+                // grenade->numBounces +=1;
+                num_bounces +=1;
+                printf("Num bounces in function is: %d\n", num_bounces);
                 // *(grenade->grenadeObj->velocityY) = 0.0;
                 // *(character->y) = top_plat - character->height;
                 return;     

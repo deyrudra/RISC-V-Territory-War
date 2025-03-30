@@ -36,6 +36,7 @@
 extern int rotate_up_grenade_released;
 extern int rotate_down_grenade_released;
 extern int throw_grenade_released;
+extern int num_bounces;
 
 extern double grenade_user_angle;
 extern double grenade_user_power;
