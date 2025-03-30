@@ -510,6 +510,7 @@ void handle_team_turn() {
 
             //rendering loop for grenade once user controls are done
             // bool grenadeExploded = false;
+            int grenade_explosion_count = 0;
             while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT){
                 renderOut(grenade.grenadeObj);
                 updateGrenadePosition(&grenade);

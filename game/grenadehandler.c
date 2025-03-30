@@ -7,7 +7,6 @@ int throw_grenade_released = 1;
 
 double grenade_user_angle = 0;
 double grenade_user_power = 0;
-int grenade_explosion_count = 0;
 
 
 
