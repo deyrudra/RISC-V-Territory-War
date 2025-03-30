@@ -7,7 +7,7 @@
 #define DELTATIME 0.02
 #define GRAVITY 9.81
 
-#define X_ACCELERATION 1.1 // For x movement walking.
+#define X_ACCELERATION 1.2 // For x movement walking.
 
 #include <stdlib.h>
 #include <stddef.h>
@@ -53,6 +53,7 @@ typedef struct Character{
     RenderView characterView;
     Bar* healthBar;
     CharacterState lastMovementMade;
+    int id;
 } Character;
 
 double abs_double(double value);
@@ -60,7 +61,7 @@ int abs_int(int value);
 
 
 // Function prototypes
-void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *leftJumpCharAsset, short int *rightJumpCharAsset, char team);
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *leftJumpCharAsset, short int *rightJumpCharAsset, char team, int id);
 
 void drawInitialHealthBar(Character *character);
 
@@ -75,6 +76,8 @@ void destroyCharacter(Character *character);
 void removeCharacter(Character *character);
 
 void resolveCollision_CharacterObject(Character *a, GameObject *b);
+
+int checkCollision_Characters(Character *a, Character *b);
 
 int checkCollision_CharacterObject(Character *a, GameObject *b);
 

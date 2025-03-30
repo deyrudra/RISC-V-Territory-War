@@ -21,7 +21,7 @@ int abs_int(int value) {
     }
 }
 
-void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpLeftCharAsset, short int *jumpRightCharAsset, char team) {
+void initializeCharacter(Character *character, int x, int y, short int *idleCharAsset, short int *walkLeftCharAsset, short int *walkRightCharAsset, short int *jumpLeftCharAsset, short int *jumpRightCharAsset, char team, int id) {
     // Replace all local array declarations with malloc calls
     short int* walkLeftPrevData = malloc(sizeof(short int) * LEFTMOVEMENT_WIDTH * LEFTMOVEMENT_HEIGHT);
     short int* walkRightPrevData = malloc(sizeof(short int) * RIGHTMOVEMENT_WIDTH * RIGHTMOVEMENT_HEIGHT);
@@ -45,6 +45,7 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->width = PLAYER_WIDTH;
     character->height = PLAYER_HEIGHT;
     character->healthBar = malloc(sizeof(Bar));
+    character->id = id;
 
     if (x < SCREEN_WIDTH) {
         character->characterView = LEFTVIEW;
@@ -314,6 +315,15 @@ void checkGrounded(Character *character) {
 
 }
 
+int checkCollision_Characters(Character *a, Character *b) {
+    if (!(*a->collidable) || !(*b->collidable)) return 0; // Ignore non-collidable objects
+
+    return (*(a->x) < *(b->x) + b->width &&
+            *(a->x) + a->width > *(b->x) &&
+            *(a->y) < *(b->y) + b->height &&
+            *(a->y) + a->height > *(b->y));
+}
+
 int checkCollision_CharacterObject(Character *a, GameObject *b) {
     if (!(*a->collidable) || !(*b->collidable)) return 0; // Ignore non-collidable objects
 
@@ -490,8 +500,8 @@ void horizontalAcceleration(Character *character, int directionBool) {
         if (*(character->velocityX) > 3) {
             *(character->velocityX) = 3;
         }
-        else if (*(character->velocityX) < 0.8) {
-            *(character->velocityX) = 0.8;
+        else if (*(character->velocityX) < 1.1) {
+            *(character->velocityX) = 1.1;
         }
         else {
             *(character->velocityX) = *(character->velocityX) + (X_ACCELERATION * DELTATIME);
@@ -502,8 +512,8 @@ void horizontalAcceleration(Character *character, int directionBool) {
         if (*(character->velocityX) < -3) {
             *(character->velocityX) = -3;
         }
-        else if (*(character->velocityX) > -0.8) {
-            *(character->velocityX) = -0.8;
+        else if (*(character->velocityX) > -1.1) {
+            *(character->velocityX) = -1.1;
         }
         else {
             *(character->velocityX) = *(character->velocityX) - (X_ACCELERATION * DELTATIME);
