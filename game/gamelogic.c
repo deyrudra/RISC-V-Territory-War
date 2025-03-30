@@ -33,6 +33,8 @@ Bar displacementBarMiddle;
 Bar displacementBarRight;
 
 Bar powerBar;
+Grenade grenade;
+GameObject* explosion;
 
 // Bar powerBarLeft;
 // Bar powerBarMiddle;
@@ -79,7 +81,6 @@ Platform lifeguardPlatform6;
 Platform netPlatform;
 Platform umbrellaPlatform;
 
-Grenade grenade;
 
 GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
@@ -477,7 +478,7 @@ void handle_team_turn() {
                     printf("The final grenade user power is: %lf\n", grenade_user_power);
                     grenade_user_power = 4;
                     printf("using ower of 4: %lf\n", grenade_user_power);
-                    initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x), *(team_a[game_state_ptr->character_turn_team_a]->y), &grenadeasset, grenade_user_angle, grenade_user_power);
+                    initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x) + PLAYER_WIDTH/2, *(team_a[game_state_ptr->character_turn_team_a]->y) + PLATFORM_HEIGHT/2, &grenadeasset, grenade_user_angle, grenade_user_power);
                     resetBar(&powerBar, powerBar.lastRenderedPartition-1);
                     grenadeLaunched = true;
                     renderIn(grenade.grenadeObj); //initial render in
@@ -508,18 +509,60 @@ void handle_team_turn() {
             }
 
             //rendering loop for grenade once user controls are done
-            while(1){
+            // bool grenadeExploded = false;
+            while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT){
                 renderOut(grenade.grenadeObj);
                 updateGrenadePosition(&grenade);
                 checkGrenadeGrounded(&grenade);
+
+                grenade_explosion_count +=1;
                 // printf("---------\nX: %d\nY: %d\nVelocityX: %lf\nVelocityY: %lf\n--------\n\n", *(grenade.grenadeObj->x), *(grenade.grenadeObj->y), *(grenade.grenadeObj->velocityX), *(grenade.grenadeObj->velocityY));
                 renderIn(grenade.grenadeObj);
+                
                 currentView = grenade.grenadeView;
-
                 updateScreenView();
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
             }
+
+            printf("GRENADE EXPLOSION START");
+
+            renderOut(grenade.grenadeObj);
+            
+            //logic for explosion animation and damage check logic
+            initializeGeneralObject(&explosion, &explosionasset, 0, *(grenade.grenadeObj->x) - EXPLOSION_WIDTH/2.0, *(grenade.grenadeObj->y) - EXPLOSION_HEIGHT/2.0, EXPLOSION_WIDTH, EXPLOSION_HEIGHT);
+            renderIn(explosion);
+
+            wait_for_vsync();
+            
+            int explosion_delay_count = 0;
+            while(1){
+                renderOut(explosion);
+                if(explosion_delay_count > 10){
+                    wait_for_vsync();
+                    break;
+                }
+                renderIn(explosion);
+                wait_for_vsync();
+                explosion_delay_count++;
+            }
+
+
+            destroyGeneralObject(explosion);
+
+            printf("GRENADE EXPLOSION DESTROYED");
+
+
+
+
+            
+            
+
+            destroyGrenade(&grenade);
+
+
+
+            
 
 
         }

@@ -9,6 +9,7 @@
 
 //BLAST RADIUS CONSTANTS
 #define BLAST_RADIUS 16
+#define GRENADE_EXPLOSION_COUNT_LIMIT 100
 
 #define COS_0 1.0000
 #define COS_10 0.9848
@@ -35,6 +36,7 @@
 extern int rotate_up_grenade_released;
 extern int rotate_down_grenade_released;
 extern int throw_grenade_released;
+extern int grenade_explosion_count;
 
 extern double grenade_user_angle;
 extern double grenade_user_power;
