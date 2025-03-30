@@ -13,19 +13,16 @@ GameObject* main_menu_background_3Obj;
 GameObject* main_menu_background_4Obj;
 GameObject* platformObj;
 GameObject* moveOrStayBannerObj1;
-GameObject* emptyBannerObj1;
 GameObject* grenadeOrStayBannerObj1;
 GameObject* movementControlBannerObj1;
 GameObject* grenadeControlBannerObj1;
 
 GameObject* moveOrStayBannerObj2;
-GameObject* emptyBannerObj2;
 GameObject* grenadeOrStayBannerObj2;
 GameObject* movementControlBannerObj2;
 GameObject* grenadeControlBannerObj2;
 
 GameObject* moveOrStayBannerObj3;
-GameObject* emptyBannerObj3;
 GameObject* grenadeOrStayBannerObj3;
 GameObject* movementControlBannerObj3;
 GameObject* grenadeControlBannerObj3;
@@ -240,10 +237,6 @@ void startGame() {
     drawInitialHealthBar(&player_b0);
     drawInitialHealthBar(&player_b1);
     drawInitialHealthBar(&player_b2);
-
-    renderIn(emptyBannerObj1);
-    renderIn(emptyBannerObj2);
-    renderIn(emptyBannerObj3);
 
     while(game_state_ptr->game_running){
         handle_team_turn();

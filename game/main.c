@@ -20,7 +20,6 @@ int main(void) {
 
   // Banners
   initializeGeneralObject(&moveOrStayBannerObj1, &moveorstaybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
-  initializeGeneralObject(&emptyBannerObj1, &emptybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj1, &grenadeorstaybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj1, &movementcontrolbanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeControlBannerObj1, &grenadecontrolbanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
@@ -28,7 +27,6 @@ int main(void) {
   
   
   initializeGeneralObject(&moveOrStayBannerObj2, &moveorstaybanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
-  initializeGeneralObject(&emptyBannerObj2, &emptybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj2, &grenadeorstaybanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj2, &movementcontrolbanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeControlBannerObj2, &grenadecontrolbanner, 0, SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
@@ -36,7 +34,6 @@ int main(void) {
   
   
   initializeGeneralObject(&moveOrStayBannerObj3, &moveorstaybanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
-  initializeGeneralObject(&emptyBannerObj3, &emptybanner, 0, 0, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeOrStayBannerObj3, &grenadeorstaybanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&movementControlBannerObj3, &movementcontrolbanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
   initializeGeneralObject(&grenadeControlBannerObj3, &grenadecontrolbanner, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT, BANNER_WIDTH, BANNER_HEIGHT);
@@ -62,15 +59,6 @@ int main(void) {
   initializeGeneralObject(&main_menu_enterObj, &main_menu_enter, 0, (SCREEN_WIDTH / 2) - (MAIN_MENU_ENTER_WIDTH / 2), 200, MAIN_MENU_ENTER_WIDTH, MAIN_MENU_ENTER_HEIGHT);
   renderIn(main_menu_enterObj);
   destroyGeneralObject(main_menu_enterObj);
-
-  //----- RENDER IN START SCREEN AND INITIALIZE GAME
-  // initializeBackground(&menuBackground, &background, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-  // placeBackground(&menuBackground);
-
-  // GameObject* gunObject;
-  
-  // initializeGeneralObject(&gunObject, &gunAsset, 0, 80, 80, GUNASSET_WIDTH, GUNASSET_HEIGHT);
-  // renderIn(gunObject);
   
   // Start the game!
   startGame();
