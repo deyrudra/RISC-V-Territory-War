@@ -32,6 +32,13 @@ Bar displacementBarLeft;
 Bar displacementBarMiddle;
 Bar displacementBarRight;
 
+Bar powerBar;
+
+// Bar powerBarLeft;
+// Bar powerBarMiddle;
+// Bar powerBarRight;
+
+
 
 
 Character player_a0;
@@ -245,6 +252,10 @@ void handle_team_turn() {
     // Team A's Turn
     if (game_state_ptr->team_turn == 'a') {
 
+        //inital view setup
+        currentView = team_a[game_state_ptr->character_turn_team_a]->characterView;
+        updateScreenView();
+
         //-----------------------Stage 1 of turn, draw bottom bar here
         renderIn(moveOrStayBannerObj1);
         renderIn(moveOrStayBannerObj2);
@@ -414,6 +425,20 @@ void handle_team_turn() {
             renderIn(grenadeControlBannerObj1);
             renderIn(grenadeControlBannerObj2);
             renderIn(grenadeControlBannerObj3);
+
+            // MIGHT NEED TO CHANGE THIS HOW THE DISPLACEMENT BAR WORKS OF INTIALIZING THREE BARS AT ONCE
+            if(currentView == LEFTVIEW){
+                printf("LEFTVIEW\n");
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 259, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            } else if (currentView == MIDDLEVIEW){
+                printf("MIDDLEVIEW\n");
+
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 259 + SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            } else if (currentView == RIGHTVIEW){
+                printf("RIGHTVIEW\n");
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 259 + SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            }
+
             // grenade logic
             printf("call grenade logic controls!\n");
             bool grenadeLaunched = false;
@@ -448,13 +473,37 @@ void handle_team_turn() {
                 else if(control == gameControls[8]){
                     printf("logic to face left\n");
                 }
-                else if(control == gameControls[14]){
+                else if(control == gameControls[14]){ // User releases space bar to launch grenade
+                    printf("The final grenade user power is: %lf\n", grenade_user_power);
                     grenade_user_power = 4;
-                    printf("FIXED INPUT POWER: %lf\n", grenade_user_power);
+                    printf("using ower of 4: %lf\n", grenade_user_power);
                     initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x), *(team_a[game_state_ptr->character_turn_team_a]->y), &grenadeasset, grenade_user_angle, grenade_user_power);
+                    resetBar(&powerBar, powerBar.lastRenderedPartition-1);
                     grenadeLaunched = true;
                     renderIn(grenade.grenadeObj); //initial render in
                 }
+
+                if(!grenadeLaunched){
+                    double ratio = grenade_user_power / NUM_DISPLACEMENT_BAR_PARTITIONS;
+                    if(ratio > 1) ratio = 1;
+                    int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
+
+
+                    
+                    if(num_partitions_filled < powerBar.lastRenderedPartition){
+                        for(int i = powerBar.lastRenderedPartition; i >= num_partitions_filled; i--){
+                            renderOut(powerBar.barObj[i]);
+                        }
+                    }
+                    else if(num_partitions_filled > powerBar.lastRenderedPartition){
+                        for(int i = powerBar.lastRenderedPartition; i < num_partitions_filled; i++){
+                            renderIn(powerBar.barObj[i]);
+                        }
+
+                    } 
+                    setLastRenderedPartition(&powerBar, num_partitions_filled);
+                }
+                
 
             }
 
@@ -484,6 +533,10 @@ void handle_team_turn() {
     }
     // Team B's Turn (DISPLACEMENT BAR DOES NOT WORK FOR TEAM B CHARACER YET, WILL FIX IT TMRW)
     else {
+        //inital view setup
+        currentView = team_b[game_state_ptr->character_turn_team_b]->characterView;
+        updateScreenView();
+
         //-----------------------Stage 1 of turn, draw bottom bar here
         renderIn(moveOrStayBannerObj1);
         renderIn(moveOrStayBannerObj2);
@@ -711,35 +764,6 @@ void initializeGame() {
     }
   }
   
-//   void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y){
-
-//     *barObj = malloc((num_partitions) * sizeof(GameObject*));
-
-
-//     for(int i = 0; i < num_partitions; i++){
-//         (*barObj)[i] = malloc(sizeof(GameObject));
-
-//         (*barObj)[i]->asset = asset;
-//         (*barObj)[i]->height = height;
-//         (*barObj)[i]->width = width;
-//         (*barObj)[i]->prevPixelData = malloc(width * height * sizeof(int));
-//         (*barObj)[i]->x = malloc(sizeof(int));
-//         (*barObj)[i]->y = malloc(sizeof(int));
-//         (*barObj)[i]->velocityX = malloc(sizeof(double));
-//         (*barObj)[i]->velocityY = malloc(sizeof(double));
-//         (*barObj)[i]->collidable = malloc(sizeof(int));
-
-
-//         //Set values (decide how to deal with setting velocity and x and y for moving health bars)
-//         *((*barObj)[i]->x) = start_x + i*width;
-//         *((*barObj)[i]->y) = start_y;
-//         *((*barObj)[i]->velocityX) = 0;
-//         *((*barObj)[i]->velocityY) = 0;
-//         *((*barObj)[i]->collidable) = 0;
-//     }
-
-// };
-
 void updateScreenView(){
     if (currentView == LEFTVIEW) {
         if (prevView == LEFTVIEW) {

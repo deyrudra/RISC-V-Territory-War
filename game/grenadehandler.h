@@ -35,7 +35,6 @@ extern int throw_grenade_released;
 extern double grenade_user_angle;
 extern double grenade_user_power;
 
-
 // Define Platform structure
 typedef struct Grenade{
     GameObject *grenadeObj; // GameObject for the character

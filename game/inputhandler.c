@@ -1,4 +1,5 @@
 #include "inputhandler.h"
+#include "grenadehandler.h"
 
 const char* gameControls[] = {
     "Move_Left", // 0
@@ -174,7 +175,15 @@ char* grenade_control_input(){
             }
         } else if (byte1 == 0x29) {
             switch(byte2){
-                case 0x29: return gameControls[13]; // user throwing grenade
+                case 0x29: 
+                    grenade_user_power +=1;
+
+                    if(grenade_user_power == 25){ //25 is max power
+                        return gameControls[14];
+                    }
+                    
+                    //printf("Grenade user power is: %lf\n", grenade_user_power);
+                    return gameControls[13]; // user throwing grenade
 
                 case 0xF0: return gameControls[14]; // user grenade stop
             }
