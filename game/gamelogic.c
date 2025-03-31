@@ -446,6 +446,10 @@ void handle_team_turn() {
             resetBar(&displacementBarMiddle, displacementBarLeft.lastRenderedPartition-1);
             resetBar(&displacementBarRight, displacementBarLeft.lastRenderedPartition-1);
 
+            destroyBar(&displacementBarLeft);
+            destroyBar(&displacementBarMiddle);
+            destroyBar(&displacementBarRight);
+
             resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
@@ -666,8 +670,8 @@ void handle_team_turn() {
                 }
                 else if(control == gameControls[14]){ // User releases space bar to launch grenade
                     printf("The final grenade user power is: %lf\n", grenade_user_power);
-                    grenade_user_power = 4;
-                    printf("using ower of 4: %lf\n", grenade_user_power);
+                    // grenade_user_power = 4;
+                    printf("USER POWER IS: %lf\n", grenade_user_power);
                     initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x) + PLAYER_WIDTH/2, *(team_a[game_state_ptr->character_turn_team_a]->y) + PLATFORM_HEIGHT/2, &grenadeasset, grenade_user_angle, grenade_user_power, lookingRightBool);
                     resetBar(&powerBar, powerBar.lastRenderedPartition-1);
                     grenadeLaunched = true;
@@ -698,6 +702,7 @@ void handle_team_turn() {
                 }
             }
             byte1 = byte2 = byte3 = 0;
+            destroyBar(&powerBar);
 
             //rendering loop for grenade once user controls are done
             // bool grenadeExploded = false;
@@ -1071,12 +1076,18 @@ void handle_team_turn() {
             renderIn(movementControlBannerObj1);
             renderIn(movementControlBannerObj2);
             renderIn(movementControlBannerObj3);
+
             renderIn(jump_right1);
             renderIn(jump_right2);
             renderIn(jump_right3);
+
+            initializeBar(&displacementBarLeft, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            initializeBar(&displacementBarMiddle, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, SCREEN_WIDTH + 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
+            initializeBar(&displacementBarRight, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, SCREEN_WIDTH*2 + 202, SCREEN_HEIGHT - BANNER_HEIGHT + 22, 0);
             
             int displacement = 0;
             int starting_x = *(team_b[game_state_ptr->character_turn_team_b]->x);
+            bool character_fell_off_map = false;
             while (abs_double(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
@@ -1085,8 +1096,16 @@ void handle_team_turn() {
                     break; //user pressed stay
                 }
 
-                moveCharacter(team_b[game_state_ptr->character_turn_team_b], control,
-                            NULL);
+                moveCharacter(team_b[game_state_ptr->character_turn_team_b], control, NULL);
+
+                //if characer falls off the map kill them
+                if(*(team_b[game_state_ptr->character_turn_team_b]->y) > SCREEN_HEIGHT + 45){
+                    team_b[game_state_ptr->character_turn_team_b]->prevState = team_b[game_state_ptr->character_turn_team_b]->state;
+                    team_b[game_state_ptr->character_turn_team_b]->state = DEAD;
+                    end_turn = true;
+                    character_fell_off_map = true;
+                    break;
+                }
                 
                 displacement = *(team_b[game_state_ptr->character_turn_team_b]->x) - starting_x;
 
@@ -1198,40 +1217,589 @@ void handle_team_turn() {
 
             }
             
-
             resetBar(&displacementBarLeft, displacementBarLeft.lastRenderedPartition-1);
             resetBar(&displacementBarMiddle, displacementBarLeft.lastRenderedPartition-1);
             resetBar(&displacementBarRight, displacementBarLeft.lastRenderedPartition-1);
+
+            destroyBar(&displacementBarLeft);
+            destroyBar(&displacementBarMiddle);
+            destroyBar(&displacementBarRight);
+
             resetArrowKeyReleaseFlags();
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
+            
+            if(!character_fell_off_map){
+                //----------Stage 2 of turn, output bar for weapon or stay
+                printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
+                renderIn(grenadeOrStayBannerObj1);
+                renderIn(grenadeOrStayBannerObj2);
+                renderIn(grenadeOrStayBannerObj3);
 
-            //----------Stage 2 of turn, output bar for weapon or stay
-            printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_b);
-            renderIn(grenadeOrStayBannerObj1);
-            renderIn(grenadeOrStayBannerObj2);
-            renderIn(grenadeOrStayBannerObj3);
-            renderIn(jump_right1);
-            renderIn(jump_right2);
-            renderIn(jump_right3);
-            end_turn = poll_grenade_or_stay_input();
+                renderIn(jump_right1);
+                renderIn(jump_right2);
+                renderIn(jump_right3);
+
+                end_turn = poll_grenade_or_stay_input();
+            }
+
         }
 
         if (!end_turn) {
+            renderIn(grenadeControlBannerObj1);
+            renderIn(grenadeControlBannerObj2);
+            renderIn(grenadeControlBannerObj3);
+
+            // MIGHT NEED TO CHANGE THIS HOW THE DISPLACEMENT BAR WORKS OF INTIALIZING THREE BARS AT ONCE
+            if(currentView == LEFTVIEW){
+                printf("LEFTVIEW\n");
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
+            } else if (currentView == MIDDLEVIEW){
+                printf("MIDDLEVIEW\n");
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258 + SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
+            } else if (currentView == RIGHTVIEW){
+                printf("RIGHTVIEW\n");
+                initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258 + SCREEN_WIDTH*2, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
+            }
+
             // grenade logic
             printf("call grenade logic controls!\n");
+            bool grenadeLaunched = false;
+
+
+            grenade_user_angle = 0;
+            grenade_user_power = 0;
+            double prev_grenade_user_angle = 0;
+
+            int lookingRightBool = 1;
+
+            // ADD LOGIC HERE
+            if (team_b[game_state_ptr->character_turn_team_b]->state == RIGHTMOVEMENT || team_b[game_state_ptr->character_turn_team_b]->state == JUMPINGRIGHT) {
+                lookingRightBool = 1;
+            }
+            else if (team_b[game_state_ptr->character_turn_team_b]->state == LEFTMOVEMENT || team_b[game_state_ptr->character_turn_team_b]->state == JUMPINGLEFT) {
+                lookingRightBool = 0;                
+            }
+            
+            else if (team_b[game_state_ptr->character_turn_team_b]->prevState == RIGHTMOVEMENT || team_b[game_state_ptr->character_turn_team_b]->prevState == JUMPINGRIGHT) {
+                lookingRightBool = 1;
+            }
+            else if (team_b[game_state_ptr->character_turn_team_b]->prevState == RIGHTMOVEMENT || team_b[game_state_ptr->character_turn_team_b]->prevState == JUMPINGLEFT) {
+                lookingRightBool = 0;                
+            }
+            else {
+                lookingRightBool = 1; // Default to looking right
+            }
+
+            if (grenade_user_angle == 0) {
+                initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                renderIn(grenade_angle_arrow);
+            }
+
+            while(!grenadeLaunched){
+                char* control = grenade_control_input();
+                //printf("%s\n", control);
+                
+                //NEED TO PUT logic for drawing arrow in this while loop
+                if (prev_grenade_user_angle != grenade_user_angle) {
+                    prev_grenade_user_angle = grenade_user_angle;
+                    if (grenade_user_angle == 0) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_180, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                    }
+                    else if (grenade_user_angle == 10) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_10, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_170, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                    }
+                    else if (grenade_user_angle == 20) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_20, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_160, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+
+                        }
+                    }
+                    else if (grenade_user_angle == 30) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_30, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_150, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                            
+                        }
+                    }
+                    else if (grenade_user_angle == 40) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_40, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_140, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                    }
+                    else if (grenade_user_angle == 50) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_50, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_130, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                            
+                        }
+                    }
+                    else if (grenade_user_angle == 60) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_60, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_120, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                    }
+                    else if (grenade_user_angle == 70) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_70, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_110, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                    }
+                    else if (grenade_user_angle == 80) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        if (lookingRightBool == 1) {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_80, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                        else {
+                            initializeGeneralObject(&grenade_angle_arrow, &arrow_100, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        }
+                    }
+                    else if (grenade_user_angle == 90) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_90, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                    }
+                    renderIn(grenade_angle_arrow);
+                }
+
+                if(control == gameControls[10]){ //if they released up grenade
+                    if(grenade_user_angle != 90){
+                        grenade_user_angle += 10;
+                        printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+                        
+                    }
+                }
+                else if(control == gameControls[12]){ // if they released down grenade
+                    if(grenade_user_angle != 0){
+                        grenade_user_angle -=10;
+                        printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+                        
+
+                    }
+                }
+                else if(control == gameControls[7]){
+                    grenade_user_angle = 0; //reset angle when side switches
+                    printf("logic to face right\n");
+                    renderOut(grenade_angle_arrow);
+                    destroyGeneralObject(grenade_angle_arrow);
+                    initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                    renderIn(grenade_angle_arrow);
+                    // team_a[game_state_ptr->character_turn_team_a]->state = RIGHTMOVEMENT;
+                    // drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
+                    lookingRightBool = 1;
+                    
+                }
+                else if(control == gameControls[8]){
+                    grenade_user_angle = 0; //reset angle when side switches
+                    renderOut(grenade_angle_arrow);
+                    destroyGeneralObject(grenade_angle_arrow);
+                    initializeGeneralObject(&grenade_angle_arrow, &arrow_180, 0, *(team_b[game_state_ptr->character_turn_team_b]->x) - (PLAYER_WIDTH / 2), *(team_b[game_state_ptr->character_turn_team_b]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                    renderIn(grenade_angle_arrow);
+                    printf("logic to face left\n");
+                    lookingRightBool = 0;
+
+                    
+                }
+                else if(control == gameControls[14]){ // User releases space bar to launch grenade
+                    printf("The final grenade user power is: %lf\n", grenade_user_power);
+                    // grenade_user_power = 4;
+                    printf("USER POWER IS: %lf\n", grenade_user_power);
+                    initializeGrenade(&grenade, *(team_b[game_state_ptr->character_turn_team_b]->x) + PLAYER_WIDTH/2, *(team_b[game_state_ptr->character_turn_team_b]->y) + PLATFORM_HEIGHT/2, &grenadeasset, grenade_user_angle, grenade_user_power, lookingRightBool);
+                    resetBar(&powerBar, powerBar.lastRenderedPartition-1);
+                    grenadeLaunched = true;
+                    renderIn(grenade.grenadeObj); //initial render in
+                    renderOut(grenade_angle_arrow);
+                    destroyGeneralObject(grenade_angle_arrow);
+                }
+
+                if(!grenadeLaunched){
+                    double ratio = grenade_user_power / NUM_DISPLACEMENT_BAR_PARTITIONS;
+                    if(ratio > 1) ratio = 1;
+                    int num_partitions_filled = ratio * (double)NUM_DISPLACEMENT_BAR_PARTITIONS;
+
+
+                    
+                    if(num_partitions_filled < powerBar.lastRenderedPartition){
+                        for(int i = powerBar.lastRenderedPartition; i >= num_partitions_filled; i--){
+                            renderOut(powerBar.barObj[i]);
+                        }
+                    }
+                    else if(num_partitions_filled > powerBar.lastRenderedPartition){
+                        for(int i = powerBar.lastRenderedPartition; i < num_partitions_filled; i++){
+                            renderIn(powerBar.barObj[i]);
+                        }
+
+                    } 
+                    setLastRenderedPartition(&powerBar, num_partitions_filled);
+                }
+            }
+            byte1 = byte2 = byte3 = 0;
+            destroyBar(&powerBar);
+
+            //rendering loop for grenade once user controls are done
+            // bool grenadeExploded = false;
+            int grenade_explosion_count = 0;
+            bool wentOffScreen = false;
+            num_bounces = 0;
+            while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT && num_bounces < 3){
+                renderOut(grenade.grenadeObj);
+                updateGrenadePosition(&grenade);
+                checkGrenadeGrounded(&grenade);
+
+                if(*(grenade.grenadeObj->x) < -10 || *(grenade.grenadeObj->x) > WORLD_WIDTH + 10){
+                    wentOffScreen = true;
+                    break;
+                }
+
+
+                grenade_explosion_count +=1;
+                // printf("---------\nX: %d\nY: %d\nVelocityX: %lf\nVelocityY: %lf\n--------\n\n", *(grenade.grenadeObj->x), *(grenade.grenadeObj->y), *(grenade.grenadeObj->velocityX), *(grenade.grenadeObj->velocityY));
+                renderIn(grenade.grenadeObj);
+                
+                currentView = grenade.grenadeView;
+                updateScreenView();
+
+                wait_for_vsync();  // swap front and back buffers on VGA vertical sync
+            }
+
+            if(!wentOffScreen){
+
+                printf("GRENADE EXPLOSION START\n");
+
+                renderOut(grenade.grenadeObj);
+                
+                //logic for explosion animation and damage check logic
+                initializeGeneralObject(&explosion, &explosionasset, 0, *(grenade.grenadeObj->x) - EXPLOSION_WIDTH/2.0, *(grenade.grenadeObj->y) - EXPLOSION_HEIGHT/2.0, EXPLOSION_WIDTH, EXPLOSION_HEIGHT);
+                renderIn(explosion);
+
+                wait_for_vsync();
+                
+                int explosion_delay_count = 0;
+                while(1){
+                    renderOut(explosion);
+                    if(explosion_delay_count > 10){
+                        wait_for_vsync();
+                        break;
+                    }
+                    renderIn(explosion);
+                    wait_for_vsync();
+                    explosion_delay_count++;
+                }
+
+
+                destroyGeneralObject(explosion);
+
+                printf("GRENADE EXPLOSION DESTROYED\n");
+
+
+                //logic for damage
+                checkWithinBlastRadiusAndApplyDamage(&grenade, team_a, team_b);
+
+                checkCharacterDeaths(); //set characters with 0 health to dead
+
+                int numAffected = getNumAffectedByCollision();
+
+                printf("NUM AFFECTED IS: %d\n", numAffected);
+
+                //render out dead characters who were just affected by collision
+                for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                    if(team_a[i]->state == DEAD && team_a[i]->withinBlastRadiusBool == 1){
+                        // do stuff
+                        removeCharacter(team_a[i]);
+                    }
+
+                    if(team_b[i]->state == DEAD && team_b[i]->withinBlastRadiusBool == 1){
+                        // do stuff
+                        removeCharacter(team_b[i]);
+                    }
+                }
+
+
+                // int knockback_count = 0;
+                int count = 0;
+                while(count != numAffected){ //if num affected == 0 it should never enter loop
+                    count = 0;
+                    for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
+                        if(team_a[curr]->withinBlastRadiusBool == 1){
+                            // printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
+                            
+                            // printf("A%d isGroundedBool is initially: %d\n", curr, team_a[curr]->isGroundedBool);
+                            //if(team_a[curr]->isGroundedBool != 1){
+                                checkGrounded(team_a[curr]);
+                            //}
+                            // printf("A%d isGroundedBool afterwards is: %d\n", curr, team_a[curr]->isGroundedBool);
+
+                            if(team_a[curr]->state == DEAD || (team_a[curr]->isGroundedBool == 1 && team_a[curr]->explosionDisplacement >= MAX_X_EXPLOSION_DISPLACEMENT)){
+                                // printf("breaking condition displacement is: %d\n", team_a[curr]->explosionDisplacement);
+                                count +=1;
+                            }
+                            else{
+                                bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_a[curr]);
+                                knockbackCharacter(team_a[curr], characterLeft, team_a[curr]->isGroundedBool);
+                                // printf("current displacement is: %d\n", team_a[curr]->explosionDisplacement);
+
+                                //check if fell off map
+                                if(*(team_a[curr]->y) > SCREEN_HEIGHT + 45){
+                                    team_a[curr]->prevState = team_a[curr]->state;
+                                    team_a[curr]->state = DEAD;
+                                }
+
+
+
+                            }
+
+
+                            int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                            int ifCollision = 0;
+                            for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                                // Team A Consideration
+                                if (team_a[curr] != team_a[i]) { // Shouldn't collide with itself
+                                    if (checkCollision_Characters(team_a[curr], team_a[i])) {
+                                        ifCollision = 1;
+                                        currentCollisionArray[i] = 1;
+                                        
+                                    }
+                                }
+                                // Team B Consideration
+                                if (checkCollision_Characters(team_a[curr], team_b[i])) {
+                                    ifCollision = 1;
+                                    currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                                    
+                                }    
+                            }
+
+                            if (ifCollision == 0) {
+                                // Remove all instances within the linked lists
+                                drawCharacter(team_a[curr], false);
+                            }
+                            else {
+                                // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                                for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_a[j]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_a[j]);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_b[j-3]);
+                                        }
+                                    }
+                                }
+
+                                drawCharacter(team_a[curr], false);
+
+                                for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_a[j], false);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_b[j-3], false);
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
+                    } // End of for loop to iterate through team a
+
+                
+                    for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
+                        if(team_b[curr]->withinBlastRadiusBool == 1){
+                            // printf("B%d within radius and health is %d\n", curr, *(team_b[curr]->health));
+
+                            checkGrounded(team_b[curr]);
+                            
+                            if(team_b[curr]->state == DEAD || (team_b[curr]->isGroundedBool == 1 && team_b[curr]->explosionDisplacement >= MAX_X_EXPLOSION_DISPLACEMENT)){
+                                count +=1;
+                            }
+                            else{
+                                bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_b[curr]);
+                                knockbackCharacter(team_b[curr], characterLeft, team_b[curr]->isGroundedBool);
+
+                                //check if fell off map
+                                if(*(team_b[curr]->y) > SCREEN_HEIGHT + 45){
+                                    team_b[curr]->prevState = team_b[curr]->state;
+                                    team_b[curr]->state = DEAD;
+                                }
+
+                            }
+
+                            // bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_b[curr]);
+                            // knockbackCharacter(team_b[curr], characterLeft);
+
+                            int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                            int ifCollision = 0;
+                            for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                                // Team A Consideration
+                                if (checkCollision_Characters(team_b[curr], team_a[i])) {
+                                    ifCollision = 1;
+                                    currentCollisionArray[i] = 1;
+                                }
+
+                                // Team B Consideration
+                                if (team_b[curr] != team_b[i]) { // Shouldn't collide with itself
+                                    if (checkCollision_Characters(team_b[curr], team_b[i])) {
+                                        ifCollision = 1;
+                                        currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                                    }
+                                }
+                            }
+                            if (ifCollision == 0) {
+                                // Remove all instances within the linked lists
+                                drawCharacter(team_b[curr], false);
+                            }
+                            else {
+                                // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                                for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_a[j]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_a[j]);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_b[j-3]);
+                                        }
+                                    }
+                                }
+
+                                drawCharacter(team_b[curr], false);
+
+
+                                for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_a[j], false);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_b[j-3], false);
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
+                    } //end of for loop to iterate through team b
+
+                    // knockback_count++;
+                    wait_for_vsync();
+                }
+
+
+
+                destroyGrenade(&grenade);
+
+                //reset within radius bool values and velocities from knockback
+                for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                    if(team_a[i]->withinBlastRadiusBool == 1){
+                        team_a[i]->withinBlastRadiusBool = 0;
+                        *(team_a[i]->velocityX) = 0;
+                        team_a[i]->explosionDisplacement = 0;
+                    }
+
+                    if(team_b[i]->withinBlastRadiusBool == 1){
+                        team_b[i]->withinBlastRadiusBool = 0;
+                        *(team_b[i]->velocityX) = 0;
+                        team_b[i]->explosionDisplacement = 0;
+                    }
+                }
+
+
+            }
+            else{ //if the grenade went off the screen
+                printf("GRENADE WENT OFF SCREEN!\n");
+                wait_for_vsync();
+                destroyGrenade(&grenade);
+            }
         }
         
-
-        if (!end_turn) {
-            // grenade logic
-            printf("call grenade logic controls\n");
-        }
 
         // END TURN LOGIC
         game_state_ptr->character_turn_team_b = getCharacterIndexForNextTurn(
             team_b, game_state_ptr->character_turn_team_b);
         game_state_ptr->team_turn = 'a';
+
+        for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+            if(team_a[i]->state == DEAD){
+                printf("A%d is DEAD\n", i);
+            }
+            else{
+                printf("A%d is ALIVE\n", i);
+            }
+        }
+
+        for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+            if(team_b[i]->state == DEAD){
+                printf("B%d is DEAD\n", i);
+            }
+            else{
+                printf("B%d is ALIVE\n", i);
+            }
+        }
 
         char game_result = checkWinCondition();
         printf("\nCurrent game result is %c\n", game_result);

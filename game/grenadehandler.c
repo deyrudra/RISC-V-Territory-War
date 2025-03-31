@@ -51,9 +51,9 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double 
     // flip x velocity logic depending on user facing left or right
 
     if(lookingRightBool){
-        *(grenade->grenadeObj->velocityX) = 1.5 * power * cosAngle; // We can update the 1 as we go (scaling factor)
+        *(grenade->grenadeObj->velocityX) = 1.5 * power / 5.0 * cosAngle; // We can update the 1 as we go (scaling factor)
     } else {
-        *(grenade->grenadeObj->velocityX) = -1 * 1.5 * power * cosAngle;
+        *(grenade->grenadeObj->velocityX) = -1 * 1.5 * power / 5.0 * cosAngle;
     }
 
     printf("Upon Grenade Init VELOCITY X is: %lf\n", *(grenade->grenadeObj->velocityX));
@@ -66,7 +66,7 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double 
     grenade->isExplodedBool = 0;
     grenade->isGroundedBool = 0;
     *(grenade->angle) = angle;
-    *(grenade->power) = power;
+    *(grenade->power) = power / 5.0;
 
     if (x < SCREEN_WIDTH) {
         grenade->grenadeView = LEFTVIEW;
