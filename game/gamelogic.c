@@ -429,6 +429,7 @@ void handle_team_turn() {
                 
 
             }
+            byte1 = byte2 = byte3 = 0;
 
             // printf("Last partition rendered is: %d\n", displacementBar.lastRenderedPartition);
             resetBar(&displacementBarLeft, displacementBarLeft.lastRenderedPartition-1);
@@ -504,9 +505,11 @@ void handle_team_turn() {
                     }
                 }
                 else if(control == gameControls[7]){
+                    grenade_user_angle = 0; //reset angle when side switches
                     printf("logic to face right\n");
                 }
                 else if(control == gameControls[8]){
+                    grenade_user_angle = 0; //reset angle when side switches
                     printf("logic to face left\n");
                 }
                 else if(control == gameControls[14]){ // User releases space bar to launch grenade
@@ -539,9 +542,8 @@ void handle_team_turn() {
                     } 
                     setLastRenderedPartition(&powerBar, num_partitions_filled);
                 }
-                
-
             }
+            byte1 = byte2 = byte3 = 0;
 
             //rendering loop for grenade once user controls are done
             // bool grenadeExploded = false;
@@ -865,9 +867,7 @@ void initializeGame() {
     game_state_ptr->game_running = false;
   }
   
-  int getCharacterIndexForNextTurn(
-      struct Character* team_array[NUM_CHARACTERS_PER_TEAM],
-      int current_character_turn_index) {
+  int getCharacterIndexForNextTurn(struct Character* team_array[NUM_CHARACTERS_PER_TEAM], int current_character_turn_index) {
     int next_idx;
     for (int i = 1; i <= NUM_CHARACTERS_PER_TEAM; i++) {
       next_idx = (current_character_turn_index + i) % NUM_CHARACTERS_PER_TEAM;

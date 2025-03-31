@@ -77,6 +77,7 @@ bool poll_move_or_stay_input(){
             }
         }
     }
+    byte1 = byte2 = byte3 = 0;
 }
 
 bool poll_grenade_or_stay_input(){
