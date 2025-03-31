@@ -141,6 +141,12 @@ GameObject* crossObj_b0_3;
 GameObject* crossObj_b1_3;
 GameObject* crossObj_b2_3;
 
+GameObject* blue_teamObj;
+GameObject* red_teamObj;
+GameObject* endgame_resetObj;
+GameObject* endgame_tieObj;
+GameObject* endgame_winObj;
+
 
 
 GameState* game_state_ptr;
@@ -383,12 +389,40 @@ void startGame() {
     }
 
     //OUTPUT END SCREEN HERE
-
+    GameObject* blue_teamObj;
+    GameObject* red_teamObj;
+    GameObject* endgame_resetObj;
+    GameObject* endgame_tieObj;
+    GameObject* endgame_winObj;
     if(game_result == 'T'){
         //draw tie screen
+        initializeGeneralObject(&endgame_tieObj, endgame_tie_140_77, 0, 140, 77, ENDGAME_TIE_140_77_WIDTH, ENDGAME_TIE_140_77_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj, endgame_reset_91_127, 0, 91, 127, ENDGAME_RESET_91_127_WIDTH, ENDGAME_RESET_91_127_HEIGHT);
+        renderIn(endgame_tieObj);
+        renderIn(endgame_resetObj);
+        destroyGeneralObject(endgame_tieObj);
+        destroyGeneralObject(endgame_resetObj);
     } else if(game_result == 'A'){
+        initializeGeneralObject(&endgame_winObj, endgame_win_125_77, 0, 125, 77, ENDGAME_WIN_125_77_WIDTH, ENDGAME_WIN_125_77_HEIGHT);
+        initializeGeneralObject(&red_teamObj, endgame_red_team_92_47, 0, 92, 47, ENDGAME_RED_TEAM_92_47_WIDTH, ENDGAME_RED_TEAM_92_47_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj, endgame_reset_91_127, 0, 91, 127, ENDGAME_RESET_91_127_WIDTH, ENDGAME_RESET_91_127_HEIGHT);
+        renderIn(endgame_winObj);
+        renderIn(red_teamObj);
+        renderIn(endgame_resetObj);
+        destroyGeneralObject(endgame_winObj);
+        destroyGeneralObject(red_teamObj);
+        destroyGeneralObject(endgame_resetObj);
         //draw team A wins
     } else if(game_result == 'B'){
+        initializeGeneralObject(&endgame_winObj, endgame_win_125_77, 0, 125, 77, ENDGAME_WIN_125_77_WIDTH, ENDGAME_WIN_125_77_HEIGHT);
+        initializeGeneralObject(&blue_teamObj, endgame_blue_team_84_47, 0, 84, 47, ENDGAME_BLUE_TEAM_84_47_WIDTH, ENDGAME_BLUE_TEAM_84_47_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj, endgame_reset_91_127, 0, 91, 127, ENDGAME_RESET_91_127_WIDTH, ENDGAME_RESET_91_127_HEIGHT);
+        renderIn(endgame_winObj);
+        renderIn(blue_teamObj);
+        renderIn(endgame_resetObj);
+        destroyGeneralObject(endgame_winObj);
+        destroyGeneralObject(blue_teamObj);
+        destroyGeneralObject(endgame_resetObj);
         //draw team B wins
     }
     audio_playback_mono(victorySound, numSamples);
@@ -396,20 +430,20 @@ void startGame() {
     //poll for spacebar to reset
     reset_game_poll_input();
 
-    destroyPlatform(&ballPlatform);
-    destroyPlatform(&chestPlatform);
-    destroyPlatform(&coolerPlatform);
-    destroyPlatform(&groundPlatform1);
-    destroyPlatform(&groundPlatform2);
-    destroyPlatform(&groundPlatform3);
-    destroyPlatform(&groundPlatform2);
-    destroyPlatform(&lifeguardPlatform1);
-    destroyPlatform(&lifeguardPlatform2);
-    destroyPlatform(&lifeguardPlatform3);
-    destroyPlatform(&lifeguardPlatform4);
-    destroyPlatform(&lifeguardPlatform5);
-    destroyPlatform(&netPlatform);
-    destroyPlatform(&umbrellaPlatform);
+    // destroyPlatform(&ballPlatform);
+    // destroyPlatform(&chestPlatform);
+    // destroyPlatform(&coolerPlatform);
+    // destroyPlatform(&groundPlatform1);
+    // destroyPlatform(&groundPlatform2);
+    // destroyPlatform(&groundPlatform3);
+    // destroyPlatform(&groundPlatform2);
+    // destroyPlatform(&lifeguardPlatform1);
+    // destroyPlatform(&lifeguardPlatform2);
+    // destroyPlatform(&lifeguardPlatform3);
+    // destroyPlatform(&lifeguardPlatform4);
+    // destroyPlatform(&lifeguardPlatform5);
+    // destroyPlatform(&netPlatform);
+    // destroyPlatform(&umbrellaPlatform);
 
     destroyCharacter(&player_a0);
     destroyCharacter(&player_a1);
@@ -418,21 +452,21 @@ void startGame() {
     destroyCharacter(&player_b1);
     destroyCharacter(&player_b2);
 
-    destroyGeneralObject(moveOrStayBannerObj1);
-    destroyGeneralObject(moveOrStayBannerObj2);
-    destroyGeneralObject(moveOrStayBannerObj3);
+    // destroyGeneralObject(moveOrStayBannerObj1);
+    // destroyGeneralObject(moveOrStayBannerObj2);
+    // destroyGeneralObject(moveOrStayBannerObj3);
 
-    destroyGeneralObject(grenadeOrStayBannerObj1);
-    destroyGeneralObject(grenadeOrStayBannerObj2);
-    destroyGeneralObject(grenadeOrStayBannerObj3);
+    // destroyGeneralObject(grenadeOrStayBannerObj1);
+    // destroyGeneralObject(grenadeOrStayBannerObj2);
+    // destroyGeneralObject(grenadeOrStayBannerObj3);
 
-    destroyGeneralObject(movementControlBannerObj1);
-    destroyGeneralObject(movementControlBannerObj2);
-    destroyGeneralObject(movementControlBannerObj3);
+    // destroyGeneralObject(movementControlBannerObj1);
+    // destroyGeneralObject(movementControlBannerObj2);
+    // destroyGeneralObject(movementControlBannerObj3);
 
-    destroyGeneralObject(grenadeControlBannerObj1);
-    destroyGeneralObject(grenadeControlBannerObj2);
-    destroyGeneralObject(grenadeControlBannerObj3);
+    // destroyGeneralObject(grenadeControlBannerObj1);
+    // destroyGeneralObject(grenadeControlBannerObj2);
+    // destroyGeneralObject(grenadeControlBannerObj3);
 
 
     /// start again
@@ -463,18 +497,18 @@ void startGame() {
 
     
     // Game Title Screen
-    initializeGeneralObject(&main_menu_background_1Obj, &main_menu_background_1, 0, 0, 0, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+    // initializeGeneralObject(&main_menu_background_1Obj, &main_menu_background_1, 0, 0, 0, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
     renderIn(main_menu_background_1Obj);
-    destroyGeneralObject(main_menu_background_1Obj);
-    initializeGeneralObject(&main_menu_background_2Obj, &main_menu_background_1, 0, SCREEN_WIDTH/2, 0, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+    // destroyGeneralObject(main_menu_background_1Obj);
+    // initializeGeneralObject(&main_menu_background_2Obj, &main_menu_background_1, 0, SCREEN_WIDTH/2, 0, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
     renderIn(main_menu_background_2Obj);
-    destroyGeneralObject(main_menu_background_2Obj);
-    initializeGeneralObject(&main_menu_background_3Obj, &main_menu_background_1, 0, 0, SCREEN_HEIGHT/2, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+    // destroyGeneralObject(main_menu_background_2Obj);
+    // initializeGeneralObject(&main_menu_background_3Obj, &main_menu_background_1, 0, 0, SCREEN_HEIGHT/2, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
     renderIn(main_menu_background_3Obj);
-    destroyGeneralObject(main_menu_background_3Obj);
-    initializeGeneralObject(&main_menu_background_4Obj, &main_menu_background_1, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
+    // destroyGeneralObject(main_menu_background_3Obj);
+    // initializeGeneralObject(&main_menu_background_4Obj, &main_menu_background_1, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
     renderIn(main_menu_background_4Obj);
-    destroyGeneralObject(main_menu_background_4Obj);
+    // destroyGeneralObject(main_menu_background_4Obj);
 
     initializeGeneralObject(&mainMenuTitleObj, &main_menu_title, 0, (SCREEN_WIDTH / 2) - (MAIN_MENU_TITLE_WIDTH / 2), 30, MAIN_MENU_TITLE_WIDTH, MAIN_MENU_TITLE_HEIGHT);
     renderIn(mainMenuTitleObj);
@@ -483,6 +517,7 @@ void startGame() {
     renderIn(main_menu_enterObj);
     destroyGeneralObject(main_menu_enterObj);
 
+    printf("We are about to restart\n");
     startGame();
 }
 
@@ -1109,6 +1144,7 @@ void handle_team_turn() {
                                 if(*(team_a[curr]->y) > SCREEN_HEIGHT + 45){
                                     team_a[curr]->prevState = team_a[curr]->state;
                                     team_a[curr]->state = DEAD;
+                                    // HERE123
                                     if (curr == 0) {
                                         renderIn(crossObj_a0_1);
                                         renderIn(crossObj_a0_2);
@@ -1453,6 +1489,31 @@ void handle_team_turn() {
                     team_b[game_state_ptr->character_turn_team_b]->state = DEAD;
                     end_turn = true;
                     character_fell_off_map = true;
+                    //HERE123
+                    if (game_state_ptr->character_turn_team_b == 0) {
+                        renderIn(crossObj_b0_1);
+                        renderIn(crossObj_b0_2);
+                        renderIn(crossObj_b0_3);
+                        destroyGeneralObject(crossObj_b0_1);
+                        destroyGeneralObject(crossObj_b0_2);
+                        destroyGeneralObject(crossObj_b0_3);
+                    }
+                    else if (game_state_ptr->character_turn_team_b == 1) {
+                        renderIn(crossObj_b1_1);
+                        renderIn(crossObj_b1_2);
+                        renderIn(crossObj_b1_3);
+                        destroyGeneralObject(crossObj_b1_1);
+                        destroyGeneralObject(crossObj_b1_2);
+                        destroyGeneralObject(crossObj_b1_3);
+                    }
+                    else if (game_state_ptr->character_turn_team_b == 2) {
+                        renderIn(crossObj_b2_1);
+                        renderIn(crossObj_b2_2);
+                        renderIn(crossObj_b2_3);
+                        destroyGeneralObject(crossObj_b2_1);
+                        destroyGeneralObject(crossObj_b2_2);
+                        destroyGeneralObject(crossObj_b2_3);
+                    }
                     break;
                 }
                 
@@ -1897,11 +1958,61 @@ void handle_team_turn() {
                     if(team_a[i]->state == DEAD && team_a[i]->withinBlastRadiusBool == 1){
                         // do stuff
                         removeCharacter(team_a[i]);
+                        if (i == 0) {
+                            renderIn(crossObj_a0_1);
+                            renderIn(crossObj_a0_2);
+                            renderIn(crossObj_a0_3);
+                            destroyGeneralObject(crossObj_a0_1);
+                            destroyGeneralObject(crossObj_a0_2);
+                            destroyGeneralObject(crossObj_a0_3);
+                        }
+                        else if (i == 1) {
+                            renderIn(crossObj_a1_1);
+                            renderIn(crossObj_a1_2);
+                            renderIn(crossObj_a1_3);
+                            destroyGeneralObject(crossObj_a1_1);
+                            destroyGeneralObject(crossObj_a1_2);
+                            destroyGeneralObject(crossObj_a1_3);
+                        }
+                        else if (i == 2) {
+                            renderIn(crossObj_a2_1);
+                            renderIn(crossObj_a2_2);
+                            renderIn(crossObj_a2_3);
+                            destroyGeneralObject(crossObj_a2_1);
+                            destroyGeneralObject(crossObj_a2_2);
+                            destroyGeneralObject(crossObj_a2_3);
+                        }
+                        // HERE123
                     }
 
                     if(team_b[i]->state == DEAD && team_b[i]->withinBlastRadiusBool == 1){
                         // do stuff
                         removeCharacter(team_b[i]);
+                        // HERE123
+                        if (i == 0) {
+                            renderIn(crossObj_b0_1);
+                            renderIn(crossObj_b0_2);
+                            renderIn(crossObj_b0_3);
+                            destroyGeneralObject(crossObj_b0_1);
+                            destroyGeneralObject(crossObj_b0_2);
+                            destroyGeneralObject(crossObj_b0_3);
+                        }
+                        else if (i == 1) {
+                            renderIn(crossObj_b1_1);
+                            renderIn(crossObj_b1_2);
+                            renderIn(crossObj_b1_3);
+                            destroyGeneralObject(crossObj_b1_1);
+                            destroyGeneralObject(crossObj_b1_2);
+                            destroyGeneralObject(crossObj_b1_3);
+                        }
+                        else if (i == 2) {
+                            renderIn(crossObj_b2_1);
+                            renderIn(crossObj_b2_2);
+                            renderIn(crossObj_b2_3);
+                            destroyGeneralObject(crossObj_b2_1);
+                            destroyGeneralObject(crossObj_b2_2);
+                            destroyGeneralObject(crossObj_b2_3);
+                        }
                     }
                 }
 
@@ -1933,6 +2044,31 @@ void handle_team_turn() {
                                 if(*(team_a[curr]->y) > SCREEN_HEIGHT + 45){
                                     team_a[curr]->prevState = team_a[curr]->state;
                                     team_a[curr]->state = DEAD;
+                                    //HERE123
+                                    if (curr == 0) {
+                                        renderIn(crossObj_a0_1);
+                                        renderIn(crossObj_a0_2);
+                                        renderIn(crossObj_a0_3);
+                                        destroyGeneralObject(crossObj_a0_1);
+                                        destroyGeneralObject(crossObj_a0_2);
+                                        destroyGeneralObject(crossObj_a0_3);
+                                    }
+                                    else if (curr == 1) {
+                                        renderIn(crossObj_a1_1);
+                                        renderIn(crossObj_a1_2);
+                                        renderIn(crossObj_a1_3);
+                                        destroyGeneralObject(crossObj_a1_1);
+                                        destroyGeneralObject(crossObj_a1_2);
+                                        destroyGeneralObject(crossObj_a1_3);
+                                    }
+                                    else if (curr == 2) {
+                                        renderIn(crossObj_a2_1);
+                                        renderIn(crossObj_a2_2);
+                                        renderIn(crossObj_a2_3);
+                                        destroyGeneralObject(crossObj_a2_1);
+                                        destroyGeneralObject(crossObj_a2_2);
+                                        destroyGeneralObject(crossObj_a2_3);
+                                    }
                                 }
 
 
@@ -2023,6 +2159,32 @@ void handle_team_turn() {
                                 if(*(team_b[curr]->y) > SCREEN_HEIGHT + 45){
                                     team_b[curr]->prevState = team_b[curr]->state;
                                     team_b[curr]->state = DEAD;
+
+                                    // HERE123
+                                    if (curr == 0) {
+                                        renderIn(crossObj_b0_1);
+                                        renderIn(crossObj_b0_2);
+                                        renderIn(crossObj_b0_3);
+                                        destroyGeneralObject(crossObj_b0_1);
+                                        destroyGeneralObject(crossObj_b0_2);
+                                        destroyGeneralObject(crossObj_b0_3);
+                                    }
+                                    else if (curr == 1) {
+                                        renderIn(crossObj_b1_1);
+                                        renderIn(crossObj_b1_2);
+                                        renderIn(crossObj_b1_3);
+                                        destroyGeneralObject(crossObj_b1_1);
+                                        destroyGeneralObject(crossObj_b1_2);
+                                        destroyGeneralObject(crossObj_b1_3);
+                                    }
+                                    else if (curr == 2) {
+                                        renderIn(crossObj_b2_1);
+                                        renderIn(crossObj_b2_2);
+                                        renderIn(crossObj_b2_3);
+                                        destroyGeneralObject(crossObj_b2_1);
+                                        destroyGeneralObject(crossObj_b2_2);
+                                        destroyGeneralObject(crossObj_b2_3);
+                                    }
                                 }
 
                             }
