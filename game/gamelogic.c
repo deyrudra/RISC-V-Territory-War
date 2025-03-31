@@ -389,40 +389,119 @@ void startGame() {
     }
 
     //OUTPUT END SCREEN HERE
-    GameObject* blue_teamObj;
-    GameObject* red_teamObj;
-    GameObject* endgame_resetObj;
-    GameObject* endgame_tieObj;
-    GameObject* endgame_winObj;
+    GameObject* blue_teamObj1;
+    GameObject* blue_teamObj2;
+    GameObject* blue_teamObj3;
+
+    GameObject* red_teamObj1;
+    GameObject* red_teamObj2;
+    GameObject* red_teamObj3;
+
+
+    GameObject* endgame_resetObj1;
+    GameObject* endgame_resetObj2;
+    GameObject* endgame_resetObj3;
+
+
+    GameObject* endgame_tieObj1;
+    GameObject* endgame_tieObj2;
+    GameObject* endgame_tieObj3;
+
+
+
+    GameObject* endgame_winObj1;
+    GameObject* endgame_winObj2;
+    GameObject* endgame_winObj3;
+
     if(game_result == 'T'){
         //draw tie screen
-        initializeGeneralObject(&endgame_tieObj, endgame_tie_140_77, 0, 140, 77, ENDGAME_TIE_140_77_WIDTH, ENDGAME_TIE_140_77_HEIGHT);
-        initializeGeneralObject(&endgame_resetObj, endgame_reset_91_127, 0, 91, 127, ENDGAME_RESET_91_127_WIDTH, ENDGAME_RESET_91_127_HEIGHT);
-        renderIn(endgame_tieObj);
-        renderIn(endgame_resetObj);
-        destroyGeneralObject(endgame_tieObj);
-        destroyGeneralObject(endgame_resetObj);
+        initializeGeneralObject(&endgame_tieObj1, endgame_tie_146_100, 0, 146, 100, ENDGAME_TIE_146_100_WIDTH, ENDGAME_TIE_146_100_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj1, endgame_reset_113_136, 0, 113, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_tieObj1);
+        renderIn(endgame_resetObj1);
+        destroyGeneralObject(endgame_tieObj1);
+        destroyGeneralObject(endgame_resetObj1);
+
+        initializeGeneralObject(&endgame_tieObj2, endgame_tie_146_100, 0, 146 + SCREEN_WIDTH, 100, ENDGAME_TIE_146_100_WIDTH, ENDGAME_TIE_146_100_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj2, endgame_reset_113_136, 0, 113 + SCREEN_WIDTH, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_tieObj2);
+        renderIn(endgame_resetObj2);
+        destroyGeneralObject(endgame_tieObj2);
+        destroyGeneralObject(endgame_resetObj2);
+
+        initializeGeneralObject(&endgame_tieObj3, endgame_tie_146_100, 0, 146 + SCREEN_WIDTH*2, 100, ENDGAME_TIE_146_100_WIDTH, ENDGAME_TIE_146_100_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj3, endgame_reset_113_136, 0, 113 + SCREEN_WIDTH*2, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_tieObj3);
+        renderIn(endgame_resetObj3);
+        destroyGeneralObject(endgame_tieObj3);
+        destroyGeneralObject(endgame_resetObj3);
+
     } else if(game_result == 'A'){
-        initializeGeneralObject(&endgame_winObj, endgame_win_125_77, 0, 125, 77, ENDGAME_WIN_125_77_WIDTH, ENDGAME_WIN_125_77_HEIGHT);
-        initializeGeneralObject(&red_teamObj, endgame_red_team_92_47, 0, 92, 47, ENDGAME_RED_TEAM_92_47_WIDTH, ENDGAME_RED_TEAM_92_47_HEIGHT);
-        initializeGeneralObject(&endgame_resetObj, endgame_reset_91_127, 0, 91, 127, ENDGAME_RESET_91_127_WIDTH, ENDGAME_RESET_91_127_HEIGHT);
-        renderIn(endgame_winObj);
-        renderIn(red_teamObj);
-        renderIn(endgame_resetObj);
-        destroyGeneralObject(endgame_winObj);
-        destroyGeneralObject(red_teamObj);
-        destroyGeneralObject(endgame_resetObj);
+        initializeGeneralObject(&endgame_winObj1, endgame_win_136_100, 0, 136, 100, ENDGAME_WIN_136_100_WIDTH, ENDGAME_WIN_136_100_HEIGHT);
+        initializeGeneralObject(&red_teamObj1, endgame_red_team_113_81, 0, 113, 81, ENDGAME_RED_TEAM_113_81_WIDTH, ENDGAME_RED_TEAM_113_81_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj1, endgame_reset_113_136, 0, 113, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_winObj1);
+        renderIn(red_teamObj1);
+        renderIn(endgame_resetObj1);
+        destroyGeneralObject(endgame_winObj1);
+        destroyGeneralObject(red_teamObj1);
+        destroyGeneralObject(endgame_resetObj1);
+
+        initializeGeneralObject(&endgame_winObj2, endgame_win_136_100, 0, 136 + SCREEN_WIDTH, 100, ENDGAME_WIN_136_100_WIDTH, ENDGAME_WIN_136_100_HEIGHT);
+        initializeGeneralObject(&red_teamObj2, endgame_red_team_113_81, 0, 113 + SCREEN_WIDTH, 81, ENDGAME_RED_TEAM_113_81_WIDTH, ENDGAME_RED_TEAM_113_81_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj2, endgame_reset_113_136, 0, 113 + SCREEN_WIDTH, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_winObj2);
+        renderIn(red_teamObj2);
+        renderIn(endgame_resetObj2);
+        destroyGeneralObject(endgame_winObj2);
+        destroyGeneralObject(red_teamObj2);
+        destroyGeneralObject(endgame_resetObj2);
+
+        initializeGeneralObject(&endgame_winObj3, endgame_win_136_100, 0, 136 + SCREEN_WIDTH*2, 100, ENDGAME_WIN_136_100_WIDTH, ENDGAME_WIN_136_100_HEIGHT);
+        initializeGeneralObject(&red_teamObj3, endgame_red_team_113_81, 0, 113 + SCREEN_WIDTH*2, 81, ENDGAME_RED_TEAM_113_81_WIDTH, ENDGAME_RED_TEAM_113_81_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj3, endgame_reset_113_136, 0, 113 + SCREEN_WIDTH*2, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_winObj3);
+        renderIn(red_teamObj3);
+        renderIn(endgame_resetObj3);
+        destroyGeneralObject(endgame_winObj3);
+        destroyGeneralObject(red_teamObj3);
+        destroyGeneralObject(endgame_resetObj3);
+
+
+
         //draw team A wins
     } else if(game_result == 'B'){
-        initializeGeneralObject(&endgame_winObj, endgame_win_125_77, 0, 125, 77, ENDGAME_WIN_125_77_WIDTH, ENDGAME_WIN_125_77_HEIGHT);
-        initializeGeneralObject(&blue_teamObj, endgame_blue_team_84_47, 0, 84, 47, ENDGAME_BLUE_TEAM_84_47_WIDTH, ENDGAME_BLUE_TEAM_84_47_HEIGHT);
-        initializeGeneralObject(&endgame_resetObj, endgame_reset_91_127, 0, 91, 127, ENDGAME_RESET_91_127_WIDTH, ENDGAME_RESET_91_127_HEIGHT);
-        renderIn(endgame_winObj);
-        renderIn(blue_teamObj);
-        renderIn(endgame_resetObj);
-        destroyGeneralObject(endgame_winObj);
-        destroyGeneralObject(blue_teamObj);
-        destroyGeneralObject(endgame_resetObj);
+        initializeGeneralObject(&endgame_winObj1, endgame_win_136_100, 0, 136, 100, ENDGAME_WIN_136_100_WIDTH, ENDGAME_WIN_136_100_HEIGHT);
+        initializeGeneralObject(&blue_teamObj1, endgame_blue_team_108_81, 0, 108, 81, ENDGAME_BLUE_TEAM_108_81_WIDTH, ENDGAME_BLUE_TEAM_108_81_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj1, endgame_reset_113_136, 0, 113, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_winObj1);
+        renderIn(blue_teamObj1);
+        renderIn(endgame_resetObj1);
+        destroyGeneralObject(endgame_winObj1);
+        destroyGeneralObject(blue_teamObj1);
+        destroyGeneralObject(endgame_resetObj1);
+
+        initializeGeneralObject(&endgame_winObj2, endgame_win_136_100, 0, 136+SCREEN_WIDTH, 100, ENDGAME_WIN_136_100_WIDTH, ENDGAME_WIN_136_100_HEIGHT);
+        initializeGeneralObject(&blue_teamObj2, endgame_blue_team_108_81, 0, 108+SCREEN_WIDTH, 81, ENDGAME_BLUE_TEAM_108_81_WIDTH, ENDGAME_BLUE_TEAM_108_81_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj2, endgame_reset_113_136, 0, 113+SCREEN_WIDTH, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_winObj2);
+        renderIn(blue_teamObj2);
+        renderIn(endgame_resetObj2);
+        destroyGeneralObject(endgame_winObj2);
+        destroyGeneralObject(blue_teamObj2);
+        destroyGeneralObject(endgame_resetObj2);
+
+        initializeGeneralObject(&endgame_winObj2, endgame_win_136_100, 0, 136+SCREEN_WIDTH*2, 100, ENDGAME_WIN_136_100_WIDTH, ENDGAME_WIN_136_100_HEIGHT);
+        initializeGeneralObject(&blue_teamObj2, endgame_blue_team_108_81, 0, 108+SCREEN_WIDTH*2, 81, ENDGAME_BLUE_TEAM_108_81_WIDTH, ENDGAME_BLUE_TEAM_108_81_HEIGHT);
+        initializeGeneralObject(&endgame_resetObj2, endgame_reset_113_136, 0, 113+SCREEN_WIDTH*2, 136, ENDGAME_RESET_113_136_WIDTH, ENDGAME_RESET_113_136_HEIGHT);
+        renderIn(endgame_winObj2);
+        renderIn(blue_teamObj2);
+        renderIn(endgame_resetObj2);
+        destroyGeneralObject(endgame_winObj2);
+        destroyGeneralObject(blue_teamObj2);
+        destroyGeneralObject(endgame_resetObj2);
+
+
         //draw team B wins
     }
     audio_playback_mono(victorySound, numSamples);
