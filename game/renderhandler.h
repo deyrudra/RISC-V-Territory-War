@@ -18,15 +18,14 @@ extern short int Buffer2[480][640];
 
 // World Array
 extern short int WORLD[WORLD_HEIGHT][WORLD_WIDTH];
-extern short int * LEFT[SCREEN_HEIGHT][SCREEN_WIDTH];
-extern short int * MIDDLE[SCREEN_HEIGHT][SCREEN_WIDTH];
-extern short int * RIGHT[SCREEN_HEIGHT][SCREEN_WIDTH];
+extern short int* LEFT[SCREEN_HEIGHT][SCREEN_WIDTH];
+extern short int* MIDDLE[SCREEN_HEIGHT][SCREEN_WIDTH];
+extern short int* RIGHT[SCREEN_HEIGHT][SCREEN_WIDTH];
 
-typedef enum {LEFTVIEW, MIDDLEVIEW, RIGHTVIEW} RenderView;
+typedef enum { LEFTVIEW, MIDDLEVIEW, RIGHTVIEW } RenderView;
 
 extern RenderView currentView;
 extern RenderView prevView;
-
 
 void initializeWorld();
 void renderLeft();
@@ -36,12 +35,10 @@ void saveLeft();
 void saveMiddle();
 void saveRight();
 
-
 void wait_for_vsync();
 void clear_screen();
+void clear_screen_2();
 void plot_pixel(int x, int y, short int pixel);
 void initializeBuffers();
 
-
-
-#endif // RENDERHANDLER_H
+#endif  // RENDERHANDLER_H
