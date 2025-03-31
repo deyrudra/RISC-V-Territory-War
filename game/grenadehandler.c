@@ -11,7 +11,7 @@ double grenade_user_power = 0;
 
 
 
-void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double angle, double power){
+void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double angle, double power, bool facingLeft){
 
     // grenade->x = malloc(sizeof(int));
     // grenade->y = malloc(sizeof(int));
@@ -49,8 +49,15 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double 
     *(grenade->grenadeObj->y) = y;
 
     // flip x velocity logic depending on user facing left or right
-    *(grenade->grenadeObj->velocityX) = 1.5 * power * cosAngle; // We can update the 1 as we go (scaling factor)
+
+    if(facingLeft){
+        *(grenade->grenadeObj->velocityX) = -1 * 1.5 * power * cosAngle;
+    } else {
+        *(grenade->grenadeObj->velocityX) = 1.5 * power * cosAngle; // We can update the 1 as we go (scaling factor)
+    }
+
     printf("Upon Grenade Init VELOCITY X is: %lf\n", *(grenade->grenadeObj->velocityX));
+
     *(grenade->grenadeObj->velocityY) = -1.0 * power * sinAngle; // We can update the 1 as we go (scaling factor)
     printf("Upon Grenade Init VELOCITY Y is: %lf\n\n", *(grenade->grenadeObj->velocityY));
     *(grenade->grenadeObj->collidable) = 1;
@@ -118,15 +125,17 @@ double getSinRatio(int angle){
     }
 }
 
-void updateGrenadePosition(Grenade* grenade){
+void updateGrenadePosition(Grenade* grenade, bool facingLeft){
     // Update positions
     
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration
 
         // velocity is bounded by 1 m/s and 4m/s and we update velocity by adding acceleration*dt
         
-        
         *(grenade->grenadeObj->x) = *(grenade->grenadeObj->x) + *(grenade->grenadeObj->velocityX);
+ 
+        // printf("%d\n", *(grenade->grenadeObj->x));
+
         *(grenade->grenadeObj->y) = *(grenade->grenadeObj->y) + *(grenade->grenadeObj->velocityY);
 
     
@@ -270,4 +279,8 @@ void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, 
             // }
         }
     }
+}
+
+bool isCharacterLeftOfGrenade(Grenade* grenade, Character* character){
+
 }

@@ -476,6 +476,7 @@ void handle_team_turn() {
             // grenade logic
             printf("call grenade logic controls!\n");
             bool grenadeLaunched = false;
+            bool facingLeft = false;
 
 
             grenade_user_angle = 0;
@@ -636,20 +637,20 @@ void handle_team_turn() {
                     // team_a[game_state_ptr->character_turn_team_a]->state = RIGHTMOVEMENT;
                     // drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
                     lookingRightBool = 1;
+
                 }
                 else if(control == gameControls[8]){
                     grenade_user_angle = 0; //reset angle when side switches
                     printf("logic to face left\n");
-                    // team_a[game_state_ptr->character_turn_team_a]->state = LEFTMOVEMENT;
-                    // drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
                     lookingRightBool = 0;
+
                     
                 }
                 else if(control == gameControls[14]){ // User releases space bar to launch grenade
                     printf("The final grenade user power is: %lf\n", grenade_user_power);
                     grenade_user_power = 4;
                     printf("using ower of 4: %lf\n", grenade_user_power);
-                    initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x) + PLAYER_WIDTH/2, *(team_a[game_state_ptr->character_turn_team_a]->y) + PLATFORM_HEIGHT/2, &grenadeasset, grenade_user_angle, grenade_user_power);
+                    initializeGrenade(&grenade, *(team_a[game_state_ptr->character_turn_team_a]->x) + PLAYER_WIDTH/2, *(team_a[game_state_ptr->character_turn_team_a]->y) + PLATFORM_HEIGHT/2, &grenadeasset, grenade_user_angle, grenade_user_power, facingLeft);
                     resetBar(&powerBar, powerBar.lastRenderedPartition-1);
                     grenadeLaunched = true;
                     renderIn(grenade.grenadeObj); //initial render in
@@ -686,7 +687,7 @@ void handle_team_turn() {
             num_bounces = 0;
             while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT && num_bounces < 3){
                 renderOut(grenade.grenadeObj);
-                updateGrenadePosition(&grenade);
+                updateGrenadePosition(&grenade, facingLeft);
                 checkGrenadeGrounded(&grenade);
 
 

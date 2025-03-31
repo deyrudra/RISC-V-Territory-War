@@ -6,6 +6,7 @@
 #include "objectHandler.h"
 #include "renderHandler.h"
 #include "gamelogic.h"
+#include <stdbool.h>
 
 //BLAST RADIUS CONSTANTS
 #define BLAST_RADIUS 30
@@ -52,8 +53,8 @@ typedef struct Grenade{
 } Grenade;
 
 // Function prototypes
-void initializeGrenade(Grenade* grenade, int x, int y,short int* asset, double angle, double power);
-void updateGrenadePosition(Grenade* grenade);
+void initializeGrenade(Grenade* grenade, int x, int y,short int* asset, double angle, double power, bool facingLeft);
+void updateGrenadePosition(Grenade* grenade, bool facingLeft);
 
 double getCosRatio(int angle);
 double getSinRatio(int angle);
@@ -63,6 +64,8 @@ void destroyGrenade(Grenade* grenade);
 void checkGrenadeGrounded(Grenade* grenade);
 
 void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, Character** team_b);
+
+bool isCharacterLeftOfGrenade(Grenade* grenade, Character* character);
 
 
 #endif
