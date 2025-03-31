@@ -15,6 +15,7 @@
 #define NUM_CHARACTERS_PER_TEAM 3
 #define DISPLACEMENT_LIMIT 320
 #define MAX_NUM_CHARACTER_COLLISION_LISTS NUM_CHARACTERS_PER_TEAM
+#define MAX_X_EXPLOSION_DISPLACEMENT 20
 
 
 // Global Game Objects
@@ -76,5 +77,7 @@ void updateScreenView();
 // void drawBar(GameObject** bar_obj);
 
 void checkCharacterDeaths();
+
+int getNumAffectedByCollision();
 
 #endif // GAMELOGIC_H

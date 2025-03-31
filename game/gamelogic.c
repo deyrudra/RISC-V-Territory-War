@@ -702,11 +702,17 @@ void handle_team_turn() {
             //rendering loop for grenade once user controls are done
             // bool grenadeExploded = false;
             int grenade_explosion_count = 0;
+            bool wentOffScreen = false;
             num_bounces = 0;
             while(grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT && num_bounces < 3){
                 renderOut(grenade.grenadeObj);
                 updateGrenadePosition(&grenade);
                 checkGrenadeGrounded(&grenade);
+
+                if(*(grenade.grenadeObj->x) < -10 || *(grenade.grenadeObj->x) > WORLD_WIDTH + 10){
+                    wentOffScreen = true;
+                    break;
+                }
 
 
                 grenade_explosion_count +=1;
@@ -718,215 +724,279 @@ void handle_team_turn() {
 
                 wait_for_vsync();  // swap front and back buffers on VGA vertical sync
             }
-
-            printf("GRENADE EXPLOSION START\n");
-
-            renderOut(grenade.grenadeObj);
             
-            //logic for explosion animation and damage check logic
-            initializeGeneralObject(&explosion, &explosionasset, 0, *(grenade.grenadeObj->x) - EXPLOSION_WIDTH/2.0, *(grenade.grenadeObj->y) - EXPLOSION_HEIGHT/2.0, EXPLOSION_WIDTH, EXPLOSION_HEIGHT);
-            renderIn(explosion);
+            if(!wentOffScreen){
 
-            wait_for_vsync();
-            
-            int explosion_delay_count = 0;
-            while(1){
-                renderOut(explosion);
-                if(explosion_delay_count > 10){
-                    wait_for_vsync();
-                    break;
-                }
+                printf("GRENADE EXPLOSION START\n");
+
+                renderOut(grenade.grenadeObj);
+                
+                //logic for explosion animation and damage check logic
+                initializeGeneralObject(&explosion, &explosionasset, 0, *(grenade.grenadeObj->x) - EXPLOSION_WIDTH/2.0, *(grenade.grenadeObj->y) - EXPLOSION_HEIGHT/2.0, EXPLOSION_WIDTH, EXPLOSION_HEIGHT);
                 renderIn(explosion);
+
                 wait_for_vsync();
-                explosion_delay_count++;
-            }
-
-
-            destroyGeneralObject(explosion);
-
-            printf("GRENADE EXPLOSION DESTROYED\n");
-
-
-            //logic for damage
-            checkWithinBlastRadiusAndApplyDamage(&grenade, team_a, team_b);
-
-            int knockback_count = 0;
-            while(knockback_count < 3){
-                for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
-                    if(team_a[curr]->withinBlastRadiusBool == 1 && team_a[curr]->state != DEAD){
-                        printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
-
-                        bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_a[curr]);
-                        knockbackCharacter(team_a[curr], characterLeft);
-
-                        int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
-                        int ifCollision = 0;
-                        for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
-                            // Team A Consideration
-                            if (team_a[curr] != team_a[i]) { // Shouldn't collide with itself
-                                if (checkCollision_Characters(team_a[curr], team_a[i])) {
-                                    ifCollision = 1;
-                                    currentCollisionArray[i] = 1;
-                                    
-                                }
-                            }
-                            // Team B Consideration
-                            if (checkCollision_Characters(team_a[curr], team_b[i])) {
-                                ifCollision = 1;
-                                currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
-                                
-                            }    
-                        }
-
-                        if (ifCollision == 0) {
-                            // Remove all instances within the linked lists
-                            drawCharacter(team_a[curr], false);
-                        }
-                        else {
-                            // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
-                            for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
-                                if (j < NUM_CHARACTERS_PER_TEAM) {
-                                    if (currentCollisionArray[j]) {
-                                        for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
-                                            // printf("render out idx: %d\n", i);
-                                            renderOut(team_a[j]->healthBar->barObj[i]);
-                                        }
-                                        removeCharacter(team_a[j]);
-                                    }
-                                }
-                                else {
-                                    if (currentCollisionArray[j]) {
-                                        for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
-                                            // printf("render out idx: %d\n", i);
-                                            renderOut(team_b[j-3]->healthBar->barObj[i]);
-                                        }
-                                        removeCharacter(team_b[j-3]);
-                                    }
-                                }
-                            }
-
-                            drawCharacter(team_a[curr], false);
-
-                            for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
-                                if (j < NUM_CHARACTERS_PER_TEAM) {
-                                    if (currentCollisionArray[j]) {
-                                        drawCharacter(team_a[j], false);
-                                    }
-                                }
-                                else {
-                                    if (currentCollisionArray[j]) {
-                                        drawCharacter(team_b[j-3], false);
-                                    }
-                                }
-                            }
-                            
-                        }
+                
+                int explosion_delay_count = 0;
+                while(1){
+                    renderOut(explosion);
+                    if(explosion_delay_count > 10){
+                        wait_for_vsync();
+                        break;
                     }
-                } // End of for loop to iterate through team a
+                    renderIn(explosion);
+                    wait_for_vsync();
+                    explosion_delay_count++;
+                }
 
-            
-                for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
-                    if(team_b[curr]->withinBlastRadiusBool == 1 && team_b[curr]->state != DEAD){
-                        printf("B%d within radius and health is %d\n", curr, *(team_b[curr]->health));
 
-                        bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_b[curr]);
-                        knockbackCharacter(team_b[curr], characterLeft);
+                destroyGeneralObject(explosion);
 
-                        int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
-                        int ifCollision = 0;
-                        for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
-                            // Team A Consideration
-                            if (checkCollision_Characters(team_b[curr], team_a[i])) {
-                                ifCollision = 1;
-                                currentCollisionArray[i] = 1;
+                printf("GRENADE EXPLOSION DESTROYED\n");
+
+
+                //logic for damage
+                checkWithinBlastRadiusAndApplyDamage(&grenade, team_a, team_b);
+
+                checkCharacterDeaths(); //set characters with 0 health to dead
+
+                int numAffected = getNumAffectedByCollision();
+
+                printf("NUM AFFECTED IS: %d\n", numAffected);
+
+                //render out dead characters who were just affected by collision
+                for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                    if(team_a[i]->state == DEAD && team_a[i]->withinBlastRadiusBool == 1){
+                        // do stuff
+                        removeCharacter(team_a[i]);
+                    }
+
+                    if(team_b[i]->state == DEAD && team_b[i]->withinBlastRadiusBool == 1){
+                        // do stuff
+                        removeCharacter(team_b[i]);
+                    }
+                }
+
+
+                // int knockback_count = 0;
+                int count = 0;
+                while(count != numAffected){ //if num affected == 0 it should never enter loop
+                    count = 0;
+                    for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
+                        if(team_a[curr]->withinBlastRadiusBool == 1){
+                            printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
+                            
+                            printf("A%d isGroundedBool is initially: %d\n", curr, team_a[curr]->isGroundedBool);
+                            //if(team_a[curr]->isGroundedBool != 1){
+                                checkGrounded(team_a[curr]);
+                            //}
+                            printf("A%d isGroundedBool afterwards is: %d\n", curr, team_a[curr]->isGroundedBool);
+
+                            if(team_a[curr]->state == DEAD || (team_a[curr]->isGroundedBool == 1 && team_a[curr]->explosionDisplacement >= MAX_X_EXPLOSION_DISPLACEMENT)){
+                                printf("breaking condition displacement is: %d\n", team_a[curr]->explosionDisplacement);
+                                count +=1;
+                            }
+                            else{
+                                bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_a[curr]);
+                                knockbackCharacter(team_a[curr], characterLeft, team_a[curr]->isGroundedBool);
+                                printf("current displacement is: %d\n", team_a[curr]->explosionDisplacement);
+
+                                //check if fell off map
+                                if(*(team_a[curr]->y) > SCREEN_HEIGHT + 45){
+                                    team_a[curr]->prevState = team_a[curr]->state;
+                                    team_a[curr]->state = DEAD;
+                                }
+
+
+
                             }
 
-                            // Team B Consideration
-                            if (team_b[curr] != team_b[i]) { // Shouldn't collide with itself
-                                if (checkCollision_Characters(team_b[curr], team_b[i])) {
+
+                            int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                            int ifCollision = 0;
+                            for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                                // Team A Consideration
+                                if (team_a[curr] != team_a[i]) { // Shouldn't collide with itself
+                                    if (checkCollision_Characters(team_a[curr], team_a[i])) {
+                                        ifCollision = 1;
+                                        currentCollisionArray[i] = 1;
+                                        
+                                    }
+                                }
+                                // Team B Consideration
+                                if (checkCollision_Characters(team_a[curr], team_b[i])) {
                                     ifCollision = 1;
                                     currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
-                                }
+                                    
+                                }    
                             }
-                        }
-                        if (ifCollision == 0) {
-                            // Remove all instances within the linked lists
-                            drawCharacter(team_b[curr], false);
-                        }
-                        else {
-                            // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
-                            for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
-                                if (j < NUM_CHARACTERS_PER_TEAM) {
-                                    if (currentCollisionArray[j]) {
-                                        for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
-                                            // printf("render out idx: %d\n", i);
-                                            renderOut(team_a[j]->healthBar->barObj[i]);
+
+                            if (ifCollision == 0) {
+                                // Remove all instances within the linked lists
+                                drawCharacter(team_a[curr], false);
+                            }
+                            else {
+                                // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                                for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_a[j]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_a[j]);
                                         }
-                                        removeCharacter(team_a[j]);
                                     }
-                                }
-                                else {
-                                    if (currentCollisionArray[j]) {
-                                        for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
-                                            // printf("render out idx: %d\n", i);
-                                            renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_b[j-3]);
                                         }
-                                        removeCharacter(team_b[j-3]);
                                     }
                                 }
+
+                                drawCharacter(team_a[curr], false);
+
+                                for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_a[j], false);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_b[j-3], false);
+                                        }
+                                    }
+                                }
+                                
                             }
-
-                            drawCharacter(team_b[curr], false);
-
-
-                            for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
-                                if (j < NUM_CHARACTERS_PER_TEAM) {
-                                    if (currentCollisionArray[j]) {
-                                        drawCharacter(team_a[j], false);
-                                    }
-                                }
-                                else {
-                                    if (currentCollisionArray[j]) {
-                                        drawCharacter(team_b[j-3], false);
-                                    }
-                                }
-                            }
-                            
                         }
+                    } // End of for loop to iterate through team a
+
+                
+                    for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
+                        if(team_b[curr]->withinBlastRadiusBool == 1){
+                            printf("B%d within radius and health is %d\n", curr, *(team_b[curr]->health));
+
+                            if(team_b[curr]->isGroundedBool != 1){
+                                checkGrounded(team_b[curr]);
+                            }
+                            if(team_b[curr]->state == DEAD || (team_b[curr]->isGroundedBool == 1 && team_b[curr]->explosionDisplacement >= MAX_X_EXPLOSION_DISPLACEMENT)){
+                                count +=1;
+                            }
+                            else{
+                                bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_b[curr]);
+                                knockbackCharacter(team_b[curr], characterLeft, team_b[curr]->isGroundedBool);
+
+                                //check if fell off map
+                                if(*(team_b[curr]->y) > SCREEN_HEIGHT + 45){
+                                    team_b[curr]->prevState = team_b[curr]->state;
+                                    team_b[curr]->state = DEAD;
+                                }
+
+                            }
+
+                            // bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_b[curr]);
+                            // knockbackCharacter(team_b[curr], characterLeft);
+
+                            int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                            int ifCollision = 0;
+                            for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                                // Team A Consideration
+                                if (checkCollision_Characters(team_b[curr], team_a[i])) {
+                                    ifCollision = 1;
+                                    currentCollisionArray[i] = 1;
+                                }
+
+                                // Team B Consideration
+                                if (team_b[curr] != team_b[i]) { // Shouldn't collide with itself
+                                    if (checkCollision_Characters(team_b[curr], team_b[i])) {
+                                        ifCollision = 1;
+                                        currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                                    }
+                                }
+                            }
+                            if (ifCollision == 0) {
+                                // Remove all instances within the linked lists
+                                drawCharacter(team_b[curr], false);
+                            }
+                            else {
+                                // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                                for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_a[j]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_a[j]);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                                // printf("render out idx: %d\n", i);
+                                                renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                            }
+                                            removeCharacter(team_b[j-3]);
+                                        }
+                                    }
+                                }
+
+                                drawCharacter(team_b[curr], false);
+
+
+                                for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                                    if (j < NUM_CHARACTERS_PER_TEAM) {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_a[j], false);
+                                        }
+                                    }
+                                    else {
+                                        if (currentCollisionArray[j]) {
+                                            drawCharacter(team_b[j-3], false);
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
+                    } //end of for loop to iterate through team b
+
+                    // knockback_count++;
+                    wait_for_vsync();
+                }
+
+
+
+                destroyGrenade(&grenade);
+
+                //reset within radius bool values and velocities from knockback
+                for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+                    if(team_a[i]->withinBlastRadiusBool == 1){
+                        team_a[i]->withinBlastRadiusBool = 0;
+                        *(team_a[i]->velocityX) = 0;
+                        team_a[i]->explosionDisplacement = 0;
                     }
-                } //end of for loop to iterate through team b
 
-                knockback_count++;
+                    if(team_b[i]->withinBlastRadiusBool == 1){
+                        team_b[i]->withinBlastRadiusBool = 0;
+                        *(team_b[i]->velocityX) = 0;
+                        team_b[i]->explosionDisplacement = 0;
+                    }
+                }
+
+
+            }
+            else{ //if the grenade went off the screen
+                printf("GRENADE WENT OFF SCREEN!\n");
                 wait_for_vsync();
+                destroyGrenade(&grenade);
             }
-
-
-
-            destroyGrenade(&grenade);
-
-            //reset within radius bool values and velocities from knockback
-            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
-                if(team_a[i]->state == DEAD){
-                    continue;
-                }
-                else{
-                    team_a[i]->withinBlastRadiusBool = 0;
-                    *(team_a[i]->velocityX) = 0;
-                }
-            }
-
-            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
-                if(team_b[i]->state == DEAD){
-                    continue;
-                }
-                else{
-                    team_b[i]->withinBlastRadiusBool = 0;
-                    *(team_b[i]->velocityX) = 0;
-
-                }
-            }
-
-
 
 
             
@@ -1207,13 +1277,15 @@ char checkWinCondition() {
     if (dead_count_a < NUM_CHARACTERS_PER_TEAM &&
         dead_count_b < NUM_CHARACTERS_PER_TEAM) {
       return 'i';
-    } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM &&
-               dead_count_b == NUM_CHARACTERS_PER_TEAM) {
-      return 't';
+    } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM && dead_count_b == NUM_CHARACTERS_PER_TEAM) {  
+        game_state_ptr->game_running = false;
+        return 't';
     } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM) {
-      return 'l';  // 'l' means team A lost
+        game_state_ptr->game_running = false;
+        return 'l';  // 'l' means team A lost
     } else if (dead_count_b == NUM_CHARACTERS_PER_TEAM) {
-      return 'w';  // 'w' means team A won
+        game_state_ptr->game_running = false;
+        return 'w';  // 'w' means team A won
     } else {
       return 'x';  // Unexpected case
     }
@@ -1291,3 +1363,18 @@ void checkCharacterDeaths(){
     }
 }
 
+int getNumAffectedByCollision(){
+    //includes dead characters
+    int count = 0;
+    for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+        if(team_a[i]->withinBlastRadiusBool == 1){
+            count+=1;
+        }
+        if(team_b[i]->withinBlastRadiusBool == 1){
+            count+=1;
+        }
+    }
+
+    return count;
+
+}

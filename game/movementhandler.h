@@ -54,6 +54,7 @@ typedef struct Character{
     Bar* healthBar;
     CharacterState lastMovementMade;
     int withinBlastRadiusBool;
+    int explosionDisplacement;
     int id;
 } Character;
 
@@ -86,6 +87,10 @@ void checkGrounded(Character *character);
 
 void resetArrowKeyReleaseFlags();
 
-void knockbackCharacter(Character* character, bool characterLeft);
+void knockbackCharacter(Character* character, bool characterLeft, int grounded);
+
+
+
+
 
 #endif // MOVEMENTHANDLER_H

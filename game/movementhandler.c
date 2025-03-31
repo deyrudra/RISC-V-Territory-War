@@ -38,6 +38,8 @@ void initializeCharacter(Character *character, int x, int y, short int *idleChar
     character->healthBar = malloc(sizeof(Bar));
     character->id = id;
     character->withinBlastRadiusBool = 0; // 0 means character is not within blast radius
+    character->explosionDisplacement = 0; // 0 means character is not within blast radius
+
 
     if (x < SCREEN_WIDTH) {
         character->characterView = LEFTVIEW;
@@ -518,13 +520,33 @@ void resetArrowKeyReleaseFlags(){
     move_right_released = 1;
 }
 
-void knockbackCharacter(Character* character, bool characterLeft){
+void knockbackCharacter(Character* character, bool characterLeft, int grounded){
     if(characterLeft){
         horizontalAcceleration(character, 0); //update the character's velocity
-        *(character->x) = *(character->x) + *(character->velocityX) * 6; //update position based on new velocity
+        *(character->x) = *(character->x) + *(character->velocityX) * 4; //update position based on new velocity
+        character->explosionDisplacement -= *(character->velocityX) * 4; //subtracting a negative number
     } else {
         horizontalAcceleration(character, 1);
-        *(character->x) = *(character->x) + *(character->velocityX) * 6;
+        *(character->x) = *(character->x) + *(character->velocityX) * 4;
+        character->explosionDisplacement += *(character->velocityX) * 4; //adding positive number
+
+    }
+
+    if(grounded == 0){
+        // Update to velocity with constant acceleration
+        *(character->velocityY) = *(character->velocityY) + (GRAVITY * DELTATIME) * 1.5;
+        // Update to position with current velocity 
+        *(character->y) = *(character->y) + *(character->velocityY);
+    }
+
+    if (*(character->x) < SCREEN_WIDTH) {
+        character->characterView = LEFTVIEW;
+    }
+    else if ((SCREEN_WIDTH <= *(character->x)) && (*(character->x) < SCREEN_WIDTH*2)) {
+        character->characterView = MIDDLEVIEW;
+    }
+    else if (SCREEN_WIDTH*2 <= *(character->x)) {
+        character->characterView = RIGHTVIEW;
     }
 }
 
