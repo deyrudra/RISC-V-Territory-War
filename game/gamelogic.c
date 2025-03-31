@@ -644,13 +644,21 @@ void handle_team_turn() {
                 else if(control == gameControls[7]){
                     grenade_user_angle = 0; //reset angle when side switches
                     printf("logic to face right\n");
+                    renderOut(grenade_angle_arrow);
+                    destroyGeneralObject(grenade_angle_arrow);
+                    initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                    renderIn(grenade_angle_arrow);
                     // team_a[game_state_ptr->character_turn_team_a]->state = RIGHTMOVEMENT;
                     // drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
                     lookingRightBool = 1;
-
+                    
                 }
                 else if(control == gameControls[8]){
                     grenade_user_angle = 0; //reset angle when side switches
+                    renderOut(grenade_angle_arrow);
+                    destroyGeneralObject(grenade_angle_arrow);
+                    initializeGeneralObject(&grenade_angle_arrow, &arrow_180, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                    renderIn(grenade_angle_arrow);
                     printf("logic to face left\n");
                     lookingRightBool = 0;
 
