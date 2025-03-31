@@ -1,4 +1,5 @@
 #include "movementhandler.h"
+#include "barhandler.h"
 
 int move_right_released = 1;
 int move_left_released = 1;
@@ -381,6 +382,12 @@ void destroyCharacter(Character *character){
     if (character->velocityY != NULL) free(character->velocityY);
     if (character->collidable != NULL) free(character->collidable);
     if (character->health != NULL) free(character->health);
+
+    //Not sure if this is correct
+    if (character->healthBar != NULL){
+        destroyBar(character->healthBar);
+        free(character->healthBar);
+    }
 }
 
 void drawCharacter(Character *character, bool firstRun){

@@ -52,6 +52,30 @@ void poll_start_input(){
 
 }
 
+void reset_game_poll_input(){
+    // Poll user to hit enter key
+    byte1 = byte2 = byte3 = 0;
+    while (1) {
+        ps2_data = *ps2_ptr;
+        RVALID = ps2_data & 0x8000;
+
+        if (RVALID) {
+            byte1 = byte2;
+            byte2 = byte3;
+            byte3 = ps2_data & 0xFF;
+        }
+
+        if (byte2 == 0xF0) {
+            if (byte3 == 0x29) { //spacebar
+                break;
+            }
+        }
+    }
+    byte1 = byte2 = byte3 = 0;
+
+}
+
+
 bool poll_move_or_stay_input(){
     while (1) {
         ps2_data = *ps2_ptr;

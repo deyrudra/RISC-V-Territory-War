@@ -47,5 +47,6 @@ char* single_poll_input(); // returns key
 char* grenade_control_input();
 void clearPS2Fifo();
 
+void reset_game_poll_input();
 
 #endif // INPUTHANDLER_H
