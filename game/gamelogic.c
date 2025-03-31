@@ -83,6 +83,8 @@ Platform lifeguardPlatform6;
 Platform netPlatform;
 Platform umbrellaPlatform;
 
+GameObject* grenade_angle_arrow;
+
 
 GameState* game_state_ptr;
 Character* team_a[NUM_CHARACTERS_PER_TEAM];
@@ -459,17 +461,12 @@ void handle_team_turn() {
             renderIn(grenadeControlBannerObj2);
             renderIn(grenadeControlBannerObj3);
 
-            renderIn(jump_right1);
-            renderIn(jump_right2);
-            renderIn(jump_right3);
-
             // MIGHT NEED TO CHANGE THIS HOW THE DISPLACEMENT BAR WORKS OF INTIALIZING THREE BARS AT ONCE
             if(currentView == LEFTVIEW){
                 printf("LEFTVIEW\n");
                 initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
             } else if (currentView == MIDDLEVIEW){
                 printf("MIDDLEVIEW\n");
-
                 initializeBar(&powerBar, &displacementbarpartition, DISPLACEMENTBARPARTITION_WIDTH, DISPLACEMENTBARPARTITION_HEIGHT, NUM_DISPLACEMENT_BAR_PARTITIONS, 258 + SCREEN_WIDTH, SCREEN_HEIGHT - BANNER_HEIGHT + 21, 0);
             } else if (currentView == RIGHTVIEW){
                 printf("RIGHTVIEW\n");
@@ -483,34 +480,117 @@ void handle_team_turn() {
 
             grenade_user_angle = 0;
             grenade_user_power = 0;
+            double prev_grenade_user_angle = 0;
+
+            if (grenade_user_angle == 0) {
+                renderOut(grenade_angle_arrow);
+                destroyGeneralObject(grenade_angle_arrow);
+                initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                renderIn(grenade_angle_arrow);
+            }
+            // ADD LOGIC HERE
+            // team_a[game_state_ptr->character_turn_team_a]->state = RIGHTMOVEMENT;
+            // removeCharacter(team_a[game_state_ptr->character_turn_team_a]);
+            // drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
+
             while(!grenadeLaunched){
                 char* control = grenade_control_input();
                 //printf("%s\n", control);
 
                 //NEED TO PUT logic for drawing arrow in this while loop
-
+                if (prev_grenade_user_angle != grenade_user_angle) {
+                    prev_grenade_user_angle = grenade_user_angle;
+                    if (grenade_user_angle == 0) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                    }
+                    else if (grenade_user_angle == 10) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_10, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 20) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_20, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 30) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_30, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 40) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_40, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 50) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_50, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 60) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_60, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 70) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_70, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 80) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_80, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    else if (grenade_user_angle == 90) {
+                        renderOut(grenade_angle_arrow);
+                        destroyGeneralObject(grenade_angle_arrow);
+                        initializeGeneralObject(&grenade_angle_arrow, &arrow_90, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
+                        
+                    }
+                    renderIn(grenade_angle_arrow);
+                }
 
                 if(control == gameControls[10]){ //if they released up grenade
                     if(grenade_user_angle != 90){
                         grenade_user_angle += 10;
                         printf("INPUT ANGLE: %lf\n", grenade_user_angle);
+                        
                     }
                 }
                 else if(control == gameControls[12]){ // if they released down grenade
                     if(grenade_user_angle != 0){
                         grenade_user_angle -=10;
                         printf("INPUT ANGLE: %lf\n", grenade_user_angle);
-
+                        
 
                     }
                 }
                 else if(control == gameControls[7]){
                     grenade_user_angle = 0; //reset angle when side switches
                     printf("logic to face right\n");
+                    team_a[game_state_ptr->character_turn_team_a]->state = RIGHTMOVEMENT;
+                    removeCharacter(team_a[game_state_ptr->character_turn_team_a]);
+                    drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
                 }
                 else if(control == gameControls[8]){
                     grenade_user_angle = 0; //reset angle when side switches
                     printf("logic to face left\n");
+                    team_a[game_state_ptr->character_turn_team_a]->state = LEFTMOVEMENT;
+                    removeCharacter(team_a[game_state_ptr->character_turn_team_a]);
+                    drawCharacter(team_a[game_state_ptr->character_turn_team_a], false);
+                    
                 }
                 else if(control == gameControls[14]){ // User releases space bar to launch grenade
                     printf("The final grenade user power is: %lf\n", grenade_user_power);
@@ -520,6 +600,8 @@ void handle_team_turn() {
                     resetBar(&powerBar, powerBar.lastRenderedPartition-1);
                     grenadeLaunched = true;
                     renderIn(grenade.grenadeObj); //initial render in
+                    renderOut(grenade_angle_arrow);
+                    destroyGeneralObject(grenade_angle_arrow);
                 }
 
                 if(!grenadeLaunched){

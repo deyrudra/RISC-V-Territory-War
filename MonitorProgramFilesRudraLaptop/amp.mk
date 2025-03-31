@@ -47,7 +47,7 @@ OCFLAGS		:= -O srec
 ELF		:= main
 ELFEXT		:= .elf
 HDRS		:=
-SRCS		:= ../game/main.c ../game/objecthandler.c ../game/loadassets.c ../game/inputhandler.c ../game/movementhandler.c ../game/renderhandler.c ../game/gamelogic.c ../game/platformhandler.c
+SRCS		:= ../game/main.c ../game/loadassets.c ../game/inputhandler.c ../game/movementhandler.c ../game/renderhandler.c ../game/gamelogic.c ../game/platformhandler.c ../game/backgroundhandler.c ../game/barhandler.c ../game/grenadehandler.c ../game/objecthandler.c
 OBJS		:= $(patsubst %, %.o, $(SRCS))
 
 ############################################

@@ -213,9 +213,8 @@ void renderOut(GameObject *obj) {
                 }
             }
         }
-    } else {
-        obj->currentlyRendered = 0; //set obj to 0 since we are not rendering it
     }
+    obj->currentlyRendered = 0; //set obj to 0 since we are not rendering it
 }
 
 int checkCollision(GameObject *a, GameObject *b) {
