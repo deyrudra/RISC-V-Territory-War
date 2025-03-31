@@ -39,10 +39,13 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double 
 
     
     double cosAngle = getCosRatio(angle);
-    printf("cosAngle is %lf\n", cosAngle);
+    // printf("cosAngle is %lf\n", cosAngle);
     double sinAngle = getSinRatio(angle);
-    printf("sinAngle is %lf\n", sinAngle);
+    // printf("sinAngle is %lf\n", sinAngle);
 
+    if(power <= 2){
+        power +=1;
+    }
 
     // Populate gameObject data
     *(grenade->grenadeObj->x) = x;
@@ -51,9 +54,9 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double 
     // flip x velocity logic depending on user facing left or right
 
     if(lookingRightBool){
-        *(grenade->grenadeObj->velocityX) = 1.5 * power / 5.0 * cosAngle; // We can update the 1 as we go (scaling factor)
+        *(grenade->grenadeObj->velocityX) = 1.2 * power / 5.0 * cosAngle; // We can update the 1 as we go (scaling factor)
     } else {
-        *(grenade->grenadeObj->velocityX) = -1 * 1.5 * power / 5.0 * cosAngle;
+        *(grenade->grenadeObj->velocityX) = -1 * 1.2 * power / 5.0 * cosAngle;
     }
 
     printf("Upon Grenade Init VELOCITY X is: %lf\n", *(grenade->grenadeObj->velocityX));
