@@ -59,6 +59,8 @@ int main(void) {
   initializeGeneralObject(&main_menu_enterObj, &main_menu_enter, 0, (SCREEN_WIDTH / 2) - (MAIN_MENU_ENTER_WIDTH / 2), 200, MAIN_MENU_ENTER_WIDTH, MAIN_MENU_ENTER_HEIGHT);
   renderIn(main_menu_enterObj);
   destroyGeneralObject(main_menu_enterObj);
+
+  
   
   // Start the game!
   startGame();

@@ -42,7 +42,13 @@ GameObject* explosion;
 // Bar powerBarMiddle;
 // Bar powerBarRight;
 
-
+// Initializing Character ICONS (TOP LEFT AND TOP RIGHT)
+GameObject* player_a0_iconObj;
+GameObject* player_a1_iconObj;
+GameObject* player_a2_iconObj;
+GameObject* player_b0_iconObj;
+GameObject* player_b1_iconObj;
+GameObject* player_b2_iconObj;
 
 
 Character player_a0;
@@ -84,6 +90,25 @@ Platform netPlatform;
 Platform umbrellaPlatform;
 
 GameObject* grenade_angle_arrow;
+GameObject* crossObj_a0_1;
+GameObject* crossObj_a1_1;
+GameObject* crossObj_a2_1;
+GameObject* crossObj_a0_2;
+GameObject* crossObj_a1_2;
+GameObject* crossObj_a2_2;
+GameObject* crossObj_a0_3;
+GameObject* crossObj_a1_3;
+GameObject* crossObj_a2_3;
+GameObject* crossObj_b0_1;
+GameObject* crossObj_b1_1;
+GameObject* crossObj_b2_1;
+GameObject* crossObj_b0_2;
+GameObject* crossObj_b1_2;
+GameObject* crossObj_b2_2;
+GameObject* crossObj_b0_3;
+GameObject* crossObj_b1_3;
+GameObject* crossObj_b2_3;
+
 
 
 GameState* game_state_ptr;
@@ -91,25 +116,25 @@ Character* team_a[NUM_CHARACTERS_PER_TEAM];
 Character* team_b[NUM_CHARACTERS_PER_TEAM];
 
 void startGame() {
-    initializeCharacter(&player_a0, 100 + PLAYER_WIDTH,
+    initializeCharacter(&player_a0, WORLD_WIDTH - 20 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a0_idle, &player_a0_leftmovement,
-                        &player_a0_rightmovement, &player_a0_jump_left, &player_a0_jump_right, 'a', 0);
-    initializeCharacter(&player_a1, 150 + PLAYER_WIDTH,
+                        &player_a0_rightmovement, &player_a0_jump_left, &player_a0_jump_right, 'a', 1);
+    initializeCharacter(&player_a1, WORLD_WIDTH - 70 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a1_idle, &player_a1_leftmovement,
-                        &player_a1_rightmovement, &player_a1_jump_left, &player_a1_jump_right, 'a', 1);
-    initializeCharacter(&player_a2, 200 + PLAYER_WIDTH,
+                        &player_a1_rightmovement, &player_a1_jump_left, &player_a1_jump_right, 'a', 2);
+    initializeCharacter(&player_a2, WORLD_WIDTH - 120 - PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_a2_idle, &player_a2_leftmovement,
-                        &player_a2_rightmovement, &player_a2_jump_left, &player_a2_jump_right, 'a', 2);
-
-    initializeCharacter(&player_b0, WORLD_WIDTH - 20 - PLAYER_WIDTH,
+                        &player_a2_rightmovement, &player_a2_jump_left, &player_a2_jump_right, 'a', 3);
+    initializeCharacter(&player_b0, 100 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b0_idle, &player_b0_leftmovement,
-                        &player_b0_rightmovement, &player_b0_jump_left, &player_b0_jump_right, 'b', 3);
-    initializeCharacter(&player_b1, WORLD_WIDTH - 70 - PLAYER_WIDTH,
+                        &player_b0_rightmovement, &player_b0_jump_left, &player_b0_jump_right, 'b', 4);
+    initializeCharacter(&player_b1, 150 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b1_idle, &player_b1_leftmovement,
-                        &player_b1_rightmovement, &player_b1_jump_left, &player_b1_jump_right, 'b', 4);
-    initializeCharacter(&player_b2, WORLD_WIDTH - 120 - PLAYER_WIDTH,
+                        &player_b1_rightmovement, &player_b1_jump_left, &player_b1_jump_right, 'b', 5);
+    initializeCharacter(&player_b2, 200 + PLAYER_WIDTH,
                         SCREEN_HEIGHT - BANNER_HEIGHT - PLAYER_HEIGHT - GROUND_HEIGHT, &player_b2_idle, &player_b2_leftmovement,
-                        &player_b2_rightmovement, &player_b2_jump_left, &player_b2_jump_right, 'b', 5);
+                        &player_b2_rightmovement, &player_b2_jump_left, &player_b2_jump_right, 'b', 6);
+
 
     initializeGame();
     
@@ -136,7 +161,7 @@ void startGame() {
 
     // Layer 1 Background Data
     // Initializations and Renderings of background objects, assets, and platforms
-    initializeBackground(&skyBackground, &sky, SKY_WIDTH, SKY_HEIGHT);
+    initializeBackground(&skyBackground, &main_menu_background_1, MAIN_MENU_BACKGROUND_1_WIDTH, MAIN_MENU_BACKGROUND_1_HEIGHT);
     placeBackground(&skyBackground);
     destroyBackground(&skyBackground);
 
@@ -216,15 +241,96 @@ void startGame() {
     initializePlatform(&umbrellaPlatform, &umbrellaPlatform148_97, 148, 97, UMBRELLAPLATFORM148_97_WIDTH, UMBRELLAPLATFORM148_97_HEIGHT);
     placePlatform(&umbrellaPlatform);
 
+
+    // Initializing Character ICONS (TOP LEFT AND TOP RIGHT)
+
+    initializeGeneralObject(&player_a0_iconObj, &player_a0_icon_263_9, 0, 263, 9, PLAYER_A0_ICON_263_9_WIDTH, PLAYER_A0_ICON_263_9_HEIGHT);
+    renderIn(player_a0_iconObj);
+    destroyGeneralObject(player_a0_iconObj);
+    initializeGeneralObject(&player_a0_iconObj, &player_a0_icon_263_9, 0, 263 + SCREEN_WIDTH, 9, PLAYER_A0_ICON_263_9_WIDTH, PLAYER_A0_ICON_263_9_HEIGHT);
+    renderIn(player_a0_iconObj);
+    destroyGeneralObject(player_a0_iconObj);
+    initializeGeneralObject(&player_a0_iconObj, &player_a0_icon_263_9, 0, 263 + SCREEN_WIDTH*2, 9, PLAYER_A0_ICON_263_9_WIDTH, PLAYER_A0_ICON_263_9_HEIGHT);
+    renderIn(player_a0_iconObj);
+    destroyGeneralObject(player_a0_iconObj);
+    initializeGeneralObject(&player_a1_iconObj, &player_a1_icon_279_9, 0, 279, 9, PLAYER_A1_ICON_279_9_WIDTH, PLAYER_A1_ICON_279_9_HEIGHT);
+    renderIn(player_a1_iconObj);
+    destroyGeneralObject(player_a1_iconObj);
+    initializeGeneralObject(&player_a1_iconObj, &player_a1_icon_279_9, 0, 279 + SCREEN_WIDTH, 9, PLAYER_A1_ICON_279_9_WIDTH, PLAYER_A1_ICON_279_9_HEIGHT);
+    renderIn(player_a1_iconObj);
+    destroyGeneralObject(player_a1_iconObj);
+    initializeGeneralObject(&player_a1_iconObj, &player_a1_icon_279_9, 0, 279 + SCREEN_WIDTH*2, 9, PLAYER_A1_ICON_279_9_WIDTH, PLAYER_A1_ICON_279_9_HEIGHT);
+    renderIn(player_a1_iconObj);
+    destroyGeneralObject(player_a1_iconObj);
+    initializeGeneralObject(&player_a2_iconObj, &player_a2_icon_300_13, 0, 300, 13, PLAYER_A2_ICON_300_13_WIDTH, PLAYER_A2_ICON_300_13_HEIGHT);
+    renderIn(player_a2_iconObj);
+    destroyGeneralObject(player_a2_iconObj);
+    initializeGeneralObject(&player_a2_iconObj, &player_a2_icon_300_13, 0, 300 + SCREEN_WIDTH, 13, PLAYER_A2_ICON_300_13_WIDTH, PLAYER_A2_ICON_300_13_HEIGHT);
+    renderIn(player_a2_iconObj);
+    destroyGeneralObject(player_a2_iconObj);
+    initializeGeneralObject(&player_a2_iconObj, &player_a2_icon_300_13, 0, 300 + SCREEN_WIDTH*2, 13, PLAYER_A2_ICON_300_13_WIDTH, PLAYER_A2_ICON_300_13_HEIGHT);
+    renderIn(player_a2_iconObj);
+    destroyGeneralObject(player_a2_iconObj);
+    initializeGeneralObject(&player_b0_iconObj, &player_b0_icon_8_6, 0, 8, 6, PLAYER_B0_ICON_8_6_WIDTH, PLAYER_B0_ICON_8_6_HEIGHT);
+    renderIn(player_b0_iconObj);
+    destroyGeneralObject(player_b0_iconObj);
+    initializeGeneralObject(&player_b0_iconObj, &player_b0_icon_8_6, 0, 8 + SCREEN_WIDTH, 6, PLAYER_B0_ICON_8_6_WIDTH, PLAYER_B0_ICON_8_6_HEIGHT);
+    renderIn(player_b0_iconObj);
+    destroyGeneralObject(player_b0_iconObj);
+    initializeGeneralObject(&player_b0_iconObj, &player_b0_icon_8_6, 0, 8 + SCREEN_WIDTH*2, 6, PLAYER_B0_ICON_8_6_WIDTH, PLAYER_B0_ICON_8_6_HEIGHT);
+    renderIn(player_b0_iconObj);
+    destroyGeneralObject(player_b0_iconObj);
+    initializeGeneralObject(&player_b1_iconObj, &player_b1_icon_24_8, 0, 24, 8, PLAYER_B1_ICON_24_8_WIDTH, PLAYER_B1_ICON_24_8_HEIGHT);
+    renderIn(player_b1_iconObj);
+    destroyGeneralObject(player_b1_iconObj);
+    initializeGeneralObject(&player_b1_iconObj, &player_b1_icon_24_8, 0, 24 + SCREEN_WIDTH, 8, PLAYER_B1_ICON_24_8_WIDTH, PLAYER_B1_ICON_24_8_HEIGHT);
+    renderIn(player_b1_iconObj);
+    destroyGeneralObject(player_b1_iconObj);
+    initializeGeneralObject(&player_b1_iconObj, &player_b1_icon_24_8, 0, 24 + SCREEN_WIDTH*2, 8, PLAYER_B1_ICON_24_8_WIDTH, PLAYER_B1_ICON_24_8_HEIGHT);
+    renderIn(player_b1_iconObj);
+    destroyGeneralObject(player_b1_iconObj);
+    initializeGeneralObject(&player_b2_iconObj, &player_b2_icon_39_8, 0, 39, 8, PLAYER_B2_ICON_39_8_WIDTH, PLAYER_B2_ICON_39_8_HEIGHT);
+    renderIn(player_b2_iconObj);
+    destroyGeneralObject(player_b2_iconObj);
+    initializeGeneralObject(&player_b2_iconObj, &player_b2_icon_39_8, 0, 39 + SCREEN_WIDTH, 8, PLAYER_B2_ICON_39_8_WIDTH, PLAYER_B2_ICON_39_8_HEIGHT);
+    renderIn(player_b2_iconObj);
+    destroyGeneralObject(player_b2_iconObj);
+    initializeGeneralObject(&player_b2_iconObj, &player_b2_icon_39_8, 0, 39 + SCREEN_WIDTH*2, 8, PLAYER_B2_ICON_39_8_WIDTH, PLAYER_B2_ICON_39_8_HEIGHT);
+    renderIn(player_b2_iconObj);
+    destroyGeneralObject(player_b2_iconObj);
+    
+    initializeGeneralObject(&crossObj_a0_1, &cross_asset, 0, 264, 10, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a1_1, &cross_asset, 0, 282, 10, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a2_1, &cross_asset, 0, 299, 11, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b0_1, &cross_asset, 0, 11, 11, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b1_1, &cross_asset, 0, 26, 12, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b2_1, &cross_asset, 0, 43, 12, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a0_2, &cross_asset, 0, 264 + SCREEN_WIDTH, 10, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a1_2, &cross_asset, 0, 282 + SCREEN_WIDTH, 10, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a2_2, &cross_asset, 0, 299 + SCREEN_WIDTH, 11, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b0_2, &cross_asset, 0, 11 + SCREEN_WIDTH, 11, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b1_2, &cross_asset, 0, 26 + SCREEN_WIDTH, 12, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b2_2, &cross_asset, 0, 43 + SCREEN_WIDTH, 12, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a0_3, &cross_asset, 0, 264 + SCREEN_WIDTH*2, 10, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a1_3, &cross_asset, 0, 282 + SCREEN_WIDTH*2, 10, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_a2_3, &cross_asset, 0, 299 + SCREEN_WIDTH*2, 11, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b0_3, &cross_asset, 0, 11 + SCREEN_WIDTH*2, 11, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b1_3, &cross_asset, 0, 26 + SCREEN_WIDTH*2, 12, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    initializeGeneralObject(&crossObj_b2_3, &cross_asset, 0, 43 + SCREEN_WIDTH*2, 12, CROSS_ASSET_WIDTH, CROSS_ASSET_HEIGHT);
+    // initializeGeneralObject(&player_b2_iconObj, &player_b2_icon_39_8, 0, 39 + SCREEN_WIDTH*2, 8, PLAYER_B2_ICON_39_8_WIDTH, PLAYER_B2_ICON_39_8_HEIGHT);
+    // initializeGeneralObject(&player_b2_iconObj, &player_b2_icon_39_8, 0, 39 + SCREEN_WIDTH*2, 8, PLAYER_B2_ICON_39_8_WIDTH, PLAYER_B2_ICON_39_8_HEIGHT);
+    // renderIn(player_b2_iconObj);
+    // destroyGeneralObject(player_b2_iconObj);
+
     // initializePlatform(&platform1, &platform, 100, 50, PLATFORM_WIDTH, PLATFORM_HEIGHT);
     // placePlatform(&platform1);
-
+    
     // initializePlatform(&platform_ground, &ground, 0, SCREEN_HEIGHT - BANNER_HEIGHT - GROUND_HEIGHT, GROUND_WIDTH, GROUND_HEIGHT);
     // placePlatform(&platform_ground);
-   
-    // Layer 3 Characters
-
     
+    // Layer 3 Characters
+    
+
 
     drawCharacter(&player_a0, true);
     drawCharacter(&player_a1, true);
@@ -239,6 +345,8 @@ void startGame() {
     drawInitialHealthBar(&player_b0);
     drawInitialHealthBar(&player_b1);
     drawInitialHealthBar(&player_b2);
+
+
 
     while(game_state_ptr->game_running){
         handle_team_turn();
@@ -327,6 +435,32 @@ void handle_team_turn() {
                     team_a[game_state_ptr->character_turn_team_a]->state = DEAD;
                     end_turn = true;
                     character_fell_off_map = true;
+
+                    //HERE123
+                    if (game_state_ptr->character_turn_team_a == 0) {
+                        renderIn(crossObj_a0_1);
+                        renderIn(crossObj_a0_2);
+                        renderIn(crossObj_a0_3);
+                        destroyGeneralObject(crossObj_a0_1);
+                        destroyGeneralObject(crossObj_a0_2);
+                        destroyGeneralObject(crossObj_a0_3);
+                    }
+                    else if (game_state_ptr->character_turn_team_a == 1) {
+                        renderIn(crossObj_a1_1);
+                        renderIn(crossObj_a1_2);
+                        renderIn(crossObj_a1_3);
+                        destroyGeneralObject(crossObj_a1_1);
+                        destroyGeneralObject(crossObj_a1_2);
+                        destroyGeneralObject(crossObj_a1_3);
+                    }
+                    else if (game_state_ptr->character_turn_team_a == 2) {
+                        renderIn(crossObj_a2_1);
+                        renderIn(crossObj_a2_2);
+                        renderIn(crossObj_a2_3);
+                        destroyGeneralObject(crossObj_a2_1);
+                        destroyGeneralObject(crossObj_a2_2);
+                        destroyGeneralObject(crossObj_a2_3);
+                    }
                     break;
                 }
 
@@ -494,24 +628,6 @@ void handle_team_turn() {
             double prev_grenade_user_angle = 0;
 
             int lookingRightBool = 1;
-
-            // ADD LOGIC HERE
-            if (team_a[game_state_ptr->character_turn_team_a]->state == RIGHTMOVEMENT || team_a[game_state_ptr->character_turn_team_a]->state == JUMPINGRIGHT) {
-                lookingRightBool = 1;
-            }
-            else if (team_a[game_state_ptr->character_turn_team_a]->state == LEFTMOVEMENT || team_a[game_state_ptr->character_turn_team_a]->state == JUMPINGLEFT) {
-                lookingRightBool = 0;                
-            }
-            
-            else if (team_a[game_state_ptr->character_turn_team_a]->prevState == RIGHTMOVEMENT || team_a[game_state_ptr->character_turn_team_a]->prevState == JUMPINGRIGHT) {
-                lookingRightBool = 1;
-            }
-            else if (team_a[game_state_ptr->character_turn_team_a]->prevState == RIGHTMOVEMENT || team_a[game_state_ptr->character_turn_team_a]->prevState == JUMPINGLEFT) {
-                lookingRightBool = 0;                
-            }
-            else {
-                lookingRightBool = 1; // Default to looking right
-            }
 
             if (grenade_user_angle == 0) {
                 initializeGeneralObject(&grenade_angle_arrow, &arrow_0, 0, *(team_a[game_state_ptr->character_turn_team_a]->x) - (PLAYER_WIDTH / 2), *(team_a[game_state_ptr->character_turn_team_a]->y), ARROW_WIDTH, ARROW_HEIGHT);
@@ -769,11 +885,61 @@ void handle_team_turn() {
                     if(team_a[i]->state == DEAD && team_a[i]->withinBlastRadiusBool == 1){
                         // do stuff
                         removeCharacter(team_a[i]);
+                        if (i == 0) {
+                            renderIn(crossObj_a0_1);
+                            renderIn(crossObj_a0_2);
+                            renderIn(crossObj_a0_3);
+                            destroyGeneralObject(crossObj_a0_1);
+                            destroyGeneralObject(crossObj_a0_2);
+                            destroyGeneralObject(crossObj_a0_3);
+                        }
+                        else if (i == 1) {
+                            renderIn(crossObj_a1_1);
+                            renderIn(crossObj_a1_2);
+                            renderIn(crossObj_a1_3);
+                            destroyGeneralObject(crossObj_a1_1);
+                            destroyGeneralObject(crossObj_a1_2);
+                            destroyGeneralObject(crossObj_a1_3);
+                        }
+                        else if (i == 2) {
+                            renderIn(crossObj_a2_1);
+                            renderIn(crossObj_a2_2);
+                            renderIn(crossObj_a2_3);
+                            destroyGeneralObject(crossObj_a2_1);
+                            destroyGeneralObject(crossObj_a2_2);
+                            destroyGeneralObject(crossObj_a2_3);
+                        }
+                        // HERE123
                     }
 
                     if(team_b[i]->state == DEAD && team_b[i]->withinBlastRadiusBool == 1){
                         // do stuff
                         removeCharacter(team_b[i]);
+                        // HERE123
+                        if (i == 0) {
+                            renderIn(crossObj_b0_1);
+                            renderIn(crossObj_b0_2);
+                            renderIn(crossObj_b0_3);
+                            destroyGeneralObject(crossObj_b0_1);
+                            destroyGeneralObject(crossObj_b0_2);
+                            destroyGeneralObject(crossObj_b0_3);
+                        }
+                        else if (i == 1) {
+                            renderIn(crossObj_b1_1);
+                            renderIn(crossObj_b1_2);
+                            renderIn(crossObj_b1_3);
+                            destroyGeneralObject(crossObj_b1_1);
+                            destroyGeneralObject(crossObj_b1_2);
+                            destroyGeneralObject(crossObj_b1_3);
+                        }
+                        else if (i == 2) {
+                            renderIn(crossObj_b2_1);
+                            renderIn(crossObj_b2_2);
+                            renderIn(crossObj_b2_3);
+                            destroyGeneralObject(crossObj_b2_1);
+                            destroyGeneralObject(crossObj_b2_2);
+                            destroyGeneralObject(crossObj_b2_3);
+                        }
                     }
                 }
 
@@ -805,6 +971,30 @@ void handle_team_turn() {
                                 if(*(team_a[curr]->y) > SCREEN_HEIGHT + 45){
                                     team_a[curr]->prevState = team_a[curr]->state;
                                     team_a[curr]->state = DEAD;
+                                    if (curr == 0) {
+                                        renderIn(crossObj_a0_1);
+                                        renderIn(crossObj_a0_2);
+                                        renderIn(crossObj_a0_3);
+                                        destroyGeneralObject(crossObj_a0_1);
+                                        destroyGeneralObject(crossObj_a0_2);
+                                        destroyGeneralObject(crossObj_a0_3);
+                                    }
+                                    else if (curr == 1) {
+                                        renderIn(crossObj_a1_1);
+                                        renderIn(crossObj_a1_2);
+                                        renderIn(crossObj_a1_3);
+                                        destroyGeneralObject(crossObj_a1_1);
+                                        destroyGeneralObject(crossObj_a1_2);
+                                        destroyGeneralObject(crossObj_a1_3);
+                                    }
+                                    else if (curr == 2) {
+                                        renderIn(crossObj_a2_1);
+                                        renderIn(crossObj_a2_2);
+                                        renderIn(crossObj_a2_3);
+                                        destroyGeneralObject(crossObj_a2_1);
+                                        destroyGeneralObject(crossObj_a2_2);
+                                        destroyGeneralObject(crossObj_a2_3);
+                                    }
                                 }
 
 
@@ -895,6 +1085,32 @@ void handle_team_turn() {
                                 if(*(team_b[curr]->y) > SCREEN_HEIGHT + 45){
                                     team_b[curr]->prevState = team_b[curr]->state;
                                     team_b[curr]->state = DEAD;
+
+                                    // HERE123
+                                    if (curr == 0) {
+                                        renderIn(crossObj_b0_1);
+                                        renderIn(crossObj_b0_2);
+                                        renderIn(crossObj_b0_3);
+                                        destroyGeneralObject(crossObj_b0_1);
+                                        destroyGeneralObject(crossObj_b0_2);
+                                        destroyGeneralObject(crossObj_b0_3);
+                                    }
+                                    else if (curr == 1) {
+                                        renderIn(crossObj_b1_1);
+                                        renderIn(crossObj_b1_2);
+                                        renderIn(crossObj_b1_3);
+                                        destroyGeneralObject(crossObj_b1_1);
+                                        destroyGeneralObject(crossObj_b1_2);
+                                        destroyGeneralObject(crossObj_b1_3);
+                                    }
+                                    else if (curr == 2) {
+                                        renderIn(crossObj_b2_1);
+                                        renderIn(crossObj_b2_2);
+                                        renderIn(crossObj_b2_3);
+                                        destroyGeneralObject(crossObj_b2_1);
+                                        destroyGeneralObject(crossObj_b2_2);
+                                        destroyGeneralObject(crossObj_b2_3);
+                                    }
                                 }
 
                             }
@@ -1251,8 +1467,14 @@ int next_idx;
 for (int i = 1; i <= NUM_CHARACTERS_PER_TEAM; i++) {
     next_idx = (current_character_turn_index + i) % NUM_CHARACTERS_PER_TEAM;
 
-    if (team_array[next_idx]->state != DEAD) {
-    return next_idx;
+    if (team_array[next_idx]->state == DEAD) {
+        if (team_array[next_idx]->prevState != DEAD) {
+            
+        }
+        team_array[next_idx]->prevState = DEAD;
+    }
+    else {
+        return next_idx;
     }
 }
 
