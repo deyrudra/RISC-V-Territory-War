@@ -1,9 +1,6 @@
 #include "gamelogic.h"
 
-int ceil_custom(double x) {
-    int i = (int)x;
-    return (x > i) ? (i + 1) : i;
-}
+char game_result = '0';
 
 GameObject* mainMenuTitleObj;
 GameObject* main_menu_enterObj;
@@ -351,6 +348,18 @@ void startGame() {
     while(game_state_ptr->game_running){
         handle_team_turn();
     }
+
+    //OUTPUT END SCREEN HERE
+
+    if(game_result == 'T'){
+        //draw tie screen
+    } else if(game_result == 'A'){
+        //draw team A wins
+    } else if(game_result == 'B'){
+        //draw team B wins
+    }
+
+    //deallocate more stuff here
 }
 
 void handle_team_turn() {
@@ -2063,18 +2072,17 @@ char checkWinCondition() {
       }
     }
   
-    if (dead_count_a < NUM_CHARACTERS_PER_TEAM &&
-        dead_count_b < NUM_CHARACTERS_PER_TEAM) {
-      return 'i';
+    if (dead_count_a < NUM_CHARACTERS_PER_TEAM && dead_count_b < NUM_CHARACTERS_PER_TEAM) {
+      game_result = 'I';
     } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM && dead_count_b == NUM_CHARACTERS_PER_TEAM) {  
         game_state_ptr->game_running = false;
-        return 't';
+        game_result = 'T';
     } else if (dead_count_a == NUM_CHARACTERS_PER_TEAM) {
         game_state_ptr->game_running = false;
-        return 'l';  // 'l' means team A lost
+        game_result = 'B'; // 'B' means team B won
     } else if (dead_count_b == NUM_CHARACTERS_PER_TEAM) {
         game_state_ptr->game_running = false;
-        return 'w';  // 'w' means team A won
+        game_result = 'A'; // 'A' means team A won
     } else {
       return 'x';  // Unexpected case
     }

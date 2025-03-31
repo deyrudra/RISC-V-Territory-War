@@ -49,6 +49,8 @@ typedef struct GameState {
     bool game_running;
 } GameState;
 
+extern char game_result;
+
 // Global game objects
 extern Character player_a0;
 extern Character player_a1;
