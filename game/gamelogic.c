@@ -596,22 +596,140 @@ void handle_team_turn() {
             //logic for damage
             checkWithinBlastRadiusAndApplyDamage(&grenade, team_a, team_b);
 
-            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
-                if(team_a[i]->withinBlastRadiusBool == 1){
-                    printf("A%d within radius and health is %d\n", i, *(team_a[i]->health));
+            for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
+                if(team_a[curr]->withinBlastRadiusBool == 1 && team_a[curr]->state != DEAD){
+                    printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
+                    int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                    int ifCollision = 0;
+                    for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                        // Team A Consideration
+                        if (team_a[curr] != team_a[i]) { // Shouldn't collide with itself
+                            if (checkCollision_Characters(team_a[curr], team_a[i])) {
+                                ifCollision = 1;
+                                currentCollisionArray[i] = 1;
+                                
+                            }
+                        }
+                        // Team B Consideration
+                        if (checkCollision_Characters(team_a[curr], team_b[i])) {
+                            ifCollision = 1;
+                            currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                            
+                        }    
+                    }
+
+                    if (ifCollision == 0) {
+                        // Remove all instances within the linked lists
+                        drawCharacter(team_a[curr], false);
+                    }
+                    else {
+                        // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                        for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                            if (j < NUM_CHARACTERS_PER_TEAM) {
+                                if (currentCollisionArray[j]) {
+                                    for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                        // printf("render out idx: %d\n", i);
+                                        renderOut(team_a[j]->healthBar->barObj[i]);
+                                    }
+                                    removeCharacter(team_a[j]);
+                                }
+                            }
+                            else {
+                                if (currentCollisionArray[j]) {
+                                    for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                        // printf("render out idx: %d\n", i);
+                                        renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                    }
+                                    removeCharacter(team_b[j-3]);
+                                }
+                            }
+                        }
+
+                        drawCharacter(team_a[curr], false);
+
+                        for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                            if (j < NUM_CHARACTERS_PER_TEAM) {
+                                if (currentCollisionArray[j]) {
+                                    drawCharacter(team_a[j], false);
+                                }
+                            }
+                            else {
+                                if (currentCollisionArray[j]) {
+                                    drawCharacter(team_b[j-3], false);
+                                }
+                            }
+                        }
+                        
+                    }
                 }
-            }
+            } // End of for loop to iterate through team a
 
-            for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
-                if(team_b[i]->withinBlastRadiusBool == 1){
-                    printf("B%d within radius and health is %d\n", i, *(team_b[i]->health));
+            for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
+                if(team_b[curr]->withinBlastRadiusBool == 1 && team_b[curr]->state != DEAD){
+                    printf("B%d within radius and health is %d\n", curr, *(team_b[curr]->health));
+                    int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
+                    int ifCollision = 0;
+                    for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
+                        // Team A Consideration
+                        if (checkCollision_Characters(team_b[curr], team_a[i])) {
+                            ifCollision = 1;
+                            currentCollisionArray[i] = 1;
+                        }
+
+                        // Team B Consideration
+                        if (team_b[curr] != team_b[i]) { // Shouldn't collide with itself
+                            if (checkCollision_Characters(team_b[curr], team_b[i])) {
+                                ifCollision = 1;
+                                currentCollisionArray[i + NUM_CHARACTERS_PER_TEAM] = 1;
+                            }
+                        }
+                    }
+                    if (ifCollision == 0) {
+                        // Remove all instances within the linked lists
+                        drawCharacter(team_b[curr], false);
+                    }
+                    else {
+                        // currentCollisionArray[game_state_ptr->character_turn_team_a] = 1;
+                        for (int j = NUM_CHARACTERS_PER_TEAM*2 - 1; j >= 0 ; j--) {
+                            if (j < NUM_CHARACTERS_PER_TEAM) {
+                                if (currentCollisionArray[j]) {
+                                    for(int i = 0; i < team_a[j]->healthBar->lastRenderedPartition; i++){
+                                        // printf("render out idx: %d\n", i);
+                                        renderOut(team_a[j]->healthBar->barObj[i]);
+                                    }
+                                    removeCharacter(team_a[j]);
+                                }
+                            }
+                            else {
+                                if (currentCollisionArray[j]) {
+                                    for(int i = 0; i < team_b[j-3]->healthBar->lastRenderedPartition; i++){
+                                        // printf("render out idx: %d\n", i);
+                                        renderOut(team_b[j-3]->healthBar->barObj[i]);
+                                    }
+                                    removeCharacter(team_b[j-3]);
+                                }
+                            }
+                        }
+
+                        drawCharacter(team_b[curr], false);
+
+
+                        for (int j = 0; j < NUM_CHARACTERS_PER_TEAM*2; j++) {
+                            if (j < NUM_CHARACTERS_PER_TEAM) {
+                                if (currentCollisionArray[j]) {
+                                    drawCharacter(team_a[j], false);
+                                }
+                            }
+                            else {
+                                if (currentCollisionArray[j]) {
+                                    drawCharacter(team_b[j-3], false);
+                                }
+                            }
+                        }
+                        
+                    }
                 }
-            }
-
-            
-
-            
-            
+            } //end of for loop to iterate through team b
 
             destroyGrenade(&grenade);
 

@@ -456,14 +456,14 @@ void updateHealthBar(Character* character){
     
     // printf("debug output 2\n");
 
-    double ratio = *(character->health) / HEALTH_LIMIT;
+    double ratio = (double) *(character->health) / HEALTH_LIMIT;
     //printf("ratio: %lf\n", ratio);
 
     // if(ratio > 1) ratio = 1;
 
-    int num_partitions_filled = ratio * NUM_HEALTH_BAR_PARTITIONS;
-    // printf("num partitions filed: %d\n", num_partitions_filled);
+    int num_partitions_filled = ratio * (double)NUM_HEALTH_BAR_PARTITIONS;
 
+    // printf("num partitions filed: %d\n", num_partitions_filled);
 
     // printf("debug output 3\n");
 
