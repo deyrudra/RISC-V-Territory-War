@@ -784,22 +784,22 @@ void handle_team_turn() {
                     count = 0;
                     for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
                         if(team_a[curr]->withinBlastRadiusBool == 1){
-                            printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
+                            // printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
                             
-                            printf("A%d isGroundedBool is initially: %d\n", curr, team_a[curr]->isGroundedBool);
+                            // printf("A%d isGroundedBool is initially: %d\n", curr, team_a[curr]->isGroundedBool);
                             //if(team_a[curr]->isGroundedBool != 1){
                                 checkGrounded(team_a[curr]);
                             //}
-                            printf("A%d isGroundedBool afterwards is: %d\n", curr, team_a[curr]->isGroundedBool);
+                            // printf("A%d isGroundedBool afterwards is: %d\n", curr, team_a[curr]->isGroundedBool);
 
                             if(team_a[curr]->state == DEAD || (team_a[curr]->isGroundedBool == 1 && team_a[curr]->explosionDisplacement >= MAX_X_EXPLOSION_DISPLACEMENT)){
-                                printf("breaking condition displacement is: %d\n", team_a[curr]->explosionDisplacement);
+                                // printf("breaking condition displacement is: %d\n", team_a[curr]->explosionDisplacement);
                                 count +=1;
                             }
                             else{
                                 bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_a[curr]);
                                 knockbackCharacter(team_a[curr], characterLeft, team_a[curr]->isGroundedBool);
-                                printf("current displacement is: %d\n", team_a[curr]->explosionDisplacement);
+                                // printf("current displacement is: %d\n", team_a[curr]->explosionDisplacement);
 
                                 //check if fell off map
                                 if(*(team_a[curr]->y) > SCREEN_HEIGHT + 45){
@@ -880,11 +880,10 @@ void handle_team_turn() {
                 
                     for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
                         if(team_b[curr]->withinBlastRadiusBool == 1){
-                            printf("B%d within radius and health is %d\n", curr, *(team_b[curr]->health));
+                            // printf("B%d within radius and health is %d\n", curr, *(team_b[curr]->health));
 
-                            if(team_b[curr]->isGroundedBool != 1){
-                                checkGrounded(team_b[curr]);
-                            }
+                            checkGrounded(team_b[curr]);
+                            
                             if(team_b[curr]->state == DEAD || (team_b[curr]->isGroundedBool == 1 && team_b[curr]->explosionDisplacement >= MAX_X_EXPLOSION_DISPLACEMENT)){
                                 count +=1;
                             }
