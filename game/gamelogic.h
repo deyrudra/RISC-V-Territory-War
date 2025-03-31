@@ -75,4 +75,6 @@ void updateScreenView();
 //void initializeBar(GameObject*** barObj, int* asset, int width, int height, int num_partitions, int start_x, int start_y);
 // void drawBar(GameObject** bar_obj);
 
+void checkCharacterDeaths();
+
 #endif // GAMELOGIC_H

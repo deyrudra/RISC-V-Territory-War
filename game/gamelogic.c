@@ -310,6 +310,7 @@ void handle_team_turn() {
             printf("After initialize displacemetn bar\n");
             int displacement = 0;
             int starting_x = *(team_a[game_state_ptr->character_turn_team_a]->x);
+            bool character_fell_off_map = false;
             while (abs_double(displacement) < DISPLACEMENT_LIMIT) {
                 bool flipped = false;
                 char* control = single_poll_input();
@@ -318,8 +319,16 @@ void handle_team_turn() {
                     break; //user pressed stay
                 }
 
-                moveCharacter(team_a[game_state_ptr->character_turn_team_a], control,
-                            NULL);
+                moveCharacter(team_a[game_state_ptr->character_turn_team_a], control, NULL);
+
+                //if characer falls off the map kill them
+                if(*(team_a[game_state_ptr->character_turn_team_a]->y) > SCREEN_HEIGHT + 45){
+                    team_a[game_state_ptr->character_turn_team_a]->prevState = team_a[game_state_ptr->character_turn_team_a]->state;
+                    team_a[game_state_ptr->character_turn_team_a]->state = DEAD;
+                    end_turn = true;
+                    character_fell_off_map = true;
+                    break;
+                }
 
                     
                 displacement = *(team_a[game_state_ptr->character_turn_team_a]->x) - starting_x;
@@ -431,7 +440,6 @@ void handle_team_turn() {
                 
                 updateScreenView();
             }
-            byte1 = byte2 = byte3 = 0;
 
             // printf("Last partition rendered is: %d\n", displacementBar.lastRenderedPartition);
             resetBar(&displacementBarLeft, displacementBarLeft.lastRenderedPartition-1);
@@ -442,18 +450,21 @@ void handle_team_turn() {
             byte1 = byte2 = byte3 = 0;
             //CURRENTLY just rendering on top of prev banner and displacememt bar
 
-            //----------Stage 2 of turn, output bar for weapon or stay
-            // updateHealthBar(team_a[game_state_ptr->character_turn_team_a]);
-            printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
-            renderIn(grenadeOrStayBannerObj1);
-            renderIn(grenadeOrStayBannerObj2);
-            renderIn(grenadeOrStayBannerObj3);
+            if(!character_fell_off_map){
+                //----------Stage 2 of turn, output bar for weapon or stay
+                // updateHealthBar(team_a[game_state_ptr->character_turn_team_a]);
+                printf("Character %c%d's turn: Press 1 to throw a grenade or 2 to stay\n", game_state_ptr->team_turn, game_state_ptr->character_turn_team_a);
+                renderIn(grenadeOrStayBannerObj1);
+                renderIn(grenadeOrStayBannerObj2);
+                renderIn(grenadeOrStayBannerObj3);
 
-            renderIn(jump_right1);
-            renderIn(jump_right2);
-            renderIn(jump_right3);
+                renderIn(jump_right1);
+                renderIn(jump_right2);
+                renderIn(jump_right3);
 
-            end_turn = poll_grenade_or_stay_input();
+                end_turn = poll_grenade_or_stay_input();
+            }
+            
         }
 
         if (!end_turn) {
@@ -919,6 +930,24 @@ void handle_team_turn() {
         game_state_ptr->character_turn_team_a = getCharacterIndexForNextTurn(team_a, game_state_ptr->character_turn_team_a);
         game_state_ptr->team_turn = 'b';
 
+        for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+            if(team_a[i]->state == DEAD){
+                printf("A%d is DEAD\n", i);
+            }
+            else{
+                printf("A%d is ALIVE\n", i);
+            }
+        }
+
+        for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+            if(team_b[i]->state == DEAD){
+                printf("B%d is DEAD\n", i);
+            }
+            else{
+                printf("B%d is ALIVE\n", i);
+            }
+        }
+
         char game_result = checkWinCondition();
         printf("\nCurrent game result is %c\n", game_result);
     }
@@ -1153,16 +1182,16 @@ for (int i = 1; i <= NUM_CHARACTERS_PER_TEAM; i++) {
 return next_idx;
 }
   
-  char checkWinCondition() {
+char checkWinCondition() {
     int dead_count_a = 0;
     int dead_count_b = 0;
   
     for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
-      if (!team_a[i]->state == DEAD) {
+      if (team_a[i]->state == DEAD) {
         dead_count_a++;
       }
   
-      if (!team_b[i]->state == DEAD) {
+      if (team_b[i]->state == DEAD) {
         dead_count_b++;
       }
     }
@@ -1227,3 +1256,30 @@ void updateScreenView(){
     }
     prevView = currentView;
 }
+
+void checkCharacterDeaths(){
+    for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+        if(team_a[i]->state == DEAD){
+            continue;
+        }
+        else{
+            if(*(team_a[i]->health) <= 0){
+                team_a[i]->prevState = team_a[i]->state;
+                team_a[i]->state = DEAD;
+            }
+        }
+    }
+
+    for(int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++){
+        if(team_b[i]->state == DEAD){
+            continue;
+        }
+        else{
+            if(*(team_b[i]->health) <= 0){
+                team_b[i]->prevState = team_b[i]->state;
+                team_b[i]->state = DEAD;
+            }
+        }
+    }
+}
+
