@@ -517,3 +517,14 @@ void resetArrowKeyReleaseFlags(){
     move_left_released = 1;
     move_right_released = 1;
 }
+
+void knockbackCharacter(Character* character, bool characterLeft){
+    if(characterLeft){
+        horizontalAcceleration(character, 0); //update the character's velocity
+        *(character->x) = *(character->x) + *(character->velocityX) * 6; //update position based on new velocity
+    } else {
+        horizontalAcceleration(character, 1);
+        *(character->x) = *(character->x) + *(character->velocityX) * 6;
+    }
+}
+

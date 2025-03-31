@@ -11,7 +11,7 @@ double grenade_user_power = 0;
 
 
 
-void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double angle, double power, bool facingLeft){
+void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double angle, double power, int lookingRightBool){
 
     // grenade->x = malloc(sizeof(int));
     // grenade->y = malloc(sizeof(int));
@@ -50,10 +50,10 @@ void initializeGrenade(Grenade* grenade, int x, int y, short int* asset, double 
 
     // flip x velocity logic depending on user facing left or right
 
-    if(facingLeft){
-        *(grenade->grenadeObj->velocityX) = -1 * 1.5 * power * cosAngle;
-    } else {
+    if(lookingRightBool){
         *(grenade->grenadeObj->velocityX) = 1.5 * power * cosAngle; // We can update the 1 as we go (scaling factor)
+    } else {
+        *(grenade->grenadeObj->velocityX) = -1 * 1.5 * power * cosAngle;
     }
 
     printf("Upon Grenade Init VELOCITY X is: %lf\n", *(grenade->grenadeObj->velocityX));
@@ -125,7 +125,7 @@ double getSinRatio(int angle){
     }
 }
 
-void updateGrenadePosition(Grenade* grenade, bool facingLeft){
+void updateGrenadePosition(Grenade* grenade){
     // Update positions
     
     // if directionBool is equal to 1, then it's positive acceleration, otherwise negative acceleration

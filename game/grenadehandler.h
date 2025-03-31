@@ -53,8 +53,8 @@ typedef struct Grenade{
 } Grenade;
 
 // Function prototypes
-void initializeGrenade(Grenade* grenade, int x, int y,short int* asset, double angle, double power, bool facingLeft);
-void updateGrenadePosition(Grenade* grenade, bool facingLeft);
+void initializeGrenade(Grenade* grenade, int x, int y,short int* asset, double angle, double power, int lookingRightBool);
+void updateGrenadePosition(Grenade* grenade);
 
 double getCosRatio(int angle);
 double getSinRatio(int angle);

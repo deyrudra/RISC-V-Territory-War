@@ -86,4 +86,6 @@ void checkGrounded(Character *character);
 
 void resetArrowKeyReleaseFlags();
 
+void knockbackCharacter(Character* character, bool characterLeft);
+
 #endif // MOVEMENTHANDLER_H
