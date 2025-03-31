@@ -282,5 +282,14 @@ void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, 
 }
 
 bool isCharacterLeftOfGrenade(Grenade* grenade, Character* character){
+    int cog_x = *(character->x) + PLAYER_WIDTH/2;
+    int grenade_cog_x = *(grenade->grenadeObj->x) + GRENADE_WIDTH/2;
+
+    if(grenade_cog_x > cog_x){
+        return true;
+    }
+    else{
+        return false; //if grenade is less than or equal to character we'll say character is right of grenade
+    }
 
 }

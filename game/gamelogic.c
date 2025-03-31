@@ -735,6 +735,16 @@ void handle_team_turn() {
             for(int curr = 0; curr < NUM_CHARACTERS_PER_TEAM; curr++){
                 if(team_a[curr]->withinBlastRadiusBool == 1 && team_a[curr]->state != DEAD){
                     printf("A%d within radius and health is %d\n", curr, *(team_a[curr]->health));
+                    bool characterLeft = isCharacterLeftOfGrenade(&grenade, team_a[curr]);
+
+                    // //update character position accordingly
+                    // if(characterLeft){  
+
+                    // } else {
+
+                    // }
+
+
                     int currentCollisionArray[NUM_CHARACTERS_PER_TEAM * 2] = {0, 0, 0, 0, 0, 0};
                     int ifCollision = 0;
                     for (int i = 0; i < NUM_CHARACTERS_PER_TEAM; i++) {
