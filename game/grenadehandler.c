@@ -237,7 +237,7 @@ void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, 
             if(cog_x >= left_bound && cog_x <= right_bound && cog_y >= top_bound && cog_y <= bottom_bound){
                 //set to within radius
                 team_a[i]->withinBlastRadiusBool = 1;
-                *(team_a[i]->health) -=30;
+                *(team_a[i]->health) -=50;
 
                 printf("A%d health is %d\n", i, *(team_a[i]->health));
 
@@ -270,7 +270,7 @@ void checkWithinBlastRadiusAndApplyDamage(Grenade* grenade, Character** team_a, 
             if(cog_x >= left_bound && cog_x <= right_bound && cog_y >= top_bound && cog_y <= bottom_bound){
                 //set to within radius
                 team_b[i]->withinBlastRadiusBool = 1;
-                *(team_b[i]->health) -=30;
+                *(team_b[i]->health) -=50;
 
                 printf("B%d health is %d\n", i, *(team_b[i]->health));
                 

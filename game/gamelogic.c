@@ -7222,7 +7222,7 @@ void handle_team_turn() {
       bool wentOffScreen = false;
       num_bounces = 0;
       while (grenade_explosion_count < GRENADE_EXPLOSION_COUNT_LIMIT &&
-             num_bounces < 3) {
+             num_bounces < 1) {
         renderOut(grenade.grenadeObj);
         updateGrenadePosition(&grenade);
         checkGrenadeGrounded(&grenade);
