@@ -1,6 +1,9 @@
 **ECE243 Project Report**  
 Rudra Dey and Sean Nishanthan
 
+**Video Demo:**
+https://youtu.be/Vb0Z8u77Ua8?si=TMeMfEaC8ZbXs2N8
+
 **Project Description:**
 
 Our ECE243 project, *Turf War* is a 2-player turn-based game implemented on the Nios-V Processor inspired by the popular online game *Territory War*. In our game, the red team and blue team have a face off, and each player controls a team of three characters. The game takes place in a beach-inspired map consisting of a wide battlefield (via three buffers for the VGA display). The PS/2 keyboard is used for user input to control player movement and grenade attacks. Players take turns controlling their characters with the goal of winning the game by eliminating all characters of the opposing team. This can be done by throwing grenades at characters to deal damage or by knocking them off the battlefield. Once a team is eliminated, the game result is displayed along with a sound effect using the speakers, with the option to restart if the users choose to do so.
